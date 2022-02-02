@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "bof_group_28"
