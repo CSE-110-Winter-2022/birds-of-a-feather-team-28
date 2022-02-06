@@ -16,7 +16,6 @@ public class BirdsOfAFeatherHandleNearbyStudents {
     public BirdsOfAFeatherHandleNearbyStudents(Person user) {
         this.user = user;
         saveNearbyStudentsToDatabase(generateStudentClassMap(getNearbyStudents()));
-
     }
 
     /**
@@ -25,7 +24,22 @@ public class BirdsOfAFeatherHandleNearbyStudents {
      */
     public HashMap<Person, List<CourseEntry>> getStudentClassMap() {
         //return from database
-        return null;
+        HashMap<Person, List<CourseEntry>> map = new HashMap<>();
+        List<CourseEntry> courses = new ArrayList<>();
+        courses.add(new DummyCourse());
+        map.put(new DummyStudent("Jimmy"), courses);
+        return map;
+        //return null;
+    }
+
+    public HashMap<Person, List<CourseEntry>> getStudentClassMapFaked(Person student) {
+        //return from database
+        HashMap<Person, List<CourseEntry>> map = new HashMap<>();
+        List<CourseEntry> courses = new ArrayList<>();
+        courses.add(new DummyCourse());
+        map.put(student, courses);
+        return map;
+        //return null;
     }
 
     /**
@@ -38,7 +52,6 @@ public class BirdsOfAFeatherHandleNearbyStudents {
         return null;
     }
 
-    //@TODO TEST THIS METHOD!
     /**
      * Returns a list of courses from two course lists that contain only the matching courses
      * @param courses1 course list 1
@@ -80,7 +93,7 @@ public class BirdsOfAFeatherHandleNearbyStudents {
 
     /**
      * Save nearby students to local
-     * @param nearbyStudents a maping of students to their matching course entries
+     * @param nearbyStudents a mapping of students to their matching course entries
      */
     public void saveNearbyStudentsToDatabase(HashMap<Person, List<CourseEntry>> nearbyStudents) {
         if (nearbyStudents == null) {
@@ -91,6 +104,13 @@ public class BirdsOfAFeatherHandleNearbyStudents {
         return;
     }
 
+    public void clearDatabase() {
+        return;
+    }
+
+    public void stop() {
+        clearDatabase();
+    }
 
 
 }
