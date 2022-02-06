@@ -9,4 +9,18 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+
+    <string-array name="quarter_dd">
+        <item>FA</item>
+        <item>WI</item>
+        <item>SP</item>
+        <item>SS1</item>
+        <item>SS2</item>
+        <item>SSS</item>
+    </string-array>
+
+
+
+
 </resources>
