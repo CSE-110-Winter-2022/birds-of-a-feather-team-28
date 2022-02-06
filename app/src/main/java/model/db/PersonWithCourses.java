@@ -11,10 +11,10 @@ public class PersonWithCourses implements IPerson {
     @Embedded
     public Person person;
 
-    @Relation(parentColumn = "id",
+    @Relation(parentColumn = "person_id",
             entityColumn = "person_id",
-            entity = CourseEntry.class,
-            projection = {"text"})
+            entity = CourseEntry.class)
+            //projection = {"text"}
 
     public List<CourseEntry> courseEntries;
 
