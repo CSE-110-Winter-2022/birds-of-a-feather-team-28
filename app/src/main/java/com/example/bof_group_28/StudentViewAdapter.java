@@ -73,7 +73,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
                 editor.putString("name", student.getName());
                 Set<String> sharedCourses = new ArraySet<>();
-                //@TODO: unfake
+                //TODO: Unfake
                 for (CourseEntry course : handler.getStudentClassMapFaked(student).get(student)) {
                     sharedCourses.add(course.toString());
                 }

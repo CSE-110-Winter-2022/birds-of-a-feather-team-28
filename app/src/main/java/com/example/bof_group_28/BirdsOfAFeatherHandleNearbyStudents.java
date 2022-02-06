@@ -23,13 +23,7 @@ public class BirdsOfAFeatherHandleNearbyStudents {
      * @return the student class map
      */
     public HashMap<Person, List<CourseEntry>> getStudentClassMap() {
-        //return from database
-        HashMap<Person, List<CourseEntry>> map = new HashMap<>();
-        List<CourseEntry> courses = new ArrayList<>();
-        courses.add(new DummyCourse());
-        map.put(new DummyStudent("Jimmy"), courses);
-        return map;
-        //return null;
+        return null;
     }
 
     public HashMap<Person, List<CourseEntry>> getStudentClassMapFaked(Person student) {

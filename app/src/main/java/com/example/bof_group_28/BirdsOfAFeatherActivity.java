@@ -67,6 +67,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
         List<Person> students = new ArrayList<>();
         students.add(new DummyStudent("Jimmy"));
+        students.add(new DummyStudent("Doug"));
+        students.add(new DummyStudent("Jimmy"));
 
 
 

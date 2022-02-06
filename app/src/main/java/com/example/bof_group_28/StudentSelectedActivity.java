@@ -34,7 +34,9 @@ public class StudentSelectedActivity extends AppCompatActivity {
 
         List<String> courses = new ArrayList<>();
         courses.addAll(courseSet);
-        //courses.add("CSE 101, WI 22");
+        //TODO: Unfake
+        courses.add("CSE 101, WI 22");
+        courses.add("CSE 101, WI 25");
 
         courseRecyclerView = findViewById(R.id.sharedCoursesView);
         courseLayoutManager = new LinearLayoutManager(this);
