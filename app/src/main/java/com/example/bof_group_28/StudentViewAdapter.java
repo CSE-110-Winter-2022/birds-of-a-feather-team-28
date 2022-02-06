@@ -40,6 +40,12 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         return this.students.size();
     }
 
+    public void clear(){
+        int size = students.size();
+        students.clear();
+        notifyItemRangeRemoved(0,size);
+    }
+
     public static class ViewHolder
             extends RecyclerView.ViewHolder {
         private final Button personButton;
