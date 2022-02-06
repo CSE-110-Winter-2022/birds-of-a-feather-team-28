@@ -1,4 +1,4 @@
-package com.example.bof_group_28;
+package com.example.bof_group_28.activities;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,8 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.bof_group_28.utility.BirdsOfAFeatherHandleNearbyStudents;
+import com.example.bof_group_28.utility.DummyStudent;
+import com.example.bof_group_28.utility.Person;
+import com.example.bof_group_28.R;
+import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 
 public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
@@ -21,6 +24,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager studentLayoutManager;
     private StudentViewAdapter studentViewAdapter;
     private boolean bofStarted;
+
+    private Person user;
 
     private BirdsOfAFeatherHandleNearbyStudents handler;
 
@@ -36,17 +41,19 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bofStarted = false;
+
+        user = new DummyStudent("Jimmy");
     }
 
     public void onBofButtonClick(View view) {
         Button bofButton = findViewById(R.id.bofButton);
         if(bofStarted){
-            BofStop();
+            stopBirdsOfFeather();
             bofButton.setText(BOF_START_BTN_TEXT);
             setButtonColor(BOF_START_BTN_COLOR, bofButton);
             this.bofStarted = false;
         }else{
-            BofStart();
+            startBirdsOfFeather(user);
             bofButton.setText(BOF_STOP_BTN_TEXT);
             setButtonColor(BOF_STOP_BTN_COLOR, bofButton);
             this.bofStarted = true;
@@ -60,27 +67,18 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         button.setBackground(buttonDrawable);
     }
 
-    public void BofStart(){
-        // update recycler view
-        Person user = new DummyStudent("Bob");
+    public void startBirdsOfFeather(Person user) {
         handler = new BirdsOfAFeatherHandleNearbyStudents(user);
-
-        List<Person> students = new ArrayList<>();
-        students.add(new DummyStudent("Jimmy"));
-        students.add(new DummyStudent("Doug"));
-        students.add(new DummyStudent("Jimmy"));
-
-
 
         studentRecyclerView = findViewById(R.id.personRecyclerView);
         studentLayoutManager = new LinearLayoutManager(this);
         studentRecyclerView.setLayoutManager(studentLayoutManager);
-        studentViewAdapter = new StudentViewAdapter(students, handler);
+        studentViewAdapter = new StudentViewAdapter(handler.getStudentsList(), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
 
     }
 
-    public void BofStop(){
+    public void stopBirdsOfFeather(){
         handler.stop();
         studentViewAdapter.clear();
         studentRecyclerView.setAdapter(studentViewAdapter);

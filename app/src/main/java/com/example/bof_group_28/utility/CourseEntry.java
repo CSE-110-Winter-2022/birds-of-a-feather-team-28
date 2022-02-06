@@ -1,6 +1,7 @@
-package com.example.bof_group_28;
+package com.example.bof_group_28.utility;
 
 public interface CourseEntry {
+
     String getYear();
     String getQuarter();
     String getSubject();

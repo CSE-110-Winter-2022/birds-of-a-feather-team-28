@@ -1,6 +1,6 @@
-package com.example.bof_group_28;
+package com.example.bof_group_28.viewAdapters;
 
-import static com.example.bof_group_28.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bof_group_28.utility.BirdsOfAFeatherHandleNearbyStudents;
+import com.example.bof_group_28.utility.CourseEntry;
+import com.example.bof_group_28.utility.Person;
+import com.example.bof_group_28.R;
+import com.example.bof_group_28.activities.StudentSelectedActivity;
+
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
     private final List<Person> students;
@@ -74,7 +78,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
                 editor.putString("name", student.getName());
                 Set<String> sharedCourses = new ArraySet<>();
                 //TODO: Unfake
-                for (CourseEntry course : handler.getStudentClassMapFaked(student).get(student)) {
+                for (CourseEntry course : handler.getStudentClassMap().get(student)) {
                     sharedCourses.add(course.toString());
                 }
                 editor.putStringSet("courses", sharedCourses);

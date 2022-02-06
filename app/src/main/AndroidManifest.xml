@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bof_group_28">
         <activity
-            android:name=".BirdsOfAFeatherActivity"
+            android:name=".activities.BirdsOfAFeatherActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.Bof_group_28.NoActionBar"
             android:exported="true">
@@ -20,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StudentSelectedActivity" />
+        <activity android:name=".activities.StudentSelectedActivity" />
     </application>
 
 </manifest>

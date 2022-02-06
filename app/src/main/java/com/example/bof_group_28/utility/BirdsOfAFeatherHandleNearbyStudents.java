@@ -1,9 +1,8 @@
-package com.example.bof_group_28;
+package com.example.bof_group_28.utility;
 
 
 import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,27 +12,52 @@ public class BirdsOfAFeatherHandleNearbyStudents {
     private Person user;
     private static final String TAG = "BoF";
 
+    private HashMap<Person, List<CourseEntry>> studentClassMap;
+
     public BirdsOfAFeatherHandleNearbyStudents(Person user) {
         this.user = user;
-        saveNearbyStudentsToDatabase(generateStudentClassMap(getNearbyStudents()));
+        studentClassMap = generateStudentClassMap(getNearbyStudents());
+        saveNearbyStudentsToDatabase(studentClassMap);
     }
 
     /**
-     * Get the student class map from the local database
+     * Test constructor
+     * @param user user
+     * @param nearbyStudents faked nearby students list
+     */
+    public BirdsOfAFeatherHandleNearbyStudents(Person user, List<Person> nearbyStudents) {
+        this.user = user;
+        studentClassMap = generateStudentClassMap(nearbyStudents);
+        saveNearbyStudentsToDatabase(studentClassMap);
+    }
+
+    /**
+     * Test constructor
+     * @param user user
+     * @param studentClassMap faked class map
+     */
+    public BirdsOfAFeatherHandleNearbyStudents(Person user, HashMap<Person, List<CourseEntry>> studentClassMap) {
+        this.user = user;
+        this.studentClassMap = studentClassMap;
+        saveNearbyStudentsToDatabase(studentClassMap);
+    }
+
+    /**
+     * Get the student class map
      * @return the student class map
      */
     public HashMap<Person, List<CourseEntry>> getStudentClassMap() {
-        return null;
+        return studentClassMap;
     }
 
-    public HashMap<Person, List<CourseEntry>> getStudentClassMapFaked(Person student) {
-        //return from database
-        HashMap<Person, List<CourseEntry>> map = new HashMap<>();
-        List<CourseEntry> courses = new ArrayList<>();
-        courses.add(new DummyCourse());
-        map.put(student, courses);
-        return map;
-        //return null;
+    public List<Person> getStudentsList() {
+        List<Person> students = new ArrayList<>();
+        students.addAll(getStudentClassMap().keySet());
+        return students;
+    }
+
+    public void refreshStudentClassMapFromDatabase() {
+
     }
 
     /**
@@ -104,6 +128,8 @@ public class BirdsOfAFeatherHandleNearbyStudents {
 
     public void stop() {
         clearDatabase();
+        studentClassMap.clear();
+        studentClassMap = null;
     }
 
 

@@ -1,6 +1,6 @@
-package com.example.bof_group_28;
+package com.example.bof_group_28.activities;
 
-import static com.example.bof_group_28.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +11,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.bof_group_28.viewAdapters.CourseViewAdapter;
+import com.example.bof_group_28.R;
 
 import java.util.ArrayList;
 import java.util.List;
