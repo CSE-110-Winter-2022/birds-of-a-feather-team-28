@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bof_group_28">
         <activity
-            android:name=".MainActivity"
+            android:name=".BirdsOfAFeatherActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.Bof_group_28.NoActionBar">
             <intent-filter>
