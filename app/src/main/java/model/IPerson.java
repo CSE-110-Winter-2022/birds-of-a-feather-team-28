@@ -12,4 +12,6 @@ public interface IPerson {
     //void addCourse(CourseEntry courseToAdd);
     //void setName(String name);
     //void setProfilePic(Image profilePic);
+
+    //git test test test
 }
