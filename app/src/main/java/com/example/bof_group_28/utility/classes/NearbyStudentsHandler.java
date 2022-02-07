@@ -1,49 +1,53 @@
-package com.example.bof_group_28.utility;
+package com.example.bof_group_28.utility.classes;
 
 
 import android.util.Log;
+
+import com.example.bof_group_28.utility.interfaces.CourseEntry;
+import com.example.bof_group_28.utility.interfaces.Person;
+import com.example.bof_group_28.utility.interfaces.StudentFinder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class BirdsOfAFeatherHandleNearbyStudents {
+public class NearbyStudentsHandler {
 
     private final Person user;
     private static final String TAG = "BoF";
-
-    private List<Person> nearbyStudents;
-
-    /**
-     * Dangerous testing method! Not sure how else to set this up
-     * @param nearbyStudents faked nearby students
-     */
-    public void setNearbyStudents(List<Person> nearbyStudents) {
-        this.nearbyStudents = nearbyStudents;
-    }
-
     private HashMap<Person, List<CourseEntry>> studentClassMap;
 
-    public BirdsOfAFeatherHandleNearbyStudents(Person user) {
+    private StudentFinder studentFinder;
+
+    /*
+     * Dangerous testing method! Not sure how else to set this up
+     * @param nearbyStudents faked nearby students
+    public void setNearbyStudents(List<Person> nearbyStudents) {
+        this.nearbyStudents = nearbyStudents;
+    }*/
+
+    /*
+    public NearbyStudentsHandler(Person user) {
         this.user = user;
         nearbyStudents = new ArrayList<>();
         refreshStudentClassMap();
-    }
+    }*/
 
-    public void refreshStudentClassMap() {
-        studentClassMap = generateStudentClassMap(getNearbyStudents());
+    /**
+     * Constructor
+     * @param user user
+     * @param studentFinder StudentFinder used to retrieve students to handle
+     */
+    public NearbyStudentsHandler(Person user, StudentFinder studentFinder) {
+        this.user = user;
+        this.studentFinder = studentFinder;
+        studentClassMap = generateStudentClassMap(studentFinder.returnNearbyStudents());
         saveNearbyStudentsToDatabase(studentClassMap);
     }
 
-    /**
-     * Test constructor
-     * @param user user
-     * @param nearbyStudents faked nearby students list
-     */
-    public BirdsOfAFeatherHandleNearbyStudents(Person user, List<Person> nearbyStudents) {
-        this.user = user;
-        this.nearbyStudents = nearbyStudents;
-        studentClassMap = generateStudentClassMap(nearbyStudents);
+    public void refreshStudentClassMap() {
+        studentFinder.updateNearbyStudents();
+        studentClassMap = generateStudentClassMap(studentFinder.returnNearbyStudents());
         saveNearbyStudentsToDatabase(studentClassMap);
     }
 
@@ -67,10 +71,9 @@ public class BirdsOfAFeatherHandleNearbyStudents {
 
     }
 
-    /**
+    /*
      * Returns nearby students based on bluetooth
      * @return a list of nearby students
-     */
     public List<Person> getNearbyStudents() {
 
 
@@ -78,7 +81,7 @@ public class BirdsOfAFeatherHandleNearbyStudents {
         // get them from bluetooth
         // update local nearby students
         return nearbyStudents;
-    }
+    }*/
 
     /**
      * Returns a list of courses from two course lists that contain only the matching courses

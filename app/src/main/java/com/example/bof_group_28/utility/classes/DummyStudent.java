@@ -1,4 +1,7 @@
-package com.example.bof_group_28.utility;
+package com.example.bof_group_28.utility.classes;
+
+import com.example.bof_group_28.utility.interfaces.CourseEntry;
+import com.example.bof_group_28.utility.interfaces.Person;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,5 +24,9 @@ public class DummyStudent implements Person {
     @Override
     public String getName() {
         return name;
+    }
+
+    public void addCourse(CourseEntry courseEntry){
+        this.courses.add(courseEntry);
     }
 }

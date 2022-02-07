@@ -1,4 +1,4 @@
-package com.example.bof_group_28.utility;
+package com.example.bof_group_28.utility.interfaces;
 
 public interface CourseEntry {
 
