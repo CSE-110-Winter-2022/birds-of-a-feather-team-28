@@ -9,6 +9,8 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,7 +20,14 @@ import com.example.bof_group_28.utility.Person;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class BirdsOfAFeatherActivity extends AppCompatActivity {
+
+    private ExecutorService backgroundThreadExecutor = Executors.newSingleThreadExecutor();
+    private Future<Void> future;
 
     private RecyclerView studentRecyclerView;
     private RecyclerView.LayoutManager studentLayoutManager;
@@ -29,6 +38,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     private BirdsOfAFeatherHandleNearbyStudents handler;
 
+    private static final String TAG = "BoF: ";
     private static final String BOF_START_BTN_TEXT = "START";
     private static final String BOF_STOP_BTN_TEXT = "STOP";
     private static final int BOF_START_BTN_COLOR = Color.rgb(76, 175, 80);
@@ -76,11 +86,66 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         studentViewAdapter = new StudentViewAdapter(handler.getStudentsList(), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
 
+        Handler runHandler = new Handler();
+
+        final Runnable r = new Runnable() {
+            public void run() {
+                if (bofStarted) {
+                    handler.refreshStudentClassMap();
+
+                    Log.v(TAG, "Refreshed student class map.");
+
+                    studentViewAdapter.clear();
+                    studentViewAdapter = new StudentViewAdapter(handler.getStudentsList(), handler);
+                    studentRecyclerView.setAdapter(studentViewAdapter);
+
+                    Log.v(TAG, "Updated nearby students view.");
+                    runHandler.postDelayed(this, 10000);
+                }
+            }
+        };
+
+        runHandler.postDelayed(r, 10000);
+
+        /*this.future = backgroundThreadExecutor.submit(() -> {
+            do {
+                handler.refreshStudentClassMap();
+
+                Log.v(TAG, "Refreshed student class map.");
+
+                studentViewAdapter.clear();
+                studentViewAdapter = new StudentViewAdapter(handler.getStudentsList(), handler);
+                studentRecyclerView.setAdapter(studentViewAdapter);
+
+                Log.v(TAG, "Updated nearby students view.");
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (bofStarted);
+            return null;
+        });*/
     }
 
     public void stopBirdsOfFeather(){
         handler.stop();
-        studentViewAdapter.clear();
-        studentRecyclerView.setAdapter(studentViewAdapter);
+        //this.future.cancel(true);
+
+        Log.v(TAG, "Stopped Birds of a Feather.");
+    }
+
+    public void onClear(View view) {
+        if (handler != null) {
+            handler.clear();
+            Log.v(TAG, "Cleared Birds of a Feather handler.");
+        }
+
+        if (studentViewAdapter != null) {
+            studentViewAdapter.clear();
+            studentRecyclerView.setAdapter(studentViewAdapter);
+            Log.v(TAG, "Cleared Birds of a Feather student view.");
+        }
     }
 }
