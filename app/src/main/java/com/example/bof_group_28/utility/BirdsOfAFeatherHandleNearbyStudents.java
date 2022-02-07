@@ -1,6 +1,5 @@
 package com.example.bof_group_28.utility;
 
-
 import android.util.Log;
 
 import java.util.ArrayList;

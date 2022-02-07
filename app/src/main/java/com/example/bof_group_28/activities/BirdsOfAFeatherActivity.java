@@ -47,12 +47,12 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     public void onBofButtonClick(View view) {
         Button bofButton = findViewById(R.id.bofButton);
-        if(bofStarted){
+        if (bofStarted) {
             stopBirdsOfFeather();
             bofButton.setText(BOF_START_BTN_TEXT);
             setButtonColor(BOF_START_BTN_COLOR, bofButton);
             this.bofStarted = false;
-        }else{
+        } else{
             startBirdsOfFeather(user);
             bofButton.setText(BOF_STOP_BTN_TEXT);
             setButtonColor(BOF_STOP_BTN_COLOR, bofButton);
