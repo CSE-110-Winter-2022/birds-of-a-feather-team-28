@@ -9,13 +9,28 @@ import java.util.List;
 
 public class BirdsOfAFeatherHandleNearbyStudents {
 
-    private Person user;
+    private final Person user;
     private static final String TAG = "BoF";
+
+    private List<Person> nearbyStudents;
+
+    /**
+     * Dangerous testing method! Not sure how else to set this up
+     * @param nearbyStudents faked nearby students
+     */
+    public void setNearbyStudents(List<Person> nearbyStudents) {
+        this.nearbyStudents = nearbyStudents;
+    }
 
     private HashMap<Person, List<CourseEntry>> studentClassMap;
 
     public BirdsOfAFeatherHandleNearbyStudents(Person user) {
         this.user = user;
+        nearbyStudents = new ArrayList<>();
+        refreshStudentClassMap();
+    }
+
+    public void refreshStudentClassMap() {
         studentClassMap = generateStudentClassMap(getNearbyStudents());
         saveNearbyStudentsToDatabase(studentClassMap);
     }
@@ -27,18 +42,8 @@ public class BirdsOfAFeatherHandleNearbyStudents {
      */
     public BirdsOfAFeatherHandleNearbyStudents(Person user, List<Person> nearbyStudents) {
         this.user = user;
+        this.nearbyStudents = nearbyStudents;
         studentClassMap = generateStudentClassMap(nearbyStudents);
-        saveNearbyStudentsToDatabase(studentClassMap);
-    }
-
-    /**
-     * Test constructor
-     * @param user user
-     * @param studentClassMap faked class map
-     */
-    public BirdsOfAFeatherHandleNearbyStudents(Person user, HashMap<Person, List<CourseEntry>> studentClassMap) {
-        this.user = user;
-        this.studentClassMap = studentClassMap;
         saveNearbyStudentsToDatabase(studentClassMap);
     }
 
@@ -52,7 +57,9 @@ public class BirdsOfAFeatherHandleNearbyStudents {
 
     public List<Person> getStudentsList() {
         List<Person> students = new ArrayList<>();
-        students.addAll(getStudentClassMap().keySet());
+        if (getStudentClassMap() != null) {
+            students.addAll(getStudentClassMap().keySet());
+        }
         return students;
     }
 
@@ -65,9 +72,12 @@ public class BirdsOfAFeatherHandleNearbyStudents {
      * @return a list of nearby students
      */
     public List<Person> getNearbyStudents() {
+
+
+        Log.v(TAG, "Attempted to retrieve nearby students.");
         // get them from bluetooth
-        // return that list of students
-        return null;
+        // update local nearby students
+        return nearbyStudents;
     }
 
     /**
@@ -119,16 +129,20 @@ public class BirdsOfAFeatherHandleNearbyStudents {
             return;
         }
         // with database class save the person and their course data
-        return;
     }
 
     public void clearDatabase() {
-        return;
     }
 
     public void stop() {
+
+    }
+
+    public void clear() {
         clearDatabase();
-        studentClassMap.clear();
+        if (studentClassMap != null) {
+            studentClassMap.clear();
+        }
         studentClassMap = null;
     }
 

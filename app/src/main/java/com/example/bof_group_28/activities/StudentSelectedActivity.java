@@ -35,11 +35,7 @@ public class StudentSelectedActivity extends AppCompatActivity {
         name.setText(preferences.getString("name", "Invalid Name"));
         Set<String> courseSet = preferences.getStringSet("courses", new ArraySet<>());
 
-        List<String> courses = new ArrayList<>();
-        courses.addAll(courseSet);
-        //TODO: Unfake
-        courses.add("CSE 101, WI 22");
-        courses.add("CSE 101, WI 25");
+        List<String> courses = new ArrayList<>(courseSet);
 
         courseRecyclerView = findViewById(R.id.sharedCoursesView);
         courseLayoutManager = new LinearLayoutManager(this);
