@@ -1,4 +1,4 @@
-name: Run Android Unit Tests
+name: Run Project Unit Tests
 on: [push, pull_request]
 
 jobs:
