@@ -11,7 +11,6 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.List;
 
-//import edu.ucsd.cse110.lab5_room.model.DummyPerson;
 import model.IPerson;
 import model.db.AppDatabase;
 import model.db.CourseEntry;
@@ -45,25 +44,10 @@ public class MainActivity extends AppCompatActivity {
 
         AppDatabase db = AppDatabase.singleton(getApplicationContext());
         db.clearAllTables();
-        List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
 
-        int newCourseId = db.courseEntryDAO().maxId() +1;
-        int personId = db.personWithCoursesDAO().count() +1;
-
-        //Hardcoded DB Entry
-        Person person = new Person(1, "John Doe");
-        db.personWithCoursesDAO().insert(person);
-        CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110");
-        db.courseEntryDAO().insert(courseEntry);
-        CourseEntry courseEntry1 = new CourseEntry(2,1,"2022", "WI22", "CSE", "101");
-        db.courseEntryDAO().insert(courseEntry1);
-
-        person = new Person(2, "Jane Doe");
-        db.personWithCoursesDAO().insert(person);
-        courseEntry = new CourseEntry(3,3,"2022", "WI22", "CSE", "110");
-        db.courseEntryDAO().insert(courseEntry);
-        courseEntry = new CourseEntry(4,4,"2022", "WI22", "MGT", "181");
-        db.courseEntryDAO().insert(courseEntry);
+        //List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
+        //int newCourseId = db.courseEntryDAO().maxId() +1;
+        //int personId = db.personWithCoursesDAO().count() +1;
 
         //TextView person1Text = (TextView) findViewById(R.id.person1);
         //person1Text.setText(persons.get(0).getCourses().get(0).subject);
