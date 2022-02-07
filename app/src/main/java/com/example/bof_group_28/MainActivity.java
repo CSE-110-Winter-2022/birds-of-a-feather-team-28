@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.util.Arrays;
@@ -41,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //setTitle(R.string.app_title);
 
         AppDatabase db = AppDatabase.singleton(getApplicationContext());
+        db.clearAllTables();
         List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
 
         int newCourseId = db.courseEntryDAO().maxId() +1;
@@ -53,6 +54,15 @@ public class MainActivity extends AppCompatActivity {
         Person person = new Person(1, "John Doe");
         db.personWithCoursesDAO().insert(person);
         CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110");
+        db.courseEntryDAO().insert(courseEntry);
+        CourseEntry courseEntry1 = new CourseEntry(2,1,"2022", "WI22", "CSE", "101");
+        db.courseEntryDAO().insert(courseEntry1);
+
+        person = new Person(2, "Jane Doe");
+        db.personWithCoursesDAO().insert(person);
+        courseEntry = new CourseEntry(3,3,"2022", "WI22", "CSE", "110");
+        db.courseEntryDAO().insert(courseEntry);
+        courseEntry = new CourseEntry(4,4,"2022", "WI22", "MGT", "181");
         db.courseEntryDAO().insert(courseEntry);
 
         //TextView person1Text = (TextView) findViewById(R.id.person1);
