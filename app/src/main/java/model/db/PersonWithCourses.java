@@ -33,6 +33,4 @@ public class PersonWithCourses implements IPerson {
         return this.courseEntries;
     }
 
-
-
 }

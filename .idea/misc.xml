@@ -4,8 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Shohan/AndroidStudioProjects/bof_group_28/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Users/Shohan/AndroidStudioProjects/bof_group_28/app/src/main/res/layout/activity_person_detail.xml" value="0.24947916666666667" />
         <entry key="..\:/Users/Shohan/AndroidStudioProjects/bof_group_28/app/src/main/res/layout/content_main.xml" value="0.24947916666666667" />
         <entry key="..\:/Users/Shohan/AndroidStudioProjects/bof_group_28/app/src/main/res/layout/fragment_first.xml" value="0.24947916666666667" />
+        <entry key="..\:/Users/Shohan/AndroidStudioProjects/bof_group_28/app/src/main/res/layout/notes_row.xml" value="0.24947916666666667" />
+        <entry key="..\:/Users/Shohan/AndroidStudioProjects/bof_group_28/app/src/main/res/layout/person_row.xml" value="0.24947916666666667" />
         <entry key="..\:/Users/aiden/Documents/GitHub/birds-of-a-feather-team-28/app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/aiden/Documents/GitHub/birds-of-a-feather-team-28/app/src/main/res/layout/person_row.xml" value="0.20520833333333333" />
       </map>

@@ -15,4 +15,9 @@ public class Person {
 
     //@ColumnInfo(name = "profilePic", typeAffinity = ColumnInfo.BLOB)
     //private byte[] profilePic;
+
+    public Person(int personId, String name) {
+        this.personId = personId;
+        this.name = name;
+    }
 }

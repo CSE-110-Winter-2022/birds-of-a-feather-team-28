@@ -2,6 +2,8 @@ package model.db;
 //person with notes dao
 
 import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
@@ -18,4 +20,13 @@ public interface PersonWithCoursesDAO {
 
     @Query("SELECT COUNT(*) from persons")
     int count();
+
+    @Query("SELECT MAX(course_id) from courseentries")
+    int maxId();
+
+    @Insert
+    void insert(Person person);
+
+    @Delete
+    void delete(Person person);
 }

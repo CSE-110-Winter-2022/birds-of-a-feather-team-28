@@ -27,6 +27,7 @@ public class CourseEntry {
 
     public CourseEntry(int courseId, int personId, String year,
                        String quarter, String subject, String courseNum) {
+        this.courseId = personId;
         this.personId = personId;
         this.year = year;
         this.quarter = quarter;

@@ -1,48 +1,69 @@
 package com.example.bof_group_28;
 
-import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
+import android.os.Bundle;
 import android.widget.TextView;
 
-import model.db.AppDatabase;
-import model.IPerson;
+import java.util.Arrays;
+import java.util.List;
 
+//import edu.ucsd.cse110.lab5_room.model.DummyPerson;
+import model.IPerson;
+import model.db.AppDatabase;
+import model.db.CourseEntry;
+import model.db.CourseEntryDAO;
+import model.db.Person;
 
 public class MainActivity extends AppCompatActivity {
+    protected RecyclerView personsRecyclerView;
+    protected RecyclerView.LayoutManager personsLayoutManager;
+    //protected PersonsViewAdapter personsViewAdapter;
+
+    /*protected IPerson[] data = {
+            new DummyPerson(0,"Jane Doe", new String[]{
+                    "Likes cats.",
+                    "Favorite color is blue."
+            }),
+            new DummyPerson(1,"John Public", new String[]{
+                    "Likes dogs.",
+                    "Favorite color is red."
+            }),
+            new DummyPerson(2,"Richard Roe", new String[]{
+                    "Likes birds.",
+                    "Favorite color is yellow."
+            })
+    };*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //setTitle(R.string.app_title);
 
-        AppDatabase db = AppDatabase.singleton(getApplicationContect());
-        List<? extends IPerson> persons = db.personsWithNotesDao().getAll();
+        AppDatabase db = AppDatabase.singleton(getApplicationContext());
+        List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
 
-        final Button buttonHideName = findViewById(R.id.hideName);
-        buttonHideName.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                TextView textView = (TextView) findViewById(R.id.textViewName);
-                textView.setVisibility(View.INVISIBLE);
-            }
-        });
-        final Button buttonShowName = findViewById(R.id.showName);
-        buttonShowName.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                TextView textView = (TextView) findViewById(R.id.textViewName);
-                textView.setVisibility(View.VISIBLE);
-            }
-        });
+        int newCourseId = db.courseEntryDAO().maxId() +1;
+        int personId = db.personWithCoursesDAO().count() +1;
 
+        //Hardcoded DB Entry
+        Person person = new Person(1, "John Doe");
+        db.personWithCoursesDAO().insert(person);
+        CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110");
+        db.courseEntryDAO().insert(courseEntry);
+
+        //TextView person1Text = (TextView) findViewById(R.id.person1);
+        //person1Text.setText(persons.get(0).getCourses().get(0).subject);
+        //set up recycler view
+        //personsRecyclerView = findViewById(R.id.persons_view);
+
+        //personsLayoutManager = new LinearLayoutManager(this);
+        //personsRecyclerView.setLayoutManager(personsLayoutManager);
+
+        //personsViewAdapter = new PersonsViewAdapter(persons);
+        //personsRecyclerView.setAdapter(personsViewAdapter);
     }
 }

@@ -6,7 +6,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class CourseEntryActivity extends AppCompatActivity {
-    @Override
+   /* @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_entry);
@@ -19,5 +19,5 @@ public class CourseEntryActivity extends AppCompatActivity {
     public void onAddClicked(View view){
         //add courses to the database through the fields
         finish();
-    }
+    }*/
 }
