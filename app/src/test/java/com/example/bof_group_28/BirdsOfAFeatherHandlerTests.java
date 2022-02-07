@@ -38,6 +38,7 @@ public class BirdsOfAFeatherHandlerTests {
         assertTrue(listsEqualNoOrder(intList1, intList2));
         intList2.add(4);
         assertFalse(listsEqualNoOrder(intList1, intList2));
+        System.out.println("Tested listsEqualNoOrder method");
     }
 
     @Test
@@ -82,6 +83,7 @@ public class BirdsOfAFeatherHandlerTests {
         studentThreeShared.add(new DummyCourse("2022", "WINTER", "CSE", "101"));
         studentThreeShared.add(new DummyCourse("2020", "FALL", "HUM", "100"));
         assertTrue(listsEqualNoOrder(studentThreeShared, handler.getStudentClassMap().get(studentThree)));
+        System.out.println("Tested Naive student input");
 
     }
 
@@ -117,6 +119,8 @@ public class BirdsOfAFeatherHandlerTests {
         assertFalse(handler.getStudentClassMap().containsKey(studentTwo));
         assertFalse(handler.getStudentClassMap().containsKey(studentThree));
         assertTrue(handler.getStudentClassMap().isEmpty());
+
+        System.out.println("Tested matching students");
 
     }
 
@@ -156,6 +160,8 @@ public class BirdsOfAFeatherHandlerTests {
 
         assertFalse(handler.getStudentClassMap().containsKey(studentTwo));
         assertFalse(handler.getStudentClassMap().containsKey(studentThree));
+        System.out.println("Tested some matching student input");
+
 
     }
 
@@ -202,6 +208,8 @@ public class BirdsOfAFeatherHandlerTests {
         studentThreeShared.add(new DummyCourse("2020", "FALL", "HUM", "100"));
         assertTrue(listsEqualNoOrder(studentThreeShared, handler.getStudentClassMap().get(studentThree)));
 
+        System.out.println("Tested same name input");
+
     }
 
     @Test
@@ -225,5 +233,7 @@ public class BirdsOfAFeatherHandlerTests {
         BirdsOfAFeatherHandleNearbyStudents handler = new BirdsOfAFeatherHandleNearbyStudents(user, students);
 
         assertFalse(handler.getStudentClassMap().containsKey(studentOne));
+        System.out.println("Tested similar courses input");
+
     }
 }
