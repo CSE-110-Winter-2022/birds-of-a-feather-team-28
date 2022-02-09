@@ -1,5 +1,6 @@
 package com.example.bof_group_28.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,9 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
+<<<<<<< Updated upstream
 import com.example.bof_group_28.utility.BirdsOfAFeatherHandleNearbyStudents;
 import com.example.bof_group_28.utility.DummyStudent;
 import com.example.bof_group_28.utility.Person;
+=======
+import com.example.bof_group_28.utility.classes.DummyCourse;
+import com.example.bof_group_28.utility.classes.DummyStudentFinder;
+import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
+import com.example.bof_group_28.utility.classes.DummyStudent;
+import com.example.bof_group_28.utility.classes.NearbyStudentsService;
+import com.example.bof_group_28.utility.interfaces.Person;
+>>>>>>> Stashed changes
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 
@@ -52,11 +62,21 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             bofButton.setText(BOF_START_BTN_TEXT);
             setButtonColor(BOF_START_BTN_COLOR, bofButton);
             this.bofStarted = false;
+<<<<<<< Updated upstream
         } else{
+=======
+
+            Intent intent = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
+            startService(intent);
+        }else{
+>>>>>>> Stashed changes
             startBirdsOfFeather(user);
             bofButton.setText(BOF_STOP_BTN_TEXT);
             setButtonColor(BOF_STOP_BTN_COLOR, bofButton);
             this.bofStarted = true;
+
+            Intent intent = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
+            stopService(intent);
         }
     }
 

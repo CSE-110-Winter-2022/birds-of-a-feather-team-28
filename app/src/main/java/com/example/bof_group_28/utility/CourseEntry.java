@@ -7,6 +7,8 @@ public interface CourseEntry {
     String getSubject();
     String getCourseNum();
 
+    String toMessageString();
+
     void setYear(String year);
     void setQuarter(String quarter);
     void setSubject(String subject);

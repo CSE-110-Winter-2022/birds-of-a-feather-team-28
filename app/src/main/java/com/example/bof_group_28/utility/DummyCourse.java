@@ -2,6 +2,14 @@ package com.example.bof_group_28.utility;
 
 import androidx.annotation.NonNull;
 
+<<<<<<< Updated upstream:app/src/main/java/com/example/bof_group_28/utility/DummyCourse.java
+=======
+import com.example.bof_group_28.utility.interfaces.CourseEntry;
+import com.google.android.gms.nearby.messages.Message;
+
+import java.nio.charset.StandardCharsets;
+
+>>>>>>> Stashed changes:app/src/main/java/com/example/bof_group_28/utility/classes/DummyCourse.java
 public class DummyCourse implements CourseEntry {
 
     public DummyCourse(String year, String quarter, String subject, String courseNum) {
@@ -60,6 +68,12 @@ public class DummyCourse implements CourseEntry {
     @Override
     public String toString() {
         return subject + " "  + courseNum + " for " + quarter + " of " + year;
+    }
+
+    @NonNull
+    @Override
+    public String toMessageString() {
+        return year + "," + quarter + "," + subject + "," + courseNum + ",";
     }
 
     @Override
