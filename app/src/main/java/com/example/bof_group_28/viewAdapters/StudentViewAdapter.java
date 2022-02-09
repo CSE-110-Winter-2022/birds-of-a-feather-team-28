@@ -14,9 +14,9 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bof_group_28.utility.BirdsOfAFeatherHandleNearbyStudents;
-import com.example.bof_group_28.utility.CourseEntry;
-import com.example.bof_group_28.utility.Person;
+import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
+import com.example.bof_group_28.utility.interfaces.CourseEntry;
+import com.example.bof_group_28.utility.interfaces.Person;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.activities.StudentSelectedActivity;
 
@@ -25,9 +25,9 @@ import java.util.Set;
 
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
     private final List<Person> students;
-    private BirdsOfAFeatherHandleNearbyStudents handler;
+    private NearbyStudentsHandler handler;
 
-    public StudentViewAdapter(List<Person> students, BirdsOfAFeatherHandleNearbyStudents handler) {
+    public StudentViewAdapter(List<Person> students, NearbyStudentsHandler handler) {
         super();
         this.handler = handler;
         this.students = students;
@@ -64,7 +64,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         private final Button personButton;
         private Person student;
 
-        ViewHolder(View itemView, BirdsOfAFeatherHandleNearbyStudents handler) {
+        ViewHolder(View itemView, NearbyStudentsHandler handler) {
             super(itemView);
             this.personButton = itemView.findViewById(R.id.person_button);
 

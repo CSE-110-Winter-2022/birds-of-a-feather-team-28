@@ -1,6 +1,8 @@
-package com.example.bof_group_28.utility;
+package com.example.bof_group_28.utility.classes;
 
 import androidx.annotation.NonNull;
+
+import com.example.bof_group_28.utility.interfaces.CourseEntry;
 
 public class DummyCourse implements CourseEntry {
 

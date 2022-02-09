@@ -14,12 +14,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.bof_group_28.utility.BirdsOfAFeatherHandleNearbyStudents;
-import com.example.bof_group_28.utility.DummyStudent;
-import com.example.bof_group_28.utility.Person;
+import com.example.bof_group_28.utility.classes.DummyCourse;
+import com.example.bof_group_28.utility.classes.DummyStudentFinder;
+import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
+import com.example.bof_group_28.utility.classes.DummyStudent;
+import com.example.bof_group_28.utility.interfaces.Person;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -36,7 +40,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     private Person user;
 
-    private BirdsOfAFeatherHandleNearbyStudents handler;
+    private NearbyStudentsHandler handler;
 
     private static final String TAG = "BoF: ";
     private static final String BOF_START_BTN_TEXT = "START";
@@ -53,6 +57,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         bofStarted = false;
 
         user = new DummyStudent("Jimmy");
+        ((DummyStudent) user).addCourse(new DummyCourse("2020","fall", "CSE", "11"));
     }
 
     public void onBofButtonClick(View view) {
@@ -78,7 +83,14 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     }
 
     public void startBirdsOfFeather(Person user) {
-        handler = new BirdsOfAFeatherHandleNearbyStudents(user);
+        List<Person> fakeNearby = new ArrayList<>();
+        Person bob = new DummyStudent("Bob");
+        Person lily = new DummyStudent("Lily");
+        ((DummyStudent) bob).addCourse(new DummyCourse("2020","fall", "CSE", "11"));
+        ((DummyStudent) lily).addCourse(new DummyCourse("2020","fall", "CSE", "11"));
+        fakeNearby.add(bob);
+        fakeNearby.add(lily);
+        handler = new NearbyStudentsHandler(user, new DummyStudentFinder(fakeNearby));
 
         studentRecyclerView = findViewById(R.id.personRecyclerView);
         studentLayoutManager = new LinearLayoutManager(this);
