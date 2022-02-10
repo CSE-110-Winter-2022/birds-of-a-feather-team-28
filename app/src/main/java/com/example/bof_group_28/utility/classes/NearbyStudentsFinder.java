@@ -26,8 +26,6 @@ public class NearbyStudentsFinder implements StudentFinder {
     public static final String MSG_DELIMITER = ",";
 
     private MessageListener messageListener;
-    // TODO: Messages Client needed to broadcast messages
-    // private MessagesClient messagesClient;
 
     List<Person> nearbyStudents;
     Context context;
