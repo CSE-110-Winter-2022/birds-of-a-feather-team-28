@@ -53,7 +53,7 @@ public class DatabaseInsertionTest {
 
     @Test
     public void createPersonTest() {
-        Person person = new Person(1, "John Doe");
+        Person person = new Person(1, "John Doe", null);
         assertEquals(1,person.personId);
         assertEquals("John Doe",person.name);
     }

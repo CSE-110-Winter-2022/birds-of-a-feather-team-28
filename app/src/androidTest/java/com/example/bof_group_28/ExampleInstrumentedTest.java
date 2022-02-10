@@ -56,7 +56,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void SinglePersonInsertionTest() {
 
-        Person person = new Person(1, "John Doe");
+        Person person = new Person(1, "John Doe", null);
         db.personWithCoursesDAO().insert(person);
         CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110");
         db.courseEntryDAO().insert(courseEntry);
@@ -76,9 +76,9 @@ public class ExampleInstrumentedTest {
     @Test
     public void DoublePersonInsertionTest() {
 
-        Person person = new Person(1, "John Doe");
+        Person person = new Person(1, "John Doe", null);
         db.personWithCoursesDAO().insert(person);
-        person = new Person(2, "Jane Doe");
+        person = new Person(2, "Jane Doe", null);
         db.personWithCoursesDAO().insert(person);
 
         CourseEntry courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110");

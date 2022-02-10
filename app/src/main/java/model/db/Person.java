@@ -13,11 +13,12 @@ public class Person {
     @ColumnInfo(name = "name")
     public String name;
 
-    //@ColumnInfo(name = "profilePic", typeAffinity = ColumnInfo.BLOB)
-    //private byte[] profilePic;
+    @ColumnInfo(name = "profile_pic")
+    public byte[] profilePic;
 
-    public Person(int personId, String name) {
+    public Person(int personId, String name, byte[] profilePic) {
         this.personId = personId;
         this.name = name;
+        this.profilePic = profilePic;
     }
 }

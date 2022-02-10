@@ -26,8 +26,14 @@ public class PersonWithCourses implements IPerson {
     }
 
     @Override
+    public byte[] getProfilePic(){
+        return this.person.profilePic;
+    }
+
+    @Override
     public List<CourseEntry> getCourses() {
         return this.courseEntries;
     }
+
 
 }
