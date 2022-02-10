@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.bof_group_28.MainActivity">
+    tools:context="com.example.bof_group_28.activities.BirdsOfAFeatherActivity">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
