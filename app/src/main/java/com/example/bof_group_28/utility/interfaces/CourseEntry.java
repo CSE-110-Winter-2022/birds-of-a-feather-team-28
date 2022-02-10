@@ -6,6 +6,7 @@ public interface CourseEntry {
     String getQuarter();
     String getSubject();
     String getCourseNum();
+    String toMsgString();
 
     void setYear(String year);
     void setQuarter(String quarter);

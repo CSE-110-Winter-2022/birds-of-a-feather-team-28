@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.internal.inject.InstrumentationContext;
+import androidx.test.internal.runner.InstrumentationConnection;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -28,7 +30,14 @@ import static org.junit.Assert.*;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.bof_group_28.utility.classes.DummyCourse;
+import com.example.bof_group_28.utility.classes.DummyStudent;
+import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
+import com.google.android.gms.nearby.messages.Message;
+
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -95,4 +104,51 @@ public class ExampleInstrumentedTest {
         assertEquals("MGT", persons.get(1).getCourses().get(0).subject);
     }
 
+    @Test
+    public void StudentMessageTest() {
+        DummyStudent bob = new DummyStudent("Bob");
+        bob.addCourse(new DummyCourse("2020","fall", "CSE", "110"));
+
+        String correctStr = "1,Bob,2020,fall,CSE,110,";
+        Message correctMsg = new Message(correctStr.getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(correctMsg, bob.toMessage());
+    }
+
+    @Test
+    public void OneNearbyStudentTest() {
+        com.example.bof_group_28.utility.interfaces.Person bob = new DummyStudent("Bob");
+        ((DummyStudent) bob).addCourse(new DummyCourse("2020","fall", "CSE", "110"));
+
+        List<com.example.bof_group_28.utility.interfaces.Person> nearbyStudents = new ArrayList<com.example.bof_group_28.utility.interfaces.Person>();
+        nearbyStudents.add((com.example.bof_group_28.utility.interfaces.Person) bob);
+
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+
+        NearbyStudentsFinder nearbyStudentsFinder = new NearbyStudentsFinder(context);
+        nearbyStudentsFinder.getMessageListener().onFound(((DummyStudent) bob).toMessage());
+
+        assertEquals(nearbyStudents.size(), nearbyStudentsFinder.returnNearbyStudents().size());
+    }
+
+    @Test
+    public void MultipleNearbyStudentsTest() {
+        com.example.bof_group_28.utility.interfaces.Person bob = new DummyStudent("Bob");
+        ((DummyStudent) bob).addCourse(new DummyCourse("2020","fall", "CSE", "110"));
+
+        com.example.bof_group_28.utility.interfaces.Person lily = new DummyStudent("Lily");
+        ((DummyStudent) lily).addCourse(new DummyCourse("2020","fall", "CSE", "110"));
+
+        List<com.example.bof_group_28.utility.interfaces.Person> nearbyStudents = new ArrayList<com.example.bof_group_28.utility.interfaces.Person>();
+        nearbyStudents.add((com.example.bof_group_28.utility.interfaces.Person) bob);
+        nearbyStudents.add((com.example.bof_group_28.utility.interfaces.Person) lily);
+
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+
+        NearbyStudentsFinder nearbyStudentsFinder = new NearbyStudentsFinder(context);
+        nearbyStudentsFinder.getMessageListener().onFound(((DummyStudent) bob).toMessage());
+        nearbyStudentsFinder.getMessageListener().onFound(((DummyStudent) lily).toMessage());
+
+        assertEquals(nearbyStudents.size(), nearbyStudentsFinder.returnNearbyStudents().size());
+    }
 }

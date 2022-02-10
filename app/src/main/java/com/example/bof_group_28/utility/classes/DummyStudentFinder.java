@@ -27,8 +27,4 @@ public class DummyStudentFinder implements StudentFinder {
         return this.nearbyStudents.size();
     }
 
-    public void addNewStudent(Person newStudent){
-        nearbyStudents.add(newStudent);
-    }
-
 }

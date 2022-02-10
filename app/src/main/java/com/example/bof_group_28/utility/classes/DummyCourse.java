@@ -1,10 +1,16 @@
 package com.example.bof_group_28.utility.classes;
 
+import android.os.Message;
+
 import androidx.annotation.NonNull;
 
 import com.example.bof_group_28.utility.interfaces.CourseEntry;
 
+import java.nio.charset.StandardCharsets;
+
 public class DummyCourse implements CourseEntry {
+
+    public static final String MSG_DELIMITER = ",";
 
     public DummyCourse(String year, String quarter, String subject, String courseNum) {
         this.year = year;
@@ -39,29 +45,27 @@ public class DummyCourse implements CourseEntry {
     }
 
     @Override
-    public void setYear(String year) {
-
-    }
+    public void setYear(String year) { this.year = year; }
 
     @Override
-    public void setQuarter(String quarter) {
-
-    }
+    public void setQuarter(String quarter) { this.quarter = quarter; }
 
     @Override
-    public void setSubject(String subject) {
-
-    }
+    public void setSubject(String subject) { this.subject = subject; }
 
     @Override
-    public void setCourseNum(String courseNum) {
-
-    }
+    public void setCourseNum(String courseNum) { this.courseNum = courseNum; }
 
     @NonNull
     @Override
     public String toString() {
         return subject + " "  + courseNum + " for " + quarter + " of " + year;
+    }
+
+    @NonNull
+    @Override
+    public String toMsgString() {
+        return year + MSG_DELIMITER + quarter + MSG_DELIMITER + subject + MSG_DELIMITER + courseNum + MSG_DELIMITER;
     }
 
     @Override
