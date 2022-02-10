@@ -1,5 +1,6 @@
 package com.example.bof_group_28.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -159,5 +160,10 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             studentRecyclerView.setAdapter(studentViewAdapter);
             Log.v(TAG, "Cleared Birds of a Feather student view.");
         }
+    }
+
+    public void onAddClassesClicked(View view) {
+        Intent intent = new Intent(this,AddClassActivity.class );
+        startActivity(intent);
     }
 }
