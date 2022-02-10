@@ -1,5 +1,6 @@
 package com.example.bof_group_28;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,10 +13,13 @@ import model.db.AppDatabase;
 import model.db.CourseEntry;
 import model.db.CourseEntryDAO;
 import model.db.Person;
+import model.db.PersonWithCourses;
 
 import static org.junit.Assert.*;
 
 import android.content.Context;
+
+import java.io.IOException;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -24,14 +28,28 @@ import android.content.Context;
  */
 
 public class DatabaseInsertionTest {
-    AppDatabase db;
+    //AppDatabase db;
+    //private UserDao userDao;
+    //private TestDatabase db;
 
-   /*@Before
-   public void createDb() {
-       Context context = ApplicationProvider.getApplicationContext();
-       db = AppDatabase.singleton(context.getApplicationContext());
-       db.clearAllTables();
-   }*/
+    /*@Before
+    public void createDb() {
+        Context context = ApplicationProvider.getApplicationContext();
+        db = Room.inMemoryDatabaseBuilder(context, TestDatabase.class).build();
+        //userDao = db.getUserDao();
+    }*/
+
+    /*@Before
+    public void createDb() {
+        Context context = ApplicationProvider.getApplicationContext();
+        db = AppDatabase.singleton(context.getApplicationContext());
+        db.clearAllTables();
+    }*/
+
+    @After
+    public void closeDb() throws IOException {
+        //db.close();
+    }
 
     @Test
     public void createPersonTest() {
@@ -51,7 +69,7 @@ public class DatabaseInsertionTest {
         assertEquals("110", courseEntry.courseNum);
     }
 
-   /* @Test
+    /*@Test
     public void SingleInsertionTest() {
 
         Person person = new Person(1, "John Doe");
@@ -64,20 +82,5 @@ public class DatabaseInsertionTest {
         assertEquals(2, db.courseEntryDAO().maxId());
     }*/
 
-   /* @Test
-    public void DoubleInsertionTest() {
-
-        Person person = new Person(1, "John Doe");
-        db.personWithCoursesDAO().insert(person);
-        person = new Person(2, "Jane Doe");
-        db.personWithCoursesDAO().insert(person);
-
-        CourseEntry courseEntry = new CourseEntry(3, 3, "2022", "WI22", "CSE", "110");
-        db.courseEntryDAO().insert(courseEntry);
-        courseEntry = new CourseEntry(4, 4, "2022", "WI22", "MGT", "181");
-        db.courseEntryDAO().insert(courseEntry);
-
-        assertEquals(2, db.personWithCoursesDAO().count());
-    }*/
 
 }

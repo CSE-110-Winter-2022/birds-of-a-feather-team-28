@@ -11,12 +11,9 @@ public class PersonWithCourses implements IPerson {
     @Embedded
     public Person person;
 
-    @Relation(parentColumn = "person_id",
-            entityColumn = "person_id",
-            entity = CourseEntry.class)
-            //projection = {"text"}
-
+    @Relation(parentColumn = "person_id", entityColumn = "person_id", entity = CourseEntry.class)
     public List<CourseEntry> courseEntries;
+    //projection = {"text"}
 
     @Override
     public int getId() {

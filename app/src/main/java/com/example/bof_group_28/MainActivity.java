@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         AppDatabase db = AppDatabase.singleton(getApplicationContext());
         db.clearAllTables();
 
-        //List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
+        List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
         //int newCourseId = db.courseEntryDAO().maxId() +1;
         //int personId = db.personWithCoursesDAO().count() +1;
 
