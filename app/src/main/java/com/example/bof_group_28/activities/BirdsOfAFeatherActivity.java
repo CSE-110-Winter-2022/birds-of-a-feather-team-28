@@ -1,5 +1,6 @@
 package com.example.bof_group_28.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.utility.classes.DummyStudent;
 import com.example.bof_group_28.utility.interfaces.Person;
 import com.example.bof_group_28.R;
+import com.example.bof_group_28.utility.services.NearbyStudentsService;
 import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 
 import java.util.ArrayList;
@@ -67,11 +69,17 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             bofButton.setText(BOF_START_BTN_TEXT);
             setButtonColor(BOF_START_BTN_COLOR, bofButton);
             this.bofStarted = false;
+
+            Intent intent = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
+            stopService(intent);
         }else{
             startBirdsOfFeather(user);
             bofButton.setText(BOF_STOP_BTN_TEXT);
             setButtonColor(BOF_STOP_BTN_COLOR, bofButton);
             this.bofStarted = true;
+
+            Intent intent = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
+            startService(intent);
         }
     }
 
