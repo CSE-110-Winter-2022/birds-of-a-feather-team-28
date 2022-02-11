@@ -168,4 +168,9 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             Log.v(TAG, "Cleared Birds of a Feather student view.");
         }
     }
+
+    public void onAddClassesClicked(View view) {
+        Intent intent = new Intent(this,AddClassActivity.class );
+        startActivity(intent);
+    }
 }

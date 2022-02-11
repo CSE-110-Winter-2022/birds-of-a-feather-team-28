@@ -20,6 +20,9 @@
             android:value="AIzaSyC8BpGrCBo52SNG4SkmrlSqztpNHBt7cyI" />
 
         <activity
+            android:name=".activities.AddClassActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.BirdsOfAFeatherActivity"
             android:exported="true"
             android:label="@string/app_name"

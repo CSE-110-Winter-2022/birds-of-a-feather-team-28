@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    tools:visibility="visible">
+
+    <Button
+        android:id="@+id/done_btn"
+        android:layout_width="120dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginBottom="32dp"
+        android:onClick="onDoneClicked"
+        android:text="Done"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/add_btn"
+        android:layout_width="108dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="107dp"
+        android:layout_marginEnd="42dp"
+        android:layout_marginBottom="32dp"
+        android:onClick="onAddClicked"
+        android:text="Add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/done_btn" />
+
+    <TextView
+        android:id="@+id/add_new_courses_txt"
+        android:layout_width="334dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:text="Add New Courses"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/quarter_dd"
+        android:layout_width="135dp"
+        android:layout_height="52dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="104dp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toTopOf="@+id/add_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/quarter_txt"
+        android:layout_width="137dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginBottom="96dp"
+        android:text="Quarter"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/add_btn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/subject_entry"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginBottom="50dp"
+        android:ems="10"
+        android:hint="Subject"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/course_num_entry"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/course_num_entry"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginBottom="52dp"
+        android:ems="10"
+        android:hint="Course #"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/year_entry"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/year_entry"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginBottom="86dp"
+        android:ems="10"
+        android:hint="Year"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/quarter_txt"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
