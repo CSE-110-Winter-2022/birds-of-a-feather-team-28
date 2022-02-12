@@ -169,8 +169,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         }
     }
 
-    public void onAddClassesClicked(View view) {
-        Intent intent = new Intent(this,AddClassActivity.class );
+    public void onEditProfileButtonClicked(View view) {
+        Intent intent = new Intent(this,EditProfileActivity.class );
         startActivity(intent);
     }
 }

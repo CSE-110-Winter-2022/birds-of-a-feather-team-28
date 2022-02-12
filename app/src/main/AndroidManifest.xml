@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bof_group_28">
+    package="com.example.bof_group_28" >
 
     <application
         android:allowBackup="true"
@@ -8,13 +8,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Bof_group_28">
+        android:theme="@style/Theme.Bof_group_28" >
+        <activity
+            android:name=".activities.EditProfileActivity"
+            android:exported="false"
+            android:label="@string/title_activity_edit_profile"
+            android:theme="@style/Theme.Bof_group_28.NoActionBar" />
+
         <service
             android:name=".utility.services.NearbyStudentsService"
             android:enabled="true"
-            android:exported="true"></service>
-
-        <!-- TODO: Replace hard-coded API Key with .gitIgnore and env file -->
+            android:exported="true" /> <!-- TODO: Replace hard-coded API Key with .gitIgnore and env file -->
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyC8BpGrCBo52SNG4SkmrlSqztpNHBt7cyI" />
@@ -26,7 +30,7 @@
             android:name=".activities.BirdsOfAFeatherActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Bof_group_28.NoActionBar">
+            android:theme="@style/Theme.Bof_group_28.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
