@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.db.AppDatabase;
+import model.db.PersonWithCourses;
 
 public class NearbyStudentsFinder implements StudentFinder {
 
@@ -46,16 +47,16 @@ public class NearbyStudentsFinder implements StudentFinder {
         Nearby.getMessagesClient(context).subscribe(messageListener);
     }
 
-    // NOTE: Is this the correct way to read from the DB?
     public void publishToNearbyStudents() {
-        /* Commenting out this code, as I'm not sure if this is the correct way to get Person from Room DB
+        AppDatabase db = AppDatabase.singleton(context);
+        PersonWithCourses personWithCourses = db.personWithCoursesDAO().get(1);
 
-        AppDatabase db;
-        db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
-        Person curUser = ((Person) db.personWithCoursesDAO().get(1).person); // 1 is always the ID of the current user
+        if (personWithCourses != null) {
+            Person curUser = (Person) personWithCourses.person; // 1 is always the ID of the current user
 
-        Message userDetailsMsg = ((DummyStudent) curUser).toMessage();
-        Nearby.getMessagesClient(context).publish(userDetailsMsg);*/
+            Message userDetailsMsg = ((DummyStudent) curUser).toMessage();
+            Nearby.getMessagesClient(context).publish(userDetailsMsg);
+        }
     }
 
     @Override
