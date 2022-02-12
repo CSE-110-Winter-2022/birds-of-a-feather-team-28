@@ -67,24 +67,6 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         ViewHolder(View itemView, NearbyStudentsHandler handler) {
             super(itemView);
             this.personButton = itemView.findViewById(R.id.person_button);
-
-            /*personButton.setOnClickListener((view) -> {
-                Context c = view.getContext();
-
-                Intent intent = new Intent(c, StudentSelectedActivity.class);
-                SharedPreferences preferences = c.getSharedPreferences(PREF_NAME, c.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-
-                editor.putString("name", student.getName());
-                Set<String> sharedCourses = new ArraySet<>();
-                for (CourseEntry course : handler.getStudentClassMap().get(student)) {
-                    sharedCourses.add(course.toString());
-                }
-                editor.putStringSet("courses", sharedCourses);
-                editor.apply();
-
-                view.getContext().startActivity(intent);
-            });*/
             personButton.setOnClickListener((view) -> {
                 Context c = view.getContext();
 
