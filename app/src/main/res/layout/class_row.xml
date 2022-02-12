@@ -16,13 +16,13 @@
             android:id="@+id/courseName"
             android:layout_width="179dp"
             android:layout_height="34dp"
-            android:layout_marginEnd="196dp"
+            android:layout_marginEnd="240dp"
             android:text="Course"
-            android:textSize="20sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.466" />
+            app:layout_constraintVertical_bias="0.533" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
