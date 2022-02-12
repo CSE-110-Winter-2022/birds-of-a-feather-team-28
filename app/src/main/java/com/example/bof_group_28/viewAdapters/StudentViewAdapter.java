@@ -23,6 +23,8 @@ import com.example.bof_group_28.activities.StudentSelectedActivity;
 import java.util.List;
 import java.util.Set;
 
+//bookkeeping
+
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
     private final List<Person> students;
     private NearbyStudentsHandler handler;
