@@ -14,6 +14,11 @@ import java.util.List;
 public class NearbyStudentsHandler {
 
     private final Person user;
+
+    public Person getUser() {
+        return user;
+    }
+
     private static final String TAG = "BoF";
     private HashMap<Person, List<CourseEntry>> studentClassMap;
 

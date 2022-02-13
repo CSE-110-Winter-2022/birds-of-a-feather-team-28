@@ -1,6 +1,9 @@
 package com.example.bof_group_28.activities;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.bof_group_28.utility.Utilities;
 import com.example.bof_group_28.utility.classes.DummyCourse;
 import com.example.bof_group_28.utility.classes.DummyStudentFinder;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
@@ -46,6 +50,9 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private static final String BOF_STOP_BTN_TEXT = "STOP";
     private static final int BOF_START_BTN_COLOR = Color.rgb(76, 175, 80);
     private static final int BOF_STOP_BTN_COLOR = Color.RED;
+    public static final String USER_NAME = "name";
+    public static final String CHANGED_NAME = "nameChanged";
+    public static final int EDIT_PROFILE_CODE = 7;
 
     private static final int UPDATE_TIME = 10000;
 
@@ -172,7 +179,24 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     }
 
     public void onEditProfileButtonClicked(View view) {
-        Intent intent = new Intent(this,EditProfileActivity.class );
-        startActivity(intent);
+        SharedPreferences preferences = view.getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString(USER_NAME, user.getName());
+
+        editor.apply();
+
+        Intent intent = new Intent(this, EditProfileActivity.class);
+        startActivityForResult(intent, EDIT_PROFILE_CODE);
+        //startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == EDIT_PROFILE_CODE) {
+            user.setName(data.getStringExtra(USER_NAME));
+            Utilities.showAlert(this, "Successfully changed name to " + data.getStringExtra(USER_NAME));
+        }
     }
 }

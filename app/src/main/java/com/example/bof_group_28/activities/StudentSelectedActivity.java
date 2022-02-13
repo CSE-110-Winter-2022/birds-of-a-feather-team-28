@@ -1,6 +1,8 @@
 package com.example.bof_group_28.activities;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.SELECTED_STUDENT_COURSES;
+import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.SELECTED_STUDENT_NAME;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,8 +36,8 @@ public class StudentSelectedActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         TextView name = findViewById(R.id.studentName);
-        name.setText(preferences.getString("name", "Invalid Name"));
-        Set<String> courseSet = preferences.getStringSet("courses", new ArraySet<>());
+        name.setText(preferences.getString(SELECTED_STUDENT_NAME, "Invalid Name"));
+        Set<String> courseSet = preferences.getStringSet(SELECTED_STUDENT_COURSES, new ArraySet<>());
 
         List<String> courses = new ArrayList<>(courseSet);
 

@@ -8,96 +8,101 @@
 
     <Button
         android:id="@+id/removeClassesButton"
-        android:layout_width="235dp"
-        android:layout_height="61dp"
+        android:layout_width="225dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="76dp"
+        android:onClick="onRemoveClassesButtonClicked"
         android:text="Remove Classes"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.511"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editClassesButton"
-        app:layout_constraintVertical_bias="0.14"
-        android:onClick="onRemoveClassesButtonClicked"/>
+        app:layout_constraintEnd_toEndOf="@+id/editClassesButton"
+        app:layout_constraintStart_toStartOf="@+id/editClassesButton"
+        app:layout_constraintTop_toBottomOf="@+id/homeButton" />
 
     <Button
         android:id="@+id/editClassesButton"
-        android:layout_width="235dp"
-        android:layout_height="61dp"
+        android:layout_width="225dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="onEditClassesButtonClicked"
         android:text="Edit Classes"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/removeClassesButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addClassesButton"
-        app:layout_constraintVertical_bias="0.091"
-        android:onClick="onEditClassesButtonClicked"/>
+        app:layout_constraintTop_toBottomOf="@+id/addClassesButton" />
 
     <Button
         android:id="@+id/addClassesButton"
-        android:layout_width="235dp"
-        android:layout_height="61dp"
-        android:layout_marginBottom="276dp"
+        android:layout_width="225dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="18dp"
+        android:onClick="onAddClassesButtonClicked"
         android:text="Add Classes"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.511"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewClassesButton"
-        app:layout_constraintVertical_bias="0.714"
-        android:onClick="onAddClassesButtonClicked"/>
+        app:layout_constraintBottom_toTopOf="@+id/editClassesButton"
+        app:layout_constraintEnd_toEndOf="@+id/editClassesButton"
+        app:layout_constraintStart_toStartOf="@+id/editClassesButton"
+        app:layout_constraintTop_toBottomOf="@+id/viewClassesButton" />
 
     <Button
         android:id="@+id/viewClassesButton"
-        android:layout_width="235dp"
-        android:layout_height="61dp"
-        android:layout_marginTop="56dp"
-        android:text="View Classes ?"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.511"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePicture"
-        app:layout_constraintVertical_bias="0.054"
-        android:onClick="onViewClassesButtonClicked"/>
+        android:layout_width="225dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="19dp"
+        android:onClick="onViewClassesButtonClicked"
+        android:text="View Classes"
+        app:layout_constraintBottom_toTopOf="@+id/addClassesButton"
+        app:layout_constraintEnd_toEndOf="@+id/addClassesButton"
+        app:layout_constraintStart_toStartOf="@+id/addClassesButton"
+        app:layout_constraintTop_toBottomOf="@+id/saveNameChangeButton" />
 
     <ImageView
         android:id="@+id/profilePicture"
-        android:layout_width="188dp"
-        android:layout_height="228dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="112dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/personsNameField"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/homeButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         tools:srcCompat="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/nameView"
-        android:layout_width="233dp"
-        android:layout_height="32dp"
-        android:text="Name Lastname"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/addClassesButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePicture"
-        app:layout_constraintVertical_bias="0.082"
-        android:gravity="center" />
 
     <Button
         android:id="@+id/homeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="17dp"
+        android:layout_marginBottom="530dp"
+        android:onClick="onHomeButtonClicked"
         android:text="Home"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/removeClassesButton"
         app:layout_constraintEnd_toStartOf="@+id/profilePicture"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-        android:onClick="onHomeButtonClicked"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/personsNameField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        app:layout_constraintBottom_toTopOf="@+id/saveNameChangeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+
+    <Button
+        android:id="@+id/saveNameChangeButton"
+        android:layout_width="225dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="36dp"
+        android:onClick="saveNameClicked"
+        android:text="Save Name"
+        app:layout_constraintBottom_toTopOf="@+id/viewClassesButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/personsNameField" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
