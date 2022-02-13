@@ -18,11 +18,20 @@ public interface PersonWithCoursesDAO {
     @Query("SELECT * FROM persons WHERE person_id=:id")
     PersonWithCourses get(int id);
 
-    @Query("SELECT COUNT(*) from persons")
+    @Query("SELECT COUNT(*) FROM persons")
     int count();
 
-    @Query("SELECT MAX(course_id) from courseentries")
+    @Query("SELECT MAX(course_id) FROM courseentries")
     int maxId();
+
+    @Query("UPDATE persons SET name = :personName, profile_pic = :profilePic WHERE person_id = :id")
+    void update(int id, String personName, byte[] profilePic);
+
+    @Query("DELETE FROM persons WHERE person_id != 1")
+    void deleteNonUserPersons();
+
+    @Query("DELETE FROM courseentries WHERE person_id != 1")
+    void deleteNonUserCourses();
 
     @Insert
     void insert(Person person);

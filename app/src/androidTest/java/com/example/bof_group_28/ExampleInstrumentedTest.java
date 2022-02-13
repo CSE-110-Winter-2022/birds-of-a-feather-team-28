@@ -28,6 +28,7 @@ import model.db.PersonWithCourses;
 import static org.junit.Assert.*;
 
 import android.content.Context;
+import android.os.Message;
 import android.util.Log;
 
 import com.example.bof_group_28.utility.classes.DummyCourse;
