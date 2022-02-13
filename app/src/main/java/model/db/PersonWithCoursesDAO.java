@@ -33,9 +33,15 @@ public interface PersonWithCoursesDAO {
     @Query("DELETE FROM courseentries WHERE person_id != 1")
     void deleteNonUserCourses();
 
+    @Query("DELETE FROM persons WHERE person_id = :id")
+    void deletePerson(int id);
+
+    @Query("DELETE FROM courseentries WHERE person_id = :id")
+    void deletePersonCourses(int id);
+
     @Insert
     void insert(Person person);
 
-    @Delete
-    void delete(Person person);
+    //@Delete
+    //void delete(Person person);
 }

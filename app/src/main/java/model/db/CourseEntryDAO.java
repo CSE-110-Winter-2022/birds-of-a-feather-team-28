@@ -24,9 +24,15 @@ public interface CourseEntryDAO {
     @Query("SELECT MAX(course_id) from courseentries")
     int maxId();
 
+    @Query("UPDATE courseentries SET person_id = :personId, subject = :newSubject, course_num = :newCourseNum, year = :newYear, quarter = :newQuarter WHERE course_id = :id")
+    void update(int id, int personId, String newSubject, String newCourseNum, String newYear, String newQuarter);
+
+    @Query("DELETE FROM courseentries WHERE course_id = :id")
+    void deleteCourse(int id);
+
     @Insert
     void insert(CourseEntry Course);
 
-    @Delete
-    void delete(CourseEntry Course);
+    //@Delete
+    //void delete(CourseEntry Course);
 }
