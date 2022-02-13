@@ -27,6 +27,9 @@
             android:name=".activities.AddClassActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.ViewClassesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.BirdsOfAFeatherActivity"
             android:exported="true"
             android:label="@string/app_name"

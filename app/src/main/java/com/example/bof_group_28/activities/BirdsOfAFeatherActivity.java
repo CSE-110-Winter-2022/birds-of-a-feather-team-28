@@ -14,15 +14,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.bof_group_28.utility.Utilities;
 import com.example.bof_group_28.utility.classes.DummyCourse;
 import com.example.bof_group_28.utility.classes.DummyStudentFinder;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.utility.classes.DummyStudent;
+import com.example.bof_group_28.utility.interfaces.CourseEntry;
 import com.example.bof_group_28.utility.interfaces.Person;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.utility.services.NearbyStudentsService;
@@ -30,6 +33,7 @@ import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -52,6 +56,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private static final int BOF_STOP_BTN_COLOR = Color.RED;
     public static final String USER_NAME = "name";
     public static final String CHANGED_NAME = "nameChanged";
+    public static final String SELF_COURSES = "ownCourses";
     public static final int EDIT_PROFILE_CODE = 7;
 
     private static final int UPDATE_TIME = 10000;
@@ -182,7 +187,12 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         SharedPreferences preferences = view.getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
+        Set<String> courses = new ArraySet<>();
+        for (CourseEntry course : user.getCourses()) {
+            courses.add(course.toString());
+        }
         editor.putString(USER_NAME, user.getName());
+        editor.putStringSet(SELF_COURSES, courses);
 
         editor.apply();
 
@@ -196,7 +206,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == EDIT_PROFILE_CODE) {
             user.setName(data.getStringExtra(USER_NAME));
-            Utilities.showAlert(this, "Successfully changed name to " + data.getStringExtra(USER_NAME));
+            Toast.makeText(this, "Successfully changed name to " + data.getStringExtra(USER_NAME), Toast.LENGTH_SHORT).show();
         }
     }
 }
