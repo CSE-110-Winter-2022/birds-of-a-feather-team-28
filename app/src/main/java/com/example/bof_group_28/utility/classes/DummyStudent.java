@@ -30,6 +30,11 @@ public class DummyStudent implements Person {
         return name;
     }
 
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getNumCourses() { return courses.size(); }
 
     public void addCourse(CourseEntry courseEntry){

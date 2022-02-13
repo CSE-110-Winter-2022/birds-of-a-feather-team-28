@@ -32,6 +32,9 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     private final List<Person> students;
     private final NearbyStudentsHandler handler;
 
+    public static final String SELECTED_STUDENT_NAME = "selectedName";
+    public static final String SELECTED_STUDENT_COURSES = "selectedCourses";
+
     public StudentViewAdapter(List<Person> students, NearbyStudentsHandler handler) {
         super();
         this.handler = handler;
@@ -84,7 +87,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
                 SharedPreferences preferences = c.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
 
-                editor.putString("name", student.getName());
+                editor.putString(SELECTED_STUDENT_NAME, student.getName());
                 Set<String> sharedCourses = new ArraySet<>();
                 if (handler.getStudentClassMap() != null && handler.getStudentClassMap().containsKey(student)) {
                     for (CourseEntry course : handler.getStudentClassMap().get(student)) {
@@ -93,7 +96,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
                 } else {
                     Log.e(BirdsOfAFeatherActivity.TAG, "ERROR! Student button pressed for student that does not exist in map.");
                 }
-                editor.putStringSet("courses", sharedCourses);
+                editor.putStringSet(SELECTED_STUDENT_COURSES, sharedCourses);
                 editor.apply();
 
                 view.getContext().startActivity(intent);
