@@ -20,6 +20,7 @@ public class DummyStudentFinder implements StudentFinder {
 
     @Override
     public void updateNearbyStudents() {
+        //TODO: add nearby students!
     }
 
     @Override

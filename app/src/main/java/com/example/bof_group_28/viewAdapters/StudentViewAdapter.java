@@ -6,14 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.ArraySet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.utility.interfaces.CourseEntry;
 import com.example.bof_group_28.utility.interfaces.Person;
@@ -27,7 +30,7 @@ import java.util.Set;
 
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
     private final List<Person> students;
-    private NearbyStudentsHandler handler;
+    private final NearbyStudentsHandler handler;
 
     public StudentViewAdapter(List<Person> students, NearbyStudentsHandler handler) {
         super();
@@ -48,6 +51,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     @Override
     public void onBindViewHolder(@NonNull StudentViewAdapter.ViewHolder holder, int position) {
         holder.setPersonButton(students.get(position));
+        holder.setSharedCoursesCount(handler.getStudentClassMap().get(students.get(position)).size());
     }
 
     @Override
@@ -65,21 +69,29 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
             extends RecyclerView.ViewHolder {
         private final Button personButton;
         private Person student;
+        private final TextView classCount;
 
         ViewHolder(View itemView, NearbyStudentsHandler handler) {
             super(itemView);
+
+            this.classCount = itemView.findViewById(R.id.sharedClassesCount);
+
             this.personButton = itemView.findViewById(R.id.person_button);
             personButton.setOnClickListener((view) -> {
                 Context c = view.getContext();
 
                 Intent intent = new Intent(c, StudentSelectedActivity.class);
-                SharedPreferences preferences = c.getSharedPreferences(PREF_NAME, c.MODE_PRIVATE);
+                SharedPreferences preferences = c.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
 
                 editor.putString("name", student.getName());
                 Set<String> sharedCourses = new ArraySet<>();
-                for (CourseEntry course : handler.getStudentClassMap().get(student)) {
-                    sharedCourses.add(course.toString());
+                if (handler.getStudentClassMap() != null && handler.getStudentClassMap().containsKey(student)) {
+                    for (CourseEntry course : handler.getStudentClassMap().get(student)) {
+                        sharedCourses.add(course.toString());
+                    }
+                } else {
+                    Log.e(BirdsOfAFeatherActivity.TAG, "ERROR! Student button pressed for student that does not exist in map.");
                 }
                 editor.putStringSet("courses", sharedCourses);
                 editor.apply();
@@ -91,6 +103,10 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         public void setPersonButton(Person student) {
             this.student = student;
             this.personButton.setText(student.getName());
+        }
+
+        public void setSharedCoursesCount(int courses) {
+            classCount.setText(courses + " shared courses.");
         }
     }
 }
