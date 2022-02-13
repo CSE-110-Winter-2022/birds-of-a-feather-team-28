@@ -38,6 +38,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import model.db.AppDatabase;
+import model.db.PersonWithCourses;
+
 public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     private RecyclerView studentRecyclerView;
@@ -62,6 +65,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private static final int UPDATE_TIME = 10000;
 
     public static final String PREF_NAME = "preferences";
+    AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,23 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
         user = new DummyStudent("Jimmy");
         ((DummyStudent) user).addCourse(new DummyCourse("2020","fall", "CSE", "11"));
+
+        db = AppDatabase.singleton(getApplicationContext());
+        clearNonUserEntries();
+        firstTimeUserInitialize();
+    }
+    private void firstTimeUserInitialize() {
+
+        if (db.personWithCoursesDAO().maxId() < 1) {
+            //FIXME Replace with name from googleAccount
+            model.db.Person testStudent = new model.db.Person(1,"Jimmy", null);
+            db.personWithCoursesDAO().insert(testStudent);
+        }
+    }
+
+    private void clearNonUserEntries() {
+        db.personWithCoursesDAO().deleteNonUserCourses();
+        db.personWithCoursesDAO().deleteNonUserPersons();
     }
 
     public void onBofButtonClick(View view) {
@@ -184,6 +205,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     }
 
     public void onEditProfileButtonClicked(View view) {
+        //FIXME Remove once view classes is switched to db
         SharedPreferences preferences = view.getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 

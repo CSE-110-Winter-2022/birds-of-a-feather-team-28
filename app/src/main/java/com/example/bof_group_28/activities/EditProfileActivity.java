@@ -24,19 +24,25 @@ import com.example.bof_group_28.utility.services.NearbyStudentsService;
 
 import java.util.Set;
 
+import model.db.AppDatabase;
+import model.db.Person;
+
+
 public class EditProfileActivity extends AppCompatActivity {
 
+    private AppDatabase db;
     private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+        db = AppDatabase.singleton(this);
 
         SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         TextView nameField = findViewById(R.id.personsNameField);
-        this.name = preferences.getString(USER_NAME, "Invalid Name");
-        nameField.setText(name);
+        //this.name = preferences.getString(USER_NAME, "Invalid Name");
+        nameField.setText(db.personWithCoursesDAO().get(1).getName());
 
     }
 
@@ -56,28 +62,31 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public void onEditClassesButtonClicked(View view) {
-        //implement
+        //FIXME implement
     }
 
     public void onRemoveClassesButtonClicked(View view) {
-        //implement
+        //FIXME implement
     }
 
     public void saveNameClicked(View view) {
-
+        //FIXME Add view to update profile pic?
         TextView nameField = findViewById(R.id.personsNameField);
-        if (nameField.getText().toString().isEmpty()) {
+        Person personToUpdate = new Person(1, nameField.getText().toString(), null);
+
+        if (personToUpdate.name.isEmpty()) {
             Toast.makeText(this, "Name cannot be empty.", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (nameField.getText().toString().equals(name)) {
-            Toast.makeText(this, "You can't change your name to the same name.", Toast.LENGTH_SHORT).show();
+        if (personToUpdate.name.equals(db.personWithCoursesDAO().get(1).getName())) {
+            Toast.makeText(this, "New name cannot be the same as the current name.", Toast.LENGTH_SHORT).show();
             return;
         }
+        db.personWithCoursesDAO().update(1,personToUpdate.name, personToUpdate.profilePic);
 
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(USER_NAME, nameField.getText().toString());
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
+        //Intent returnIntent = new Intent();
+        //returnIntent.putExtra(USER_NAME, nameField.getText().toString());
+        //setResult(Activity.RESULT_OK, returnIntent);
+        //finish();
     }
 }

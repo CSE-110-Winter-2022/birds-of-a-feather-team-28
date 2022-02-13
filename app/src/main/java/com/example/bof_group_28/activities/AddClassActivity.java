@@ -13,11 +13,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bof_group_28.R;
 
+import model.db.AppDatabase;
+import model.db.CourseEntry;
+
 public class AddClassActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private Spinner spinner;
+    private AppDatabase db;
     private static final String[] quarterNames =
             {"","FA","WI", "SP", "SS1", "SS2", "SSS"};
 
@@ -26,6 +31,7 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_class);
 
+        db = AppDatabase.singleton(this);
 
         spinner = (Spinner)findViewById(R.id.quarter_dd);
         ArrayAdapter<String>adapter = new ArrayAdapter<String>(AddClassActivity.this,
@@ -98,7 +104,53 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
 
     public void onAddClicked(View view){
         //add courses to the database through the fields
-        finish();
+        TextView text;
+
+        text = findViewById(R.id.subject_entry);
+        String subjectTxt = text.getText().toString();
+
+        text = findViewById(R.id.course_num_entry);
+        String courseNumTxt = text.getText().toString();
+
+        text = findViewById(R.id.year_entry);
+        String yearTxt = text.getText().toString();
+
+        text = findViewById(R.id.quarter_txt);
+        String quarterTxt = text.getText().toString();
+
+        int newCourseID = db.courseEntryDAO().maxId()+1;
+        CourseEntry courseToAdd = new CourseEntry(newCourseID, 1, yearTxt, quarterTxt, subjectTxt, courseNumTxt);
+
+        if (validateCourse(courseToAdd)) {
+            db.courseEntryDAO().insert(courseToAdd);
+            finish();
+        }
+    }
+
+    //FIXME Add more validation here if needed
+    private boolean validateCourse(CourseEntry courseToAdd) {
+        boolean flag = true;
+        if (courseToAdd.year == null || courseToAdd.year == ""
+            || courseToAdd.quarter == null || courseToAdd.quarter == ""
+            || courseToAdd.subject == null || courseToAdd.subject == ""
+            || courseToAdd.courseNum == null || courseToAdd.courseNum == "") {
+
+            Toast.makeText(this, "Make sure no fields are empty.", Toast.LENGTH_LONG).show();
+            flag = false;
+        }
+        if (courseToAdd.year.length() != 4 || !(courseToAdd.year.matches("[0-9]+"))) {
+            Toast.makeText(this, "Make sure the year is a 4-digit number.", Toast.LENGTH_LONG).show();
+            flag = false;
+        }
+        if (courseToAdd.subject.length() < 3 || courseToAdd.subject.length() > 4 || !(courseToAdd.subject.matches("^[a-zA-Z]+$"))) {
+            Toast.makeText(this, "Make sure the subject is a 3 or 4 letter alphabetic code.", Toast.LENGTH_LONG).show();
+            flag = false;
+        }
+        if (courseToAdd.courseNum.length() < 2 || courseToAdd.courseNum.length() > 4) {
+            Toast.makeText(this, "Make sure the Course Number is a 2 to 4 digit code.", Toast.LENGTH_LONG).show();
+            flag = false;
+        }
+        return flag;
     }
 
     @Override
