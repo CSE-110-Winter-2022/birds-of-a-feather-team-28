@@ -32,9 +32,6 @@ import java.util.concurrent.Future;
 
 public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
-    private ExecutorService backgroundThreadExecutor = Executors.newSingleThreadExecutor();
-    private Future<Void> future;
-
     private RecyclerView studentRecyclerView;
     private RecyclerView.LayoutManager studentLayoutManager;
     private StudentViewAdapter studentViewAdapter;
