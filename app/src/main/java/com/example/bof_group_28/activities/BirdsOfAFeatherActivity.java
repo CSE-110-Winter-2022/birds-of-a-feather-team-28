@@ -41,11 +41,13 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     private NearbyStudentsHandler handler;
 
-    private static final String TAG = "BoF: ";
+    public static final String TAG = "BoF: ";
     private static final String BOF_START_BTN_TEXT = "START";
     private static final String BOF_STOP_BTN_TEXT = "STOP";
     private static final int BOF_START_BTN_COLOR = Color.rgb(76, 175, 80);
     private static final int BOF_STOP_BTN_COLOR = Color.RED;
+
+    private static final int UPDATE_TIME = 10000;
 
     public static final String PREF_NAME = "preferences";
 
@@ -88,6 +90,9 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     }
 
     public void startBirdsOfFeather(Person user) {
+
+        //TODO: Have students come into range for this "fake startup", so you can demo multiple things.
+        //ie. You clear then somebody new shows up, but others dont. Or of course realtime you see somebody show up.
         List<Person> fakeNearby = new ArrayList<>();
         Person bob = new DummyStudent("Bob");
         Person lily = new DummyStudent("Lily");
@@ -117,12 +122,12 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                     studentRecyclerView.setAdapter(studentViewAdapter);
 
                     Log.v(TAG, "Updated nearby students view.");
-                    runHandler.postDelayed(this, 10000);
+                    runHandler.postDelayed(this, UPDATE_TIME);
                 }
             }
         };
 
-        runHandler.postDelayed(r, 10000);
+        runHandler.postDelayed(r, UPDATE_TIME);
 
         /*this.future = backgroundThreadExecutor.submit(() -> {
             do {
