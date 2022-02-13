@@ -31,18 +31,19 @@ import model.db.Person;
 public class EditProfileActivity extends AppCompatActivity {
 
     private AppDatabase db;
-    private String name;
+    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
         db = AppDatabase.singleton(this);
+        userName = db.personWithCoursesDAO().get(1).getName();
 
         SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+
         TextView nameField = findViewById(R.id.personsNameField);
-        //this.name = preferences.getString(USER_NAME, "Invalid Name");
-        nameField.setText(db.personWithCoursesDAO().get(1).getName());
+        nameField.setText(userName);
 
     }
 
@@ -78,7 +79,7 @@ public class EditProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Name cannot be empty.", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (personToUpdate.name.equals(db.personWithCoursesDAO().get(1).getName())) {
+        if (personToUpdate.name.equals(userName)) {
             Toast.makeText(this, "New name cannot be the same as the current name.", Toast.LENGTH_SHORT).show();
             return;
         }
