@@ -19,6 +19,9 @@ import com.example.bof_group_28.R;
 import model.db.AppDatabase;
 import model.db.CourseEntry;
 
+/**
+ * Manage Course View Adapter is the view adapter for managing courses menu
+ */
 public class ManageCourseViewAdapter extends RecyclerView.Adapter<ManageCourseViewAdapter.Viewholder> {
 
     private Context context;
@@ -70,18 +73,23 @@ public class ManageCourseViewAdapter extends RecyclerView.Adapter<ManageCourseVi
             this.deleteCourseButton = itemView.findViewById(R.id.deleteCourseButton);
             this.editCourseButton = itemView.findViewById(R.id.editCourseButton);
 
+            // delete course button implementation
             deleteCourseButton.setOnClickListener((view) -> {
-                Context c = view.getContext();
-                //FIXME Refresh Recycler view
+                // delete the item
+                int pos = this.getLayoutPosition();
                 databaseHandler.deleteCourse(currentCourse.courseId);
-                notifyDataSetChanged();
+                courseEntries.remove(pos);
+                notifyItemRemoved(pos);
                 Toast.makeText(context, "Deleted Course: " + currentCourse.subject + " " + currentCourse.courseNum , Toast.LENGTH_SHORT).show();
             });
+
+            // edit a course
+            //TODO: IMPLEMENT
             editCourseButton.setOnClickListener((view) -> {
-                Context c = view.getContext();
                 Toast.makeText(context, "Editing!", Toast.LENGTH_SHORT).show();
             });
 
+            // update variables with course data
             courseSubject = itemView.findViewById(R.id.courseSubject);
             courseNum = itemView.findViewById(R.id.courseNum);
             courseQuarter = itemView.findViewById(R.id.courseQuarter);
