@@ -30,6 +30,7 @@ import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.utility.services.NearbyStudentsService;
 import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +85,14 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
         bofStarted = false;
         databaseHandler = new DatabaseHandler(db, getApplicationContext());
+
+        if (GoogleSignIn.getLastSignedInAccount(this) == null) {
+            Log.v(TAG, "User is not logged in through Google.");
+            Intent googleIntent = new Intent(this, GoogleSignInActivity.class);
+            startActivity(googleIntent);
+        } else {
+            Log.v(TAG, "User is already logged in!");
+        }
     }
 
     /**
