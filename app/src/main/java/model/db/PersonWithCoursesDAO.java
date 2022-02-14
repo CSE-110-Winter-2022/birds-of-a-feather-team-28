@@ -27,6 +27,7 @@ public interface PersonWithCoursesDAO {
     @Query("UPDATE persons SET name = :personName, profile_pic = :profilePic WHERE person_id = :id")
     void update(int id, String personName, byte[] profilePic);
 
+    //Only use after person's courses have been deleted
     @Query("DELETE FROM persons WHERE person_id != 1")
     void deleteNonUserPersons();
 
