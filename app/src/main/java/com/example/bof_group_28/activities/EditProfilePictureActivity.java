@@ -11,11 +11,13 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.databinding.ActivityEditProfilePictureBinding;
 import com.example.bof_group_28.databinding.ActivityMainBinding;
+import com.example.bof_group_28.utility.classes.Converters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,32 +35,33 @@ public class EditProfilePictureActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile_picture);
-        //FIXME place current pfp into pfpview
-
-
-
-
-
 
         binding = ActivityEditProfilePictureBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        //FIXME SHOULD WE HAVE DEFAULT PFP ?
+
+        byte[] pfp = user.getProfilePic();
+        if(pfp != null){
+            Bitmap pfpBitmap = Converters.byteArrToBitmap(pfp);
+            ((ImageView) findViewById(R.id.profilePicture)).setImageBitmap(pfpBitmap);
+        }
 
         binding.saveProfilePicture.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v){
 
-                //FIXME CHECK VALID LINK OR CHECK IN FETCH IMAGE CLASS BELOW
-
+                //FIXME CHECK VALID LINK OR CHECK IN FETCH IMAGE CLASS BELOW - THIS MIGHT ALR BE DONE
+                //FIXME HAVE CONSISTENT PROFILE PICTURE SIZES
                 String url = binding.URLTextField.getText().toString();
                 FetchImage fetchImage = new FetchImage(url);
                 fetchImage.start();
                 Bitmap bitmap = fetchImage.getBitmap();
-
-                OutputStream oStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, oStream);
-                byte[] byteArr = ((ByteArrayOutputStream) oStream).toByteArray();
-                databaseHandler.updatePerson(user.getId(), user.getName(), byteArr);
+                if(bitmap != null){
+                    byte[] byteArr = Converters.bitmapToByteArr(bitmap);
+                    databaseHandler.updatePerson(1, "Jimmy", byteArr);
+                    System.out.println("un poggers sheeesh");
+                }
 
             }
 
