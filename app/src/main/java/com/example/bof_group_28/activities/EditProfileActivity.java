@@ -47,22 +47,23 @@ public class EditProfileActivity extends AppCompatActivity {
         finish();
     }
 
-    public void onViewClassesButtonClicked(View view) {
+    /*public void onViewClassesButtonClicked(View view) {
         Intent intent = new Intent(this, ViewClassesActivity.class );
         startActivity(intent);
-    }
+    }*/
 
     public void onAddClassesButtonClicked(View view) {
         Intent intent = new Intent(this, AddClassActivity.class );
         startActivity(intent);
     }
 
-    public void onEditClassesButtonClicked(View view) {
-        //FIXME implement
+    public void onManageClassesButtonClicked(View view) {
+        Intent intent = new Intent(this, ManageClassesActivity.class );
+        startActivity(intent);
     }
 
-    public void onRemoveClassesButtonClicked(View view) {
-        //FIXME implement
+    public void onEditProfilePicButtonClicked(View view) {
+        //FIXME implement or remove
     }
 
     /**
