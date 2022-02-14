@@ -6,63 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".activities.EditProfileActivity">
 
-    <Button
-        android:id="@+id/editProfilePic"
-        android:layout_width="225dp"
-        android:layout_height="65dp"
-        android:layout_marginBottom="76dp"
-        android:onClick="onEditProfilePicButtonClicked"
-        android:text="Edit Profile Pic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/manageClassesButton"
-        app:layout_constraintStart_toStartOf="@+id/manageClassesButton"
-        app:layout_constraintTop_toBottomOf="@+id/homeButton" />
-
-    <Button
-        android:id="@+id/manageClassesButton"
-        android:layout_width="225dp"
-        android:layout_height="65dp"
-        android:layout_marginBottom="20dp"
-        android:onClick="onManageClassesButtonClicked"
-        android:text="Manage Classes"
-        app:layout_constraintBottom_toTopOf="@+id/editProfilePic"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addClassesButton" />
-
-    <Button
-        android:id="@+id/addClassesButton"
-        android:layout_width="225dp"
-        android:layout_height="65dp"
-        android:layout_marginBottom="18dp"
-        android:onClick="onAddClassesButtonClicked"
-        android:text="Add Classes"
-        app:layout_constraintBottom_toTopOf="@+id/manageClassesButton"
-        app:layout_constraintEnd_toEndOf="@+id/manageClassesButton"
-        app:layout_constraintStart_toStartOf="@+id/manageClassesButton"
-        app:layout_constraintTop_toBottomOf="@+id/viewClassesButton" />
-
-    <Button
-        android:id="@+id/viewClassesButton"
-        android:layout_width="225dp"
-        android:layout_height="65dp"
-        android:layout_marginBottom="19dp"
-        android:onClick="onViewClassesButtonClicked"
-        android:text="View Classes"
-        app:layout_constraintBottom_toTopOf="@+id/addClassesButton"
-        app:layout_constraintEnd_toEndOf="@+id/addClassesButton"
-        app:layout_constraintStart_toStartOf="@+id/addClassesButton"
-        app:layout_constraintTop_toBottomOf="@+id/saveNameChangeButton" />
-
     <ImageView
         android:id="@+id/profilePicture"
-        android:layout_width="0dp"
+        android:layout_width="298dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="112dp"
-        android:layout_marginBottom="1dp"
-        app:layout_constraintBottom_toTopOf="@+id/personsNameField"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="28dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/homeButton"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -70,39 +21,66 @@
         android:id="@+id/homeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="9dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="17dp"
-        android:layout_marginBottom="530dp"
+        android:layout_marginBottom="150dp"
         android:onClick="onHomeButtonClicked"
         android:text="Home"
-        app:layout_constraintBottom_toTopOf="@+id/editProfilePic"
-        app:layout_constraintEnd_toStartOf="@+id/profilePicture"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/personsNameField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/saveNameChangeButton"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="33dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+        app:layout_constraintTop_toBottomOf="@+id/homeButton">
 
-    <Button
-        android:id="@+id/saveNameChangeButton"
-        android:layout_width="225dp"
-        android:layout_height="65dp"
-        android:layout_marginBottom="36dp"
-        android:onClick="saveNameClicked"
-        android:text="Save Name"
-        app:layout_constraintBottom_toTopOf="@+id/viewClassesButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/personsNameField" />
+        <EditText
+            android:id="@+id/personsNameField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name" />
+
+        <Button
+            android:id="@+id/saveNameChangeButton"
+            android:layout_width="225dp"
+            android:layout_height="65dp"
+            android:onClick="saveNameClicked"
+            android:text="Save Name" />
+
+        <Button
+            android:id="@+id/manageClassesButton"
+            android:layout_width="265dp"
+            android:layout_height="65dp"
+            android:layout_marginBottom="20dp"
+            android:onClick="onManageClassesButtonClicked"
+            android:text="Manage Classes" />
+
+        <Button
+            android:id="@+id/addClassesButton"
+            android:layout_width="265dp"
+            android:layout_height="65dp"
+            android:layout_marginBottom="18dp"
+            android:onClick="onAddClassesButtonClicked"
+            android:text="Add Classes" />
+
+        <Button
+            android:id="@+id/editProfilePic"
+            android:layout_width="265dp"
+            android:layout_height="65dp"
+            android:layout_marginBottom="76dp"
+            android:onClick="onEditProfilePicButtonClicked"
+            android:text="Edit Profile Pic" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

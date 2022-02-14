@@ -47,11 +47,6 @@ public class EditProfileActivity extends AppCompatActivity {
         finish();
     }
 
-    /*public void onViewClassesButtonClicked(View view) {
-        Intent intent = new Intent(this, ViewClassesActivity.class );
-        startActivity(intent);
-    }*/
-
     public void onAddClassesButtonClicked(View view) {
         Intent intent = new Intent(this, AddClassActivity.class );
         startActivity(intent);
