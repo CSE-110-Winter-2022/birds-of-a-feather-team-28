@@ -2,22 +2,26 @@ package com.example.bof_group_28.viewAdapters;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.ArraySet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
+import com.example.bof_group_28.utility.classes.Converters;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.activities.StudentSelectedActivity;
@@ -34,6 +38,9 @@ import model.db.PersonWithCourses;
  * The student view adapter handles a view of nearby students with similar classes
  */
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
+
+    public static final String PFP = "pfp";
+
     // Instance Variables
     private final List<PersonWithCourses> students;
     private final NearbyStudentsHandler handler;
@@ -72,6 +79,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     public void onBindViewHolder(@NonNull StudentViewAdapter.ViewHolder holder, int position) {
         holder.setPersonButton(students.get(position));
         holder.setSharedCoursesCount(handler.getStudentClassMap().get(students.get(position)).size());
+        holder.setProfilePicture(students.get(position).getProfilePic());
         Log.v(TAG, "Bound Student Item for " + students.get(position).getName());
     }
 
@@ -94,6 +102,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         private final Button personButton;
         private PersonWithCourses student;
         private final TextView classCount;
+        private byte[] pfp;
 
         /**
          * Construct a Recycler View Item with onClick to select a student
@@ -128,6 +137,11 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
                     Log.e(BirdsOfAFeatherActivity.TAG, "ERROR! Student button pressed for student that does not exist in map.");
                 }
                 editor.putStringSet(SELECTED_STUDENT_COURSES, sharedCourses);
+
+                if (pfp != null) {
+                    intent.putExtra(PFP, pfp);
+                }
+
                 editor.apply();
 
                 view.getContext().startActivity(intent);
@@ -141,6 +155,18 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
         public void setSharedCoursesCount(int courses) {
             classCount.setText(courses + " shared courses.");
+        }
+
+        /**
+         * Set the profile picture
+         * @param pfp byte array
+         */
+        public void setProfilePicture(byte[] pfp) {
+            if(pfp != null){
+                this.pfp = pfp;
+                Bitmap pfpBitmap = Converters.byteArrToBitmap(pfp);
+                ((ImageView) itemView.findViewById(R.id.smallProfilePicture)).setImageBitmap(pfpBitmap);
+            }
         }
     }
 }
