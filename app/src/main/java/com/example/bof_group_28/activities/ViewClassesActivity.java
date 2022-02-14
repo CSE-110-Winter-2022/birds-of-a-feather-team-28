@@ -2,7 +2,6 @@ package com.example.bof_group_28.activities;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.SELF_COURSES;
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.USER_NAME;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,9 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.viewAdapters.CourseViewAdapter;
-import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import model.db.AppDatabase;

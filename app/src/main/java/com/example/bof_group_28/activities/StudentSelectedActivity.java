@@ -14,8 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bof_group_28.viewAdapters.CourseViewAdapter;
 import com.example.bof_group_28.R;
+import com.example.bof_group_28.viewAdapters.CourseViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
