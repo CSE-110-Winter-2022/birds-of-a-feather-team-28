@@ -59,7 +59,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private static final String BOF_STOP_BTN_TEXT = "STOP";
     private static final int BOF_START_BTN_COLOR = Color.rgb(76, 175, 80);
     private static final int BOF_STOP_BTN_COLOR = Color.RED;
-    private static final int UPDATE_TIME = 10000;
+    private static final int UPDATE_TIME = 5000;
 
     // Database
     public static DatabaseHandler databaseHandler;
@@ -127,6 +127,10 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                     "2022", "WI", "CSE", "12");
             databaseHandler.insertCourse(fakeCourseTwo);
 
+            CourseEntry fakeCourseThree = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonTwo.personId,
+                    "2022", "WI", "CSE", "20");
+            databaseHandler.insertCourse(fakeCourseThree);
+
             databaseHandler.insertPersonWithCourses(fakePersonOne);
             databaseHandler.insertPersonWithCourses(fakePersonTwo);
 
@@ -145,7 +149,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         studentRecyclerView = findViewById(R.id.personRecyclerView);
         studentLayoutManager = new LinearLayoutManager(this);
         studentRecyclerView.setLayoutManager(studentLayoutManager);
-        studentViewAdapter = new StudentViewAdapter(handler.getStudentsList(), handler);
+        studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
 
         // Setup runnable to check nearby students
@@ -155,13 +159,13 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                 if (bofStarted) {
                     handler.refreshStudentClassMap();
 
-                    Log.v(TAG, "Refreshed student class map.");
+                    Log.v(TAG, "Refreshed student class map from main activity.");
 
                     studentViewAdapter.clear();
-                    studentViewAdapter = new StudentViewAdapter(handler.getStudentsList(), handler);
+                    studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
                     studentRecyclerView.setAdapter(studentViewAdapter);
 
-                    Log.v(TAG, "Updated nearby students view.");
+                    Log.v(TAG, "Updated nearby students view in main activity.");
                     runHandler.postDelayed(this, UPDATE_TIME);
                 }
             }

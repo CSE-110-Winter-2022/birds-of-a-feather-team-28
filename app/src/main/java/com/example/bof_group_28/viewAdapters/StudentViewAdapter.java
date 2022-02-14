@@ -1,6 +1,7 @@
 package com.example.bof_group_28.viewAdapters;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,21 +22,31 @@ import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.activities.StudentSelectedActivity;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 import model.db.CourseEntry;
 import model.db.PersonWithCourses;
 
-//bookkeeping
-
+/**
+ * The student view adapter handles a view of nearby students with similar classes
+ */
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
+    // Instance Variables
     private final List<PersonWithCourses> students;
     private final NearbyStudentsHandler handler;
 
+    // Constants
     public static final String SELECTED_STUDENT_NAME = "selectedName";
     public static final String SELECTED_STUDENT_COURSES = "selectedCourses";
 
+    /**
+     * Construct a student view adapter with a nearby handler and list of students
+     * @param students list of students to show
+     * @param handler nearby handler
+     */
     public StudentViewAdapter(List<PersonWithCourses> students, NearbyStudentsHandler handler) {
         super();
         this.handler = handler;
@@ -52,10 +63,16 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         return new ViewHolder(view, handler);
     }
 
+    /**
+     * Setup the person button and shared courses count
+     * @param holder the holder
+     * @param position the position of student to bind to in array
+     */
     @Override
     public void onBindViewHolder(@NonNull StudentViewAdapter.ViewHolder holder, int position) {
         holder.setPersonButton(students.get(position));
         holder.setSharedCoursesCount(handler.getStudentClassMap().get(students.get(position)).size());
+        Log.v(TAG, "Bound Student Item for " + students.get(position).getName());
     }
 
     @Override
@@ -63,6 +80,9 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         return this.students.size();
     }
 
+    /**
+     * Clear the student view adapter
+     */
     public void clear(){
         int size = students.size();
         students.clear();
@@ -75,11 +95,18 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         private PersonWithCourses student;
         private final TextView classCount;
 
+        /**
+         * Construct a Recycler View Item with onClick to select a student
+         * @param itemView the item
+         * @param handler the nearby handler
+         */
         ViewHolder(View itemView, NearbyStudentsHandler handler) {
             super(itemView);
 
+            // shared count
             this.classCount = itemView.findViewById(R.id.sharedClassesCount);
 
+            // onclick to select a student
             this.personButton = itemView.findViewById(R.id.person_button);
             personButton.setOnClickListener((view) -> {
                 Context c = view.getContext();
@@ -88,7 +115,10 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
                 SharedPreferences preferences = c.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
 
+                // share their name as an extra
                 editor.putString(SELECTED_STUDENT_NAME, student.getName());
+
+                // get the shared courses as a set, and pass as an extra
                 Set<String> sharedCourses = new ArraySet<>();
                 if (handler.getStudentClassMap() != null && handler.getStudentClassMap().containsKey(student)) {
                     for (CourseEntry course : handler.getStudentClassMap().get(student)) {

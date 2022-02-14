@@ -1,5 +1,8 @@
 package com.example.bof_group_28.viewAdapters;
 
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +36,7 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull CourseViewAdapter.ViewHolder holder, int position) {
         holder.setCourseName(courses.get(position));
+        Log.v(TAG, "Bound Course Item for " + courses.get(position));
     }
 
     @Override
