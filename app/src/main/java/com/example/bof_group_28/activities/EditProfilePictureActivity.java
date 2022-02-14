@@ -75,6 +75,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
                                Toast.makeText(c, "Invalid image URL", Toast.LENGTH_SHORT).show();
                            }
                        }
+                       //FIXME: update pfp from menu page once returning
                    }
                 });
             }
