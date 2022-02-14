@@ -7,14 +7,15 @@
     tools:context=".activities.EditProfileActivity">
 
     <ImageView
-        android:id="@+id/profilePicture"
-        android:layout_width="298dp"
+        android:id="@+id/profilePictureProfile"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="96dp"
+        android:layout_marginBottom="34dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/homeButton"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -22,20 +23,21 @@
         android:id="@+id/homeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="138dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="94dp"
+        android:layout_marginBottom="128dp"
         android:onClick="onHomeButtonClicked"
         android:text="Home"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintEnd_toStartOf="@+id/profilePictureProfile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="51dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
@@ -62,8 +64,9 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="408dp"
-        android:layout_height="311dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="3dp"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -75,15 +78,16 @@
             android:id="@+id/manageClassesButton"
             android:layout_width="265dp"
             android:layout_height="65dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="50dp"
             android:onClick="onManageClassesButtonClicked"
-            android:text="Manage Classes" />
+            android:text="Manage Classes"
+            tools:layout_marginBottom="20dp" />
 
         <Button
             android:id="@+id/addClassesButton"
             android:layout_width="265dp"
             android:layout_height="65dp"
-            android:layout_marginBottom="18dp"
+            android:layout_marginBottom="40dp"
             android:onClick="onAddClassesButtonClicked"
             android:text="Add Classes" />
 
@@ -91,7 +95,7 @@
             android:id="@+id/editProfilePic"
             android:layout_width="265dp"
             android:layout_height="65dp"
-            android:layout_marginBottom="76dp"
+            android:layout_marginBottom="50dp"
             android:onClick="onEditProfilePicButtonClicked"
             android:text="Edit Profile Pic" />
 
