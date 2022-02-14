@@ -51,7 +51,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="20dp"
         android:backgroundTint="@android:color/holo_blue_light"
-        android:onClick="onClear"
+        android:onClick="onClearButtonClicked"
         android:text="@string/clear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

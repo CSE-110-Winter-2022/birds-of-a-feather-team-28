@@ -21,7 +21,7 @@ public interface PersonWithCoursesDAO {
     @Query("SELECT COUNT(*) FROM persons")
     int count();
 
-    @Query("SELECT MAX(course_id) FROM courseentries")
+    @Query("SELECT MAX(person_id) FROM persons")
     int maxId();
 
     @Query("UPDATE persons SET name = :personName, profile_pic = :profilePic WHERE person_id = :id")

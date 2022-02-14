@@ -1,5 +1,6 @@
 package model.db;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.PrimaryKey;
 import androidx.room.Entity;
@@ -33,5 +34,25 @@ public class CourseEntry {
         this.quarter = quarter;
         this.subject = subject;
         this.courseNum = courseNum;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return subject + " "  + courseNum + " for " + quarter + " of " + year;
+    }
+
+    @Override
+    public boolean equals(Object otherCourseObject) {
+        CourseEntry otherCourse;
+        if (otherCourseObject instanceof CourseEntry) {
+            otherCourse = (CourseEntry) otherCourseObject;
+        } else {
+            return false;
+        }
+        return (year.equals(otherCourse.year)
+                && quarter.equals(otherCourse.quarter)
+                && subject.equals(otherCourse.subject)
+                && courseNum.equals(otherCourse.courseNum));
     }
 }

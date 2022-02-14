@@ -3,6 +3,7 @@ package model.db;
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import model.IPerson;
@@ -33,6 +34,14 @@ public class PersonWithCourses implements IPerson {
     @Override
     public List<CourseEntry> getCourses() {
         return this.courseEntries;
+    }
+
+    public List<String> getCoursesString() {
+        List<String> courseStrings = new ArrayList<>();
+        for (CourseEntry courseEntry : getCourses()) {
+            courseStrings.add(courseEntry.toString());
+        }
+        return courseStrings;
     }
 
 

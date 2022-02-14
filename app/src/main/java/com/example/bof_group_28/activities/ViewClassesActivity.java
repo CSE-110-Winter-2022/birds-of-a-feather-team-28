@@ -1,8 +1,7 @@
 package com.example.bof_group_28.activities;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.SELF_COURSES;
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.USER_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,31 +20,24 @@ import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import model.db.AppDatabase;
-
 public class ViewClassesActivity extends AppCompatActivity {
 
     private RecyclerView classRecyclerView;
     private RecyclerView.LayoutManager classLayoutManager;
     private CourseViewAdapter classViewAdapter;
-    private AppDatabase db;
     private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.courses_view);
-        db = AppDatabase.singleton(this);
-        userName = db.personWithCoursesDAO().get(1).getName();
+        userName = user.getName();
 
         classRecyclerView = findViewById(R.id.viewCoursesCourseView);
         classLayoutManager = new LinearLayoutManager(this);
         classRecyclerView.setLayoutManager(classLayoutManager);
 
-        SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-
-        //classViewAdapter = new CourseViewAdapter(new ArrayList<>(preferences.getStringSet(SELF_COURSES, new ArraySet<>())));
-        classViewAdapter = new CourseViewAdapter(new ArrayList<>(preferences.getStringSet(SELF_COURSES, new ArraySet<>())));
+        classViewAdapter = new CourseViewAdapter(new ArrayList<>(user.getCoursesString()));
         classRecyclerView.setAdapter(classViewAdapter);
 
         TextView studentName = findViewById(R.id.viewCoursesStudentName);

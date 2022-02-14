@@ -1,9 +1,6 @@
 package com.example.bof_group_28.activities;
 
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.CHANGED_NAME;
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.SELF_COURSES;
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.USER_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.SELECTED_STUDENT_COURSES;
 import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.SELECTED_STUDENT_NAME;
 
@@ -26,6 +23,7 @@ import java.util.Set;
 
 import model.db.AppDatabase;
 import model.db.Person;
+import model.db.PersonWithCourses;
 
 
 public class EditProfileActivity extends AppCompatActivity {
@@ -38,13 +36,10 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
         db = AppDatabase.singleton(this);
-        userName = db.personWithCoursesDAO().get(1).getName();
-
-        SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        userName = user.getName();
 
         TextView nameField = findViewById(R.id.personsNameField);
         nameField.setText(userName);
-
     }
 
     public void onHomeButtonClicked(View view) {
@@ -70,24 +65,27 @@ public class EditProfileActivity extends AppCompatActivity {
         //FIXME implement
     }
 
+    /**
+     * Check if a user changes their name
+     * @param view the view
+     */
     public void saveNameClicked(View view) {
         //FIXME Add view to update profile pic?
         TextView nameField = findViewById(R.id.personsNameField);
-        Person personToUpdate = new Person(1, nameField.getText().toString(), null);
+        String name = nameField.getText().toString();
 
-        if (personToUpdate.name.isEmpty()) {
+        Person personToUpdate = user.person;
+
+        if (name.isEmpty()) {
             Toast.makeText(this, "Name cannot be empty.", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (personToUpdate.name.equals(userName)) {
+        if (name.equals(userName)) {
             Toast.makeText(this, "New name cannot be the same as the current name.", Toast.LENGTH_SHORT).show();
             return;
         }
-        db.personWithCoursesDAO().update(1,personToUpdate.name, personToUpdate.profilePic);
 
-        //Intent returnIntent = new Intent();
-        //returnIntent.putExtra(USER_NAME, nameField.getText().toString());
-        //setResult(Activity.RESULT_OK, returnIntent);
-        //finish();
+        db.personWithCoursesDAO().update(personToUpdate.personId, name, personToUpdate.profilePic);
+        Toast.makeText(this, "Name updated successfully", Toast.LENGTH_SHORT).show();
     }
 }

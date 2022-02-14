@@ -5,10 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.widget.Toast;
 
-import com.example.bof_group_28.utility.classes.DummyCourse;
-import com.example.bof_group_28.utility.classes.DummyStudent;
 import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
-import com.example.bof_group_28.utility.interfaces.Person;
 
 public class NearbyStudentsService extends Service {
 
