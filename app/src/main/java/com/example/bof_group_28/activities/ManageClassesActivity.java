@@ -1,9 +1,12 @@
 package com.example.bof_group_28.activities;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
+
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.viewAdapters.ManageCourseViewAdapter;
@@ -23,6 +26,10 @@ public class ManageClassesActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manage_classes_view);
+
+        TextView nameView = findViewById(R.id.manageCoursesStudentName);
+        nameView.setText(user.getName());
+
         courseRV = findViewById(R.id.courseListView);
 
         //FIXME refactor to singleton person

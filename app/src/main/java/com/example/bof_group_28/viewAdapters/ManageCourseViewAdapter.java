@@ -1,5 +1,8 @@
 package com.example.bof_group_28.viewAdapters;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +47,7 @@ public class ManageCourseViewAdapter extends RecyclerView.Adapter<ManageCourseVi
         holder.courseNum.setText(course.courseNum);
         holder.courseQuarter.setText(course.quarter);
         holder.courseYear.setText(course.year);
+        Log.v(TAG, "Bound Manage Course Item for " + course.toString());
     }
 
     @Override

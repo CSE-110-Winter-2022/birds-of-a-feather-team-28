@@ -10,6 +10,8 @@ import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
 import com.example.bof_group_28.utility.interfaces.StudentFinder;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class NearbyStudentsHandler {
      * Get nearby students and refresh the student map
      */
     public void refreshStudentClassMap() {
+        Log.v(TAG, "Refreshed student class map in handler.");
         refreshUser();
         studentFinder.updateNearbyStudents();
         studentClassMap = generateStudentClassMap(studentFinder.returnNearbyStudents());
@@ -81,6 +84,28 @@ public class NearbyStudentsHandler {
         List<PersonWithCourses> students = new ArrayList<>();
         if (getStudentClassMap() != null) {
             students.addAll(getStudentClassMap().keySet());
+        }
+        return students;
+    }
+
+    /**
+     * Return students in class map that share courses and sorted by shared courses
+     * @return the list
+     */
+    public List<PersonWithCourses> getSortedStudentsList() {
+        Log.v(TAG, "Sorted Student List");
+        List<PersonWithSharedCouseCount> sharedCourseCount = new ArrayList<>();
+        for (PersonWithCourses person : getStudentsList()) {
+            if (getStudentClassMap() != null && getStudentClassMap().containsKey(person)) {
+                sharedCourseCount.add(new PersonWithSharedCouseCount(person, getStudentClassMap().get(person).size()));
+            } else {
+                Log.e(TAG, "Attempted to access invalid student class map.");
+            }
+        }
+        sharedCourseCount.sort(Collections.reverseOrder());
+        List<PersonWithCourses> students = new ArrayList<>();
+        for (PersonWithSharedCouseCount pwc : sharedCourseCount) {
+            students.add(pwc.getPersonWithCourses());
         }
         return students;
     }
@@ -124,6 +149,9 @@ public class NearbyStudentsHandler {
         return matchingStudents;
     }
 
+    /**
+     * Clear the student class map
+     */
     public void clear() {
         if (studentClassMap != null) {
             studentClassMap.clear();
