@@ -54,6 +54,7 @@ public class DatabaseInsertionTest {
         db.personWithCoursesDAO().insert(person);
         CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110");
         db.courseEntryDAO().insert(courseEntry);
+        //FIXME: bad quarter naming
         courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101");
         db.courseEntryDAO().insert(courseEntry);
 
