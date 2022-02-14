@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,11 +25,13 @@ import model.db.CourseEntry;
 
 public class AddClassActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private Spinner spinner;
+    //Acceptable quarters, empty string is default but validation prevents database insertion
     private static final String[] quarterNames =
             {"","FA","WI", "SP", "SS1", "SS2", "SSS"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v("AddClassActivity", "AddClassActivity Created");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_class);
 
@@ -47,10 +50,8 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         savePreviousEntry();
     }
 
-
-    //subject, course, year, quarter
     public void savePreviousEntry(){
-
+        //Save currently entered strings in views to sharedPrefs
         SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -73,7 +74,7 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
     }
 
     public void loadPreviousEntry() {
-
+        //Load previously entered strings in views
         SharedPreferences preferences = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
 
         String subject = preferences.getString("subject","");
@@ -91,8 +92,7 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         String quarter = preferences.getString("quarter","");
         TextView quarterView = findViewById(R.id.quarter_txt);
         quarterView.setText(quarter);
-        //SharedPreferences.Editor editor = preferences.edit();
-        //SharedPreferences.getString()
+
 
     }
 
@@ -102,7 +102,8 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
     }
 
     public void onAddClicked(View view){
-        //add courses to the database through the fields
+        //Create new courseEntry object from views to add to database
+        Log.v("AddClassActivity", "Add Course Clicked");
         TextView text;
 
         text = findViewById(R.id.subject_entry);
@@ -121,13 +122,16 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         CourseEntry courseToAdd = new CourseEntry(newCourseID, user.getId(), yearTxt, quarterTxt, subjectTxt, courseNumTxt);
 
         if (validateCourse(courseToAdd)) {
+            Log.v("AddClassActivity", "Course Successfully Added");
             databaseHandler.insertCourse(courseToAdd);
             finish();
         }
+        Log.v("AddClassActivity", "Course Not Added");
     }
 
     //FIXME Add more validation here if needed
     private boolean validateCourse(CourseEntry courseToAdd) {
+        //Check that fields are not empty
         boolean flag = true;
         if (courseToAdd.year == null || courseToAdd.year == ""
             || courseToAdd.quarter == null || courseToAdd.quarter == ""
@@ -137,22 +141,32 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
             Toast.makeText(this, "Make sure no fields are empty.", Toast.LENGTH_LONG).show();
             flag = false;
         }
+        //Check year is a 4-digit number
         if (courseToAdd.year.length() != 4 || !(courseToAdd.year.matches("[0-9]+"))) {
             Toast.makeText(this, "Make sure the year is a 4-digit number.", Toast.LENGTH_LONG).show();
             flag = false;
         }
+        //Check subject is a 3-4 letter code
         if (courseToAdd.subject.length() < 3 || courseToAdd.subject.length() > 4 || !(courseToAdd.subject.matches("^[a-zA-Z]+$"))) {
             Toast.makeText(this, "Make sure the subject is a 3 or 4 letter alphabetic code.", Toast.LENGTH_LONG).show();
             flag = false;
         }
+        //Check courseNum is a code beteween 2 to 4 characters
         if (courseToAdd.courseNum.length() < 2 || courseToAdd.courseNum.length() > 4) {
             Toast.makeText(this, "Make sure the Course Number is a 2 to 4 digit code.", Toast.LENGTH_LONG).show();
             flag = false;
         }
+        //Make sure duplicate courses can't be entered
         if (databaseHandler.getPersonsCourses(courseToAdd.personId).contains(courseToAdd)) {
             Toast.makeText(this, "Cannot add a duplicate course.", Toast.LENGTH_LONG).show();
             flag = false;
         }
+        if (flag) {
+            Log.v("AddClassActivity", "Successfully Validated New Course");
+        } else {
+            Log.v("AddClassActivity", "New Course Not Validated");
+        }
+
         return flag;
     }
 
@@ -160,7 +174,7 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
     //https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         TextView text = findViewById(R.id.quarter_txt);
-
+        Log.v("AddClassActivity", "Quarter Chosen");
         switch (position) {
             case 0:
                 // Whatever you want to happen when the first item gets selected
