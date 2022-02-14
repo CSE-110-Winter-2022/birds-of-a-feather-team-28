@@ -14,18 +14,18 @@ import java.util.List;
 
 import model.db.CourseEntry;
 
-public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.ViewHolder> {
-    //private final List<String> courses;
-    private final List<CourseEntry> courses;
+public class EditCourseViewAdapter extends RecyclerView.Adapter<EditCourseViewAdapter.ViewHolder> {
+    private final List<String> courses;
+    //private final List<CourseEntry> courses;
 
-    public CourseViewAdapter(List<CourseEntry> courses) {
+    public EditCourseViewAdapter(List<String> courses) {
         super();
         this.courses = courses;
     }
 
     @NonNull
     @Override
-    public CourseViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public EditCourseViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.class_row, parent, false);
@@ -34,7 +34,7 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CourseViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull EditCourseViewAdapter.ViewHolder holder, int position) {
         holder.setCourseName(courses.get(position));
     }
 

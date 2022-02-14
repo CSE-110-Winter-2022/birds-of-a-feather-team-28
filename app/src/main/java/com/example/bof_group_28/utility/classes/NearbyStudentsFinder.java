@@ -2,15 +2,10 @@ package com.example.bof_group_28.utility.classes;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.room.Room;
 
-import com.example.bof_group_28.utility.interfaces.CourseEntry;
-import com.example.bof_group_28.utility.interfaces.Person;
 import com.example.bof_group_28.utility.interfaces.StudentFinder;
-import com.example.bof_group_28.utility.services.NearbyStudentsService;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageListener;
@@ -18,7 +13,8 @@ import com.google.android.gms.nearby.messages.MessageListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.db.AppDatabase;
+import model.db.CourseEntry;
+import model.db.PersonWithCourses;
 
 public class NearbyStudentsFinder implements StudentFinder {
 
@@ -27,17 +23,18 @@ public class NearbyStudentsFinder implements StudentFinder {
 
     private MessageListener messageListener;
 
-    List<Person> nearbyStudents;
+    List<PersonWithCourses> nearbyStudents;
     Context context;
+    DatabaseHandler databaseHandler;
 
     public NearbyStudentsFinder(Context context){
         this.messageListener = createMessageListener();
-        this.nearbyStudents = new ArrayList<Person>();
+        this.nearbyStudents = new ArrayList<PersonWithCourses>();
         this.context = context;
     }
 
     @Override
-    public List<Person> returnNearbyStudents() {
+    public List<PersonWithCourses> returnNearbyStudents() {
         return nearbyStudents;
     }
 
@@ -67,7 +64,7 @@ public class NearbyStudentsFinder implements StudentFinder {
         return new MessageListener() {
             @Override
             public void onFound(@NonNull Message message) {
-                DummyStudent foundStudent = decodeMessage(message);
+                PersonWithCourses foundStudent = decodeMessage(message);
                 nearbyStudents.add(foundStudent);
             }
 
@@ -82,7 +79,7 @@ public class NearbyStudentsFinder implements StudentFinder {
         return messageListener;
     }
 
-    public DummyStudent decodeMessage(Message message) {
+    public PersonWithCourses decodeMessage(Message message) {
         String messageContent = new String(message.getContent());
         String[] messageVals = messageContent.split(MSG_DELIMITER);
 
@@ -100,14 +97,18 @@ public class NearbyStudentsFinder implements StudentFinder {
             String subject = messageVals[(i*4)+4];
             String courseNum = messageVals[(i*4)+5];
 
-            CourseEntry course = new DummyCourse(year, quarter, subject, courseNum);
+            //CourseEntry course = new DummyCourse(year, quarter, subject, courseNum);
+            //FIXME fix course entry
+            CourseEntry course = null;
             Log.d(TAG, course.toString());
             studentCourses.add(course);
         }
 
-        DummyStudent student = new DummyStudent(studentName);
-        student.courses = studentCourses;
+        //FIXME uncomment
+        //PersonWithCourses student = new PersonWithCourses(studentName);
+        //student.courses = studentCourses;
 
-        return student;
+        //return student;
+        return null;
     }
 }

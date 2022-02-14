@@ -1,10 +1,13 @@
 package com.example.bof_group_28.utility.interfaces;
 
+import com.example.bof_group_28.utility.classes.DatabaseHandler;
+
 import java.util.List;
 
-public interface StudentFinder {
+import model.db.PersonWithCourses;
 
-    List<Person> returnNearbyStudents();
+public interface StudentFinder {
+    List<PersonWithCourses> returnNearbyStudents();
     void updateNearbyStudents();
     int numNearbyStudents();
 
