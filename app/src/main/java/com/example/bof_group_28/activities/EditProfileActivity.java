@@ -58,7 +58,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public void onEditProfilePicButtonClicked(View view) {
-        //FIXME implement or remove
+        Intent intent = new Intent(this, EditProfilePictureActivity.class);
+        startActivity(intent);
     }
 
     /**

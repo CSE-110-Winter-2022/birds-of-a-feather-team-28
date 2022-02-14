@@ -1,2 +1,5 @@
-package com.example.bof_group_28.activities;public class Converters {
+package com.example.bof_group_28.activities;
+
+public class Converters {
+
 }
