@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bof_group_28.R;
+import com.example.bof_group_28.utility.classes.Converters;
 
 import model.db.Person;
 
@@ -29,6 +32,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
         TextView nameField = findViewById(R.id.personsNameField);
         nameField.setText(userName);
+
+        byte[] pfp = user.getProfilePic();
+        if(pfp != null){
+            Bitmap pfpBitmap = Converters.byteArrToBitmap(pfp);
+            ((ImageView) findViewById(R.id.profilePictureProfile)).setImageBitmap(pfpBitmap);
+        }
     }
 
     public void onHomeButtonClicked(View view) {

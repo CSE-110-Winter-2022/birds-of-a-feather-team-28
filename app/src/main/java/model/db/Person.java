@@ -13,7 +13,7 @@ public class Person {
     @ColumnInfo(name = "name")
     public String name;
 
-    @ColumnInfo(name = "profile_pic")
+    @ColumnInfo(name = "profile_pic", typeAffinity = ColumnInfo.BLOB)
     public byte[] profilePic;
 
     public Person(int personId, String name, byte[] profilePic) {

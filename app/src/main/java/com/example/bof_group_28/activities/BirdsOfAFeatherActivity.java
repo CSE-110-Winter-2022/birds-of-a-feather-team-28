@@ -1,9 +1,12 @@
 package com.example.bof_group_28.activities;
 
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,8 +22,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.bof_group_28.utility.classes.Converters;
 import com.example.bof_group_28.utility.classes.DatabaseHandler;
 import com.example.bof_group_28.utility.classes.DummyStudentFinder;
+import com.example.bof_group_28.utility.classes.FetchImage;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.utility.services.NearbyStudentsService;
@@ -116,6 +121,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         List<PersonWithCourses> fakeNearby = new ArrayList<>();
 
         if (db.personWithCoursesDAO().maxId() < 3) {
+
             Person fakePersonOne = new Person(db.personWithCoursesDAO().maxId() + 1, "Bob", null);
             Person fakePersonTwo = new Person(db.personWithCoursesDAO().maxId() + 2, "Lily", null);
 
@@ -136,6 +142,26 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
             fakeNearby.add(databaseHandler.getPersonWithCourses(fakePersonOne));
             fakeNearby.add(databaseHandler.getPersonWithCourses(fakePersonTwo));
+
+            // Add default pfp to nearby students
+            FetchImage fetchImage = new FetchImage("https://i.imgur.com/OLWcBAL.png");
+            fetchImage.start();
+            Handler handler = new Handler();
+
+            handler.post (new Runnable() {
+                @Override
+                public void run() {
+                    if (fetchImage.isAlive()) {
+                        handler.postDelayed(this, 500);
+                    } else {
+                        Bitmap bitmap = fetchImage.getBitmap();
+                        byte[] byteArr = Converters.bitmapToByteArr(bitmap);
+                        databaseHandler.updatePerson(fakePersonOne.personId, fakePersonOne.name, byteArr);
+                        databaseHandler.updatePerson(fakePersonTwo.personId, fakePersonTwo.name, byteArr);
+                    }
+                }
+            });
+
         } else {
             fakeNearby.add(db.personWithCoursesDAO().get(2));
             fakeNearby.add(db.personWithCoursesDAO().get(3));

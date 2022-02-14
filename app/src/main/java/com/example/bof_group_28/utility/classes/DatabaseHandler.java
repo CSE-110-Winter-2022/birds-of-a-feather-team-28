@@ -3,6 +3,10 @@ package com.example.bof_group_28.utility.classes;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.*;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -44,14 +48,34 @@ public class DatabaseHandler {
         // runs only when db is empty
         if (db.personWithCoursesDAO().maxId() < 1) {
             //FIXME Replace with name from googleAccount
-            String name = "Jimmy";
-
-            //FIXME Implement Profile Pic
-            byte[] profilePictureBytes = null;
+            String name = "Name Not Set";
 
             // Add the person to the Database
-            Person userPerson = new Person(1, name, profilePictureBytes);
+            // PFP is initially null until updated slightly later
+            Person userPerson = new Person(1, name, null);
             db.personWithCoursesDAO().insert(userPerson);
+
+            // Update PFP when default PFP is loaded
+            FetchImage fetchImage = new FetchImage("https://i.imgur.com/OLWcBAL.png");
+            fetchImage.start();
+            Handler handler = new Handler();
+
+            handler.post (new Runnable() {
+                @Override
+                public void run() {
+                    if (fetchImage.isAlive()) {
+                        Log.v(TAG, "Still processing fetch image");
+                        //FIXME: not elegant way to check if done
+                        handler.postDelayed(this, 1000);
+                    } else {
+                        Bitmap bitmap = fetchImage.getBitmap();
+                        //FIXME: fix if file is too large for db
+                        Log.v(TAG, "Converted Bitmap to Byte Array");
+                        byte[] byteArr = Converters.bitmapToByteArr(bitmap);
+                        updatePerson(user.getId(), user.getName(), byteArr);
+                    }
+                }
+            });
 
         }
         updateUser();

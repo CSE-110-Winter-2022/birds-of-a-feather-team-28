@@ -1,13 +1,17 @@
 package com.example.bof_group_28.activities;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
+import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.PFP;
 import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.SELECTED_STUDENT_COURSES;
 import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.SELECTED_STUDENT_NAME;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.ArraySet;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bof_group_28.R;
+import com.example.bof_group_28.utility.classes.Converters;
 import com.example.bof_group_28.viewAdapters.CourseViewAdapter;
 
 import java.util.ArrayList;
@@ -44,6 +49,11 @@ public class StudentSelectedActivity extends AppCompatActivity {
         courseRecyclerView.setLayoutManager(courseLayoutManager);
         courseViewAdapter = new CourseViewAdapter(courses);
         courseRecyclerView.setAdapter(courseViewAdapter);
+
+        if (getIntent().hasExtra(PFP)) {
+            ((ImageView) findViewById(R.id.largeProfilePicture))
+                    .setImageBitmap(Converters.byteArrToBitmap(getIntent().getByteArrayExtra(PFP)));
+        }
     }
 
     public void goBack(View view) {
