@@ -1,6 +1,8 @@
 package com.example.bof_group_28.activities;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -119,10 +121,11 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         String quarterTxt = text.getText().toString();
 
         int newCourseID = db.courseEntryDAO().maxId()+1;
-        CourseEntry courseToAdd = new CourseEntry(newCourseID, 1, yearTxt, quarterTxt, subjectTxt, courseNumTxt);
+        CourseEntry courseToAdd = new CourseEntry(newCourseID, user.getId(), yearTxt, quarterTxt, subjectTxt, courseNumTxt);
 
         if (validateCourse(courseToAdd)) {
             db.courseEntryDAO().insert(courseToAdd);
+            databaseHandler.updateUser();
             finish();
         }
     }
@@ -148,6 +151,10 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         }
         if (courseToAdd.courseNum.length() < 2 || courseToAdd.courseNum.length() > 4) {
             Toast.makeText(this, "Make sure the Course Number is a 2 to 4 digit code.", Toast.LENGTH_LONG).show();
+            flag = false;
+        }
+        if (db.personWithCoursesDAO().get(courseToAdd.personId).getCourses().contains(courseToAdd)) {
+            Toast.makeText(this, "Cannot add a duplicate course.", Toast.LENGTH_LONG).show();
             flag = false;
         }
         return flag;

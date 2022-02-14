@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-// bookkeeping
-
 public class StudentSelectedActivity extends AppCompatActivity {
 
     private RecyclerView courseRecyclerView;

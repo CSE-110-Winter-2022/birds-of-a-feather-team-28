@@ -1,92 +1,89 @@
 package com.example.bof_group_28.utility.classes;
 
 
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+
 import android.util.Log;
 
-import com.example.bof_group_28.utility.interfaces.CourseEntry;
-import com.example.bof_group_28.utility.interfaces.Person;
+import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
 import com.example.bof_group_28.utility.interfaces.StudentFinder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import model.db.CourseEntry;
+import model.db.Person;
+import model.db.PersonWithCourses;
+
+/**
+ * This class handles nearby student information
+ */
 public class NearbyStudentsHandler {
 
-    private final Person user;
+    // The user
+    private PersonWithCourses user;
 
-    public Person getUser() {
+    /**
+     * Get the user
+     * @return the user
+     */
+    public PersonWithCourses getUser() {
         return user;
     }
 
-    private static final String TAG = "BoF";
-    private HashMap<Person, List<CourseEntry>> studentClassMap;
-
+    // Instance Variables
+    private HashMap<PersonWithCourses, List<CourseEntry>> studentClassMap;
     private StudentFinder studentFinder;
-
-    /*
-     * Dangerous testing method! Not sure how else to set this up
-     * @param nearbyStudents faked nearby students
-    public void setNearbyStudents(List<Person> nearbyStudents) {
-        this.nearbyStudents = nearbyStudents;
-    }*/
-
-    /*
-    public NearbyStudentsHandler(Person user) {
-        this.user = user;
-        nearbyStudents = new ArrayList<>();
-        refreshStudentClassMap();
-    }*/
 
     /**
      * Constructor
      * @param user user
      * @param studentFinder StudentFinder used to retrieve students to handle
      */
-    public NearbyStudentsHandler(Person user, StudentFinder studentFinder) {
+    public NearbyStudentsHandler(PersonWithCourses user, StudentFinder studentFinder) {
         this.user = user;
         this.studentFinder = studentFinder;
         studentClassMap = generateStudentClassMap(studentFinder.returnNearbyStudents());
-        saveNearbyStudentsToDatabase(studentClassMap);
     }
 
+    /**
+     * Get nearby students and refresh the student map
+     */
     public void refreshStudentClassMap() {
+        refreshUser();
         studentFinder.updateNearbyStudents();
         studentClassMap = generateStudentClassMap(studentFinder.returnNearbyStudents());
-        saveNearbyStudentsToDatabase(studentClassMap);
+    }
+
+    /**
+     * Refresh the user
+     */
+    public void refreshUser() {
+        databaseHandler.updateUser();
+        this.user = BirdsOfAFeatherActivity.user;
     }
 
     /**
      * Get the student class map
      * @return the student class map
      */
-    public HashMap<Person, List<CourseEntry>> getStudentClassMap() {
+    public HashMap<PersonWithCourses, List<CourseEntry>> getStudentClassMap() {
         return studentClassMap;
     }
 
-    public List<Person> getStudentsList() {
-        List<Person> students = new ArrayList<>();
+    /**
+     * Get the students in the class map as a list
+     * @return the students list
+     */
+    public List<PersonWithCourses> getStudentsList() {
+        List<PersonWithCourses> students = new ArrayList<>();
         if (getStudentClassMap() != null) {
             students.addAll(getStudentClassMap().keySet());
         }
         return students;
     }
-
-    public void refreshStudentClassMapFromDatabase() {
-
-    }
-
-    /*
-     * Returns nearby students based on bluetooth
-     * @return a list of nearby students
-    public List<Person> getNearbyStudents() {
-
-
-        Log.v(TAG, "Attempted to retrieve nearby students.");
-        // get them from bluetooth
-        // update local nearby students
-        return nearbyStudents;
-    }*/
 
     /**
      * Returns a list of courses from two course lists that contain only the matching courses
@@ -111,14 +108,14 @@ public class NearbyStudentsHandler {
      * @param nearbyStudents the list of nearby students
      * @return a mapping of students to shared classes
      */
-    public HashMap<Person, List<CourseEntry>> generateStudentClassMap(List<Person> nearbyStudents) {
+    public HashMap<PersonWithCourses, List<CourseEntry>> generateStudentClassMap(List<PersonWithCourses> nearbyStudents) {
         if (nearbyStudents == null) {
             Log.e(TAG,"Attempted to generate a student class map off null nearby students");
             return null;
         }
 
-        HashMap<Person, List<CourseEntry>> matchingStudents = new HashMap<>();
-        for (Person p : nearbyStudents) {
+        HashMap<PersonWithCourses, List<CourseEntry>> matchingStudents = new HashMap<>();
+        for (PersonWithCourses p : nearbyStudents) {
             List<CourseEntry> matchingCourses = filterCourses(p.getCourses(), user.getCourses());
             if (matchingCourses.size() > 0) {
                 matchingStudents.put(p, matchingCourses);
@@ -127,27 +124,7 @@ public class NearbyStudentsHandler {
         return matchingStudents;
     }
 
-    /**
-     * Save nearby students to local
-     * @param nearbyStudents a mapping of students to their matching course entries
-     */
-    public void saveNearbyStudentsToDatabase(HashMap<Person, List<CourseEntry>> nearbyStudents) {
-        if (nearbyStudents == null) {
-            Log.e(TAG,"Attempted to save a null nearby students list to database");
-            return;
-        }
-        // with database class save the person and their course data
-    }
-
-    public void clearDatabase() {
-    }
-
-    public void stop() {
-
-    }
-
     public void clear() {
-        clearDatabase();
         if (studentClassMap != null) {
             studentClassMap.clear();
         }
