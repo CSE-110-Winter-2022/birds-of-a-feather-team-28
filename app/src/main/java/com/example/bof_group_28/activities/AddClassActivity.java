@@ -24,7 +24,6 @@ import model.db.CourseEntry;
 
 public class AddClassActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private Spinner spinner;
-    private AppDatabase db;
     private static final String[] quarterNames =
             {"","FA","WI", "SP", "SS1", "SS2", "SSS"};
 
@@ -32,8 +31,6 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_class);
-
-        db = AppDatabase.singleton(this);
 
         spinner = (Spinner)findViewById(R.id.quarter_dd);
         ArrayAdapter<String>adapter = new ArrayAdapter<String>(AddClassActivity.this,
@@ -120,12 +117,11 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         text = findViewById(R.id.quarter_txt);
         String quarterTxt = text.getText().toString();
 
-        int newCourseID = db.courseEntryDAO().maxId()+1;
+        int newCourseID = databaseHandler.db.courseEntryDAO().maxId()+1;
         CourseEntry courseToAdd = new CourseEntry(newCourseID, user.getId(), yearTxt, quarterTxt, subjectTxt, courseNumTxt);
 
         if (validateCourse(courseToAdd)) {
-            db.courseEntryDAO().insert(courseToAdd);
-            databaseHandler.updateUser();
+            databaseHandler.insertCourse(courseToAdd);
             finish();
         }
     }
@@ -153,7 +149,7 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
             Toast.makeText(this, "Make sure the Course Number is a 2 to 4 digit code.", Toast.LENGTH_LONG).show();
             flag = false;
         }
-        if (db.personWithCoursesDAO().get(courseToAdd.personId).getCourses().contains(courseToAdd)) {
+        if (databaseHandler.getPersonsCourses(courseToAdd.personId).contains(courseToAdd)) {
             Toast.makeText(this, "Cannot add a duplicate course.", Toast.LENGTH_LONG).show();
             flag = false;
         }

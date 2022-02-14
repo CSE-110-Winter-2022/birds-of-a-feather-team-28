@@ -1,5 +1,6 @@
 package com.example.bof_group_28.viewAdapters;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
 
 import android.content.Context;
 import android.util.Log;
@@ -72,8 +73,7 @@ public class ManageCourseViewAdapter extends RecyclerView.Adapter<ManageCourseVi
             deleteCourseButton.setOnClickListener((view) -> {
                 Context c = view.getContext();
                 //FIXME Refresh Recycler view
-                AppDatabase db = AppDatabase.singleton(context);
-                db.courseEntryDAO().deleteCourse(currentCourse.courseId);
+                databaseHandler.deleteCourse(currentCourse.courseId);
                 notifyDataSetChanged();
                 Toast.makeText(context, "Deleted Course: " + currentCourse.subject + " " + currentCourse.courseNum , Toast.LENGTH_SHORT).show();
             });

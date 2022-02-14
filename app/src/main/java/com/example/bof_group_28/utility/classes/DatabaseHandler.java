@@ -70,6 +70,7 @@ public class DatabaseHandler {
     public void clearNonUserEntries() {
         db.personWithCoursesDAO().deleteNonUserCourses();
         db.personWithCoursesDAO().deleteNonUserPersons();
+        updateUser();
     }
 
     /**
@@ -79,6 +80,7 @@ public class DatabaseHandler {
      */
     public void insertPerson(String name, byte[] profilePic) {
         db.personWithCoursesDAO().insert(new Person(db.personWithCoursesDAO().maxId() + 1, name, profilePic));
+        updateUser();
     }
 
     /**
@@ -99,6 +101,7 @@ public class DatabaseHandler {
                     courseNums[i]
                     ));
         }
+        updateUser();
     }
 
     /**
@@ -107,14 +110,7 @@ public class DatabaseHandler {
      */
     public void insertPersonWithCourses(Person p) {
         db.personWithCoursesDAO().insert(p);
-    }
-
-    /**
-     * Insert a course entry
-     * @param courseEntry the course entry
-     */
-    public void insertCourse(CourseEntry courseEntry) {
-        db.courseEntryDAO().insert(courseEntry);
+        updateUser();
     }
 
     /**
@@ -124,5 +120,44 @@ public class DatabaseHandler {
      */
     public PersonWithCourses getPersonWithCourses(Person p) {
         return db.personWithCoursesDAO().get(p.personId);
+    }
+
+    /**
+     * Get a person's courses from their id
+     * @param personId person id
+     * @return their list of courses
+     */
+    public List<CourseEntry> getPersonsCourses(int personId) {
+        updateUser();
+        return db.personWithCoursesDAO().get(personId).getCourses();
+    }
+
+    /**
+     * Insert a course entry
+     * @param courseEntry the course entry
+     */
+    public void insertCourse(CourseEntry courseEntry) {
+        db.courseEntryDAO().insert(courseEntry);
+        updateUser();
+    }
+
+    /**
+     * Update an entry
+     * @param id person id
+     * @param name name
+     * @param profilePic pfp
+     */
+    public void updatePerson(int id, String name, byte[] profilePic) {
+        db.personWithCoursesDAO().update(id, name, profilePic);
+        updateUser();
+    }
+
+    /**
+     * Delete a course
+     * @param courseId the course id
+     */
+    public void deleteCourse(int courseId) {
+        db.courseEntryDAO().deleteCourse(courseId);
+        updateUser();
     }
 }
