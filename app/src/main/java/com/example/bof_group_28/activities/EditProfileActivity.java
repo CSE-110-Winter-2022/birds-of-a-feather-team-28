@@ -1,41 +1,30 @@
 package com.example.bof_group_28.activities;
 
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
-import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.SELECTED_STUDENT_COURSES;
-import static com.example.bof_group_28.viewAdapters.StudentViewAdapter.SELECTED_STUDENT_NAME;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.ArraySet;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bof_group_28.R;
-import com.example.bof_group_28.utility.Utilities;
-import com.example.bof_group_28.utility.services.NearbyStudentsService;
 
-import java.util.Set;
-
-import model.db.AppDatabase;
 import model.db.Person;
-import model.db.PersonWithCourses;
 
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    private AppDatabase db;
     private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-        db = AppDatabase.singleton(this);
         userName = user.getName();
 
         TextView nameField = findViewById(R.id.personsNameField);
@@ -81,7 +70,7 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        db.personWithCoursesDAO().update(personToUpdate.personId, name, personToUpdate.profilePic);
+        databaseHandler.updatePerson(personToUpdate.personId, name, personToUpdate.profilePic);
         Toast.makeText(this, "Name updated successfully", Toast.LENGTH_SHORT).show();
     }
 }

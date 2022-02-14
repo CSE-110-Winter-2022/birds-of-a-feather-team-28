@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 public class ManageClassesActivity extends AppCompatActivity{
     private RecyclerView courseRV;
-    private AppDatabase db;
     // Arraylist for storing data
     private ArrayList<CourseEntry> courseEntries;
 
@@ -32,11 +31,8 @@ public class ManageClassesActivity extends AppCompatActivity{
 
         courseRV = findViewById(R.id.courseListView);
 
-        //FIXME refactor to singleton person
-        db = AppDatabase.singleton(this);
-
         //query list of courses for user form database
-        courseEntries = (ArrayList<CourseEntry>) db.personWithCoursesDAO().get(1).getCourses();
+        courseEntries = (ArrayList<CourseEntry>) user.getCourses();
 
         // initialize adapter and pass list of courses
         ManageCourseViewAdapter courseAdapter = new ManageCourseViewAdapter(this, courseEntries);
