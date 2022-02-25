@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:onClick="onGoogleConfirmName"
             android:text="Confirm Name"
-            tools:layout_marginTop="50dp" />
+            tools:layout_marginTop="50dp"
+            tools:visibility="invisible" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
