@@ -115,14 +115,15 @@ public class DatabaseHandler {
      * @param subjects list of subjects
      * @param courseNums list of courseNums
      */
-    public void insertCourses(Person p, String[] years, String[] quarters, String[] subjects, String[] courseNums) {
+    public void insertCourses(Person p, String[] years, String[] quarters, String[] subjects, String[] courseNums, String[] sizes) {
         for (int i = 0; i < years.length; i++){
             db.courseEntryDAO().insert(new CourseEntry(db.courseEntryDAO().maxId() + 1,
                     p.personId,
                     years[i],
                     quarters[i],
                     subjects[i],
-                    courseNums[i]
+                    courseNums[i],
+                    sizes[i]
                     ));
         }
         updateUser();

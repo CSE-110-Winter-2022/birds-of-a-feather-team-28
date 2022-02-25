@@ -32,19 +32,19 @@ public class CourseEntryDAO {
         Person person = new Person(1, "John Doe", null);
         db.personWithCoursesDAO().insert(person);
 
-        CourseEntry courseEntry = new CourseEntry(1, 1, "2022", "WI22", "CSE", "101");
+        CourseEntry courseEntry = new CourseEntry(1, 1, "2022", "WI22", "CSE", "101", "Tiny");
         db.courseEntryDAO().insert(courseEntry);
         courseList.add(courseEntry);
 
-        courseEntry = new CourseEntry(2, 1, "2022", "WI22", "CSE", "102");
+        courseEntry = new CourseEntry(2, 1, "2022", "WI22", "CSE", "102", "Tiny");
         db.courseEntryDAO().insert(courseEntry);
         courseList.add(courseEntry);
 
-        courseEntry = new CourseEntry(3, 1, "2022", "WI22", "MGT", "103");
+        courseEntry = new CourseEntry(3, 1, "2022", "WI22", "MGT", "103", "Tiny");
         db.courseEntryDAO().insert(courseEntry);
         courseList.add(courseEntry);
 
-        courseEntry = new CourseEntry(4, 1, "2022", "WI22", "CSE", "104");
+        courseEntry = new CourseEntry(4, 1, "2022", "WI22", "CSE", "104", "Tiny");
         db.courseEntryDAO().insert(courseEntry);
         courseList.add(courseEntry);
     }
@@ -68,11 +68,11 @@ public class CourseEntryDAO {
 
     @Test
     public void updateCourses() {
-        db.courseEntryDAO().update(1,1,"MGT", "111", "2022", "WI22");
+        db.courseEntryDAO().update(1,1,"MGT", "111", "2022", "WI22", "Tiny");
         assertEquals("MGT", db.courseEntryDAO().get(1).subject);
         assertEquals("111", db.courseEntryDAO().get(1).courseNum);
 
-        db.courseEntryDAO().update(1,1,"CSE", "101", "2022", "WI22");
+        db.courseEntryDAO().update(1,1,"CSE", "101", "2022", "WI22", "Tiny");
         assertEquals("CSE", db.courseEntryDAO().get(1).subject);
         assertEquals("101", db.courseEntryDAO().get(1).courseNum);
 
@@ -92,7 +92,7 @@ public class CourseEntryDAO {
 
     @Test
     public void insertCourses() {
-        CourseEntry courseEntry = new CourseEntry(9, 1, "2022", "WI22", "WCWP", "109");
+        CourseEntry courseEntry = new CourseEntry(9, 1, "2022", "WI22", "WCWP", "109", "Tiny");
         db.courseEntryDAO().insert(courseEntry);
         assertEquals("WCWP", db.courseEntryDAO().get(9).subject);
         assertEquals("109", db.courseEntryDAO().get(9).courseNum);

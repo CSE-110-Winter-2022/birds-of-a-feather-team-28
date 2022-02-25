@@ -135,15 +135,15 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             Person fakePersonTwo = new Person(db.personWithCoursesDAO().maxId() + 2, "Lily", null);
 
             CourseEntry fakeCourseOne = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonOne.personId,
-                    "2022", "WI", "CSE", "12");
+                    "2022", "WI", "CSE", "12", "Tiny");
             databaseHandler.insertCourse(fakeCourseOne);
 
             CourseEntry fakeCourseTwo = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonTwo.personId,
-                    "2022", "WI", "CSE", "12");
+                    "2022", "WI", "CSE", "12", "Tiny");
             databaseHandler.insertCourse(fakeCourseTwo);
 
             CourseEntry fakeCourseThree = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonTwo.personId,
-                    "2022", "WI", "CSE", "20");
+                    "2022", "WI", "CSE", "20", "Tiny");
             databaseHandler.insertCourse(fakeCourseThree);
 
             databaseHandler.insertPersonWithCourses(fakePersonOne);

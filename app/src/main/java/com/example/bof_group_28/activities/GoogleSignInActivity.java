@@ -57,14 +57,19 @@ public class GoogleSignInActivity extends AppCompatActivity {
             if (acct != null) {
                 String personName = acct.getDisplayName();
                 Log.v(TAG, "Signed in as " + personName);
+                if (personName.isEmpty()) {
+                    personName = "Empty Name";
+                }
 
                 TextView editGoogleName = findViewById(R.id.editGoogleName);
                 editGoogleName.setText(personName);
                 editGoogleName.setVisibility(VISIBLE);
+                Log.v(TAG, "Edit Google Name Field now Visible");
 
 
                 Button confirmGoogleNameButton = findViewById(R.id.confirmGoogleNameButton);
                 confirmGoogleNameButton.setVisibility(VISIBLE);
+                Log.v(TAG, "Google Confirm Name Button now Visible");
 
                 Toast.makeText(this, "Please confirm your name.", Toast.LENGTH_SHORT).show();
             }

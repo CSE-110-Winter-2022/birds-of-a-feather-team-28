@@ -26,14 +26,18 @@ public class CourseEntry {
     @ColumnInfo(name = "course_num")
     public String courseNum;
 
+    @ColumnInfo(name = "size")
+    public String size;
+
     public CourseEntry(int courseId, int personId, String year,
-                       String quarter, String subject, String courseNum) {
+                       String quarter, String subject, String courseNum, String size) {
         this.courseId = courseId;
         this.personId = personId;
         this.year = year;
         this.quarter = quarter;
         this.subject = subject;
         this.courseNum = courseNum;
+        this.size = size;
     }
 
     @NonNull
@@ -53,6 +57,7 @@ public class CourseEntry {
         return (year.equals(otherCourse.year)
                 && quarter.equals(otherCourse.quarter)
                 && subject.equals(otherCourse.subject)
-                && courseNum.equals(otherCourse.courseNum));
+                && courseNum.equals(otherCourse.courseNum)
+                && size.equals(otherCourse.size));
     }
 }
