@@ -51,6 +51,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
      * @param account the account
      */
     public void updateUI(GoogleSignInAccount account) {
+        //FIXME: not called often enough? When you first login does not prompt a name change
         if (account !=  null) {
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
             if (acct != null) {
