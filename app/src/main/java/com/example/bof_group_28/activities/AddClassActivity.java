@@ -6,8 +6,6 @@ import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,14 +18,17 @@ import android.widget.Toast;
 
 import com.example.bof_group_28.R;
 
-import model.db.AppDatabase;
 import model.db.CourseEntry;
 
-public class AddClassActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-    private Spinner spinner;
+public class AddClassActivity extends AppCompatActivity {
+    private Spinner quarterSpinner;
+    private Spinner sizeSpinner;
     //Acceptable quarters, empty string is default but validation prevents database insertion
-    private static final String[] quarterNames =
-            {"","FA","WI", "SP", "SS1", "SS2", "SSS"};
+    //TODO From Aiden ^^ this is janky code
+    private static final String[] QUARTER_NAMES =
+            {"", "FA", "WI", "SP", "SS1", "SS2", "SSS"};
+    private static final String[] SIZES =
+            {"", "Tiny (<40)", "Small (40-75)", "Medium (75-150)", "Large (150-250)", "Huge (250-400)", "Gigantic (400+)" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +36,86 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_class);
 
-        spinner = (Spinner)findViewById(R.id.quarter_dd);
-        ArrayAdapter<String>adapter = new ArrayAdapter<String>(AddClassActivity.this,
-                android.R.layout.simple_spinner_item,quarterNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
+        quarterSpinner = (Spinner)findViewById(R.id.quarter_dd);
+        ArrayAdapter<String>quarterAdapter = new ArrayAdapter<String>(AddClassActivity.this,
+                android.R.layout.simple_spinner_item, QUARTER_NAMES);
+        quarterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        quarterSpinner.setAdapter(quarterAdapter);
+        quarterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            //https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
+            public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+                TextView text = findViewById(R.id.quarter_txt);
+                Log.v("AddClassActivity", "Quarter Chosen");
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        text.setText("FA");
+                        break;
+                    case 2:
+                        text.setText("WI");
+                        break;
+                    case 3:
+                        text.setText("SP");
+                        break;
+                    case 4:
+                        text.setText("SS1");
+                        break;
+                    case 5:
+                        text.setText("SS2");
+                        break;
+                    case 6:
+                        text.setText("SSS");
+                        break;
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        // TODO: when a case 0 sets text to empty, does not properly save previous input
+        sizeSpinner = (Spinner)findViewById(R.id.size_dd);
+        ArrayAdapter<String>sizeAdapter = new ArrayAdapter<String>(AddClassActivity.this,
+                android.R.layout.simple_spinner_item, SIZES);
+        sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sizeSpinner.setAdapter(sizeAdapter);
+        sizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            //https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
+            public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+                TextView text = findViewById(R.id.sizeTxt);
+                Log.v("AddClassActivity", "Size Chosen");
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        text.setText(SIZES[1]);
+                        break;
+                    case 2:
+                        text.setText(SIZES[2]);
+                        break;
+                    case 3:
+                        text.setText(SIZES[3]);
+                        break;
+                    case 4:
+                        text.setText(SIZES[4]);
+                        break;
+                    case 5:
+                        text.setText(SIZES[5]);
+                        break;
+                    case 6:
+                        text.setText(SIZES[6]);
+                        break;
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         loadPreviousEntry();
     }
 
@@ -71,6 +146,10 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         editor.putString("quarter", quarterView.getText().toString());
         editor.apply();
 
+        TextView sizeView = findViewById(R.id.sizeTxt);
+        editor.putString("size", sizeView.getText().toString());
+        editor.apply();
+
     }
 
     public void loadPreviousEntry() {
@@ -91,8 +170,15 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
 
         String quarter = preferences.getString("quarter","");
         TextView quarterView = findViewById(R.id.quarter_txt);
-        quarterView.setText(quarter);
+        if (!quarter.isEmpty()) {
+            quarterView.setText(quarter);
+        }
 
+        String size = preferences.getString("size","");
+        TextView sizeView = findViewById(R.id.sizeTxt);
+        if (!size.isEmpty()) {
+            sizeView.setText(size);
+        }
 
     }
 
@@ -118,8 +204,11 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         text = findViewById(R.id.quarter_txt);
         String quarterTxt = text.getText().toString();
 
+        text = findViewById(R.id.sizeTxt);
+        String sizeTxt = text.getText().toString();
+
         int newCourseID = databaseHandler.db.courseEntryDAO().maxId()+1;
-        CourseEntry courseToAdd = new CourseEntry(newCourseID, user.getId(), yearTxt, quarterTxt, subjectTxt, courseNumTxt);
+        CourseEntry courseToAdd = new CourseEntry(newCourseID, user.getId(), yearTxt, quarterTxt, subjectTxt, courseNumTxt, sizeTxt);
 
         if (validateCourse(courseToAdd)) {
             Log.v("AddClassActivity", "Course Successfully Added");
@@ -136,7 +225,8 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         if (courseToAdd.year == null || courseToAdd.year == ""
             || courseToAdd.quarter == null || courseToAdd.quarter == ""
             || courseToAdd.subject == null || courseToAdd.subject == ""
-            || courseToAdd.courseNum == null || courseToAdd.courseNum == "") {
+            || courseToAdd.courseNum == null || courseToAdd.courseNum == ""
+            || courseToAdd.size == null || courseToAdd.size == "") {
 
             Toast.makeText(this, "Make sure no fields are empty.", Toast.LENGTH_LONG).show();
             flag = false;
@@ -151,7 +241,7 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
             Toast.makeText(this, "Make sure the subject is a 3 or 4 letter alphabetic code.", Toast.LENGTH_LONG).show();
             flag = false;
         }
-        //Check courseNum is a code beteween 2 to 4 characters
+        //Check courseNum is a code between 2 to 4 characters
         if (courseToAdd.courseNum.length() < 2 || courseToAdd.courseNum.length() > 4) {
             Toast.makeText(this, "Make sure the Course Number is a 2 to 4 digit code.", Toast.LENGTH_LONG).show();
             flag = false;
@@ -168,48 +258,6 @@ public class AddClassActivity extends AppCompatActivity implements AdapterView.O
         }
 
         return flag;
-    }
-
-    @Override
-    //https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
-    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        TextView text = findViewById(R.id.quarter_txt);
-        Log.v("AddClassActivity", "Quarter Chosen");
-        switch (position) {
-            case 0:
-                // Whatever you want to happen when the first item gets selected
-                //text.setText("FA");
-                break;
-            case 1:
-                // Whatever you want to happen when the first item gets selected
-                text.setText("FA");
-                break;
-            case 2:
-                // Whatever you want to happen when the second item gets selected
-                text.setText("WI");
-                break;
-            case 3:
-                // Whatever you want to happen when the third item gets selected
-                text.setText("SP");
-                break;
-            case 4:
-                // Whatever you want to happen when the second item gets selected
-                text.setText("SS1");
-                break;
-            case 5:
-                // Whatever you want to happen when the second item gets selected
-                text.setText("SS2");
-                break;
-            case 6:
-                // Whatever you want to happen when the second item gets selected
-                text.setText("SSS");
-                break;
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // TODO Auto-generated method stub
     }
 
 }
