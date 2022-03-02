@@ -17,18 +17,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bof_group_28.R;
+import com.example.bof_group_28.utility.enums.QuarterName;
+import com.example.bof_group_28.utility.enums.SizeName;
+
+import java.util.Arrays;
 
 import model.db.CourseEntry;
 
 public class AddClassActivity extends AppCompatActivity {
-    private Spinner quarterSpinner;
-    private Spinner sizeSpinner;
-    //Acceptable quarters, empty string is default but validation prevents database insertion
-    //TODO From Aiden ^^ this is janky code
-    private static final String[] QUARTER_NAMES =
-            {"", "FA", "WI", "SP", "SS1", "SS2", "SSS"};
-    private static final String[] SIZES =
-            {"", "Tiny (<40)", "Small (40-75)", "Medium (75-150)", "Large (150-250)", "Huge (250-400)", "Gigantic (400+)" };
+    //https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
+    //Major resource for spinners
+    Spinner quarterSpinner;
+    Spinner sizeSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,93 +36,58 @@ public class AddClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_class);
 
-        quarterSpinner = (Spinner)findViewById(R.id.quarter_dd);
-        ArrayAdapter<String>quarterAdapter = new ArrayAdapter<String>(AddClassActivity.this,
-                android.R.layout.simple_spinner_item, QUARTER_NAMES);
+        // Create dropdown for Quarters
+        quarterSpinner = findViewById(R.id.quarter_dd);
+        ArrayAdapter<String>quarterAdapter = new ArrayAdapter<>(AddClassActivity.this,
+                android.R.layout.simple_spinner_item, QuarterName.types());
         quarterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         quarterSpinner.setAdapter(quarterAdapter);
         quarterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            //https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
                 TextView text = findViewById(R.id.quarter_txt);
-                Log.v("AddClassActivity", "Quarter Chosen");
-                switch (position) {
-                    case 0:
-                        break;
-                    case 1:
-                        text.setText("FA");
-                        break;
-                    case 2:
-                        text.setText("WI");
-                        break;
-                    case 3:
-                        text.setText("SP");
-                        break;
-                    case 4:
-                        text.setText("SS1");
-                        break;
-                    case 5:
-                        text.setText("SS2");
-                        break;
-                    case 6:
-                        text.setText("SSS");
-                        break;
+                if (position != 0) {
+                    text.setText(QuarterName.types()[position]);
+                } else {
+                    text.setText("");
                 }
+                Log.v("AddClassActivity", "Quarter Chosen");
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
+                // Do nothing
             }
         });
 
-        // TODO: when a case 0 sets text to empty, does not properly save previous input
-        sizeSpinner = (Spinner)findViewById(R.id.size_dd);
-        ArrayAdapter<String>sizeAdapter = new ArrayAdapter<String>(AddClassActivity.this,
-                android.R.layout.simple_spinner_item, SIZES);
+        // Create dropdown for Size
+        sizeSpinner = findViewById(R.id.size_dd);
+        ArrayAdapter<String>sizeAdapter = new ArrayAdapter<>(AddClassActivity.this,
+                android.R.layout.simple_spinner_item, SizeName.types());
         sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sizeSpinner.setAdapter(sizeAdapter);
         sizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            //https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-                TextView text = findViewById(R.id.sizeTxt);
-                Log.v("AddClassActivity", "Size Chosen");
-                switch (position) {
-                    case 0:
-                        break;
-                    case 1:
-                        text.setText(SIZES[1]);
-                        break;
-                    case 2:
-                        text.setText(SIZES[2]);
-                        break;
-                    case 3:
-                        text.setText(SIZES[3]);
-                        break;
-                    case 4:
-                        text.setText(SIZES[4]);
-                        break;
-                    case 5:
-                        text.setText(SIZES[5]);
-                        break;
-                    case 6:
-                        text.setText(SIZES[6]);
-                        break;
+                TextView text = findViewById(R.id.size_txt);
+                if (position != 0) {
+                    text.setText(SizeName.types()[position]);
+                } else {
+                    text.setText("");
                 }
+                Log.v("AddClassActivity", "Size Chosen");
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
+                // Do nothing
             }
         });
+
         loadPreviousEntry();
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        savePreviousEntry();
     }
 
     public void savePreviousEntry(){
@@ -132,21 +97,17 @@ public class AddClassActivity extends AppCompatActivity {
 
         TextView subjectView = findViewById(R.id.subject_entry);
         editor.putString("subject", subjectView.getText().toString());
-        editor.apply();
 
         TextView courseNumView = findViewById(R.id.course_num_entry);
         editor.putString("courseNum", courseNumView.getText().toString());
-        editor.apply();
 
         TextView yearView = findViewById(R.id.year_entry);
         editor.putString("year", yearView.getText().toString());
-        editor.apply();
 
         TextView quarterView = findViewById(R.id.quarter_txt);
         editor.putString("quarter", quarterView.getText().toString());
-        editor.apply();
 
-        TextView sizeView = findViewById(R.id.sizeTxt);
+        TextView sizeView = findViewById(R.id.size_txt);
         editor.putString("size", sizeView.getText().toString());
         editor.apply();
 
@@ -169,21 +130,15 @@ public class AddClassActivity extends AppCompatActivity {
         yearView.setText(year);
 
         String quarter = preferences.getString("quarter","");
-        TextView quarterView = findViewById(R.id.quarter_txt);
-        if (!quarter.isEmpty()) {
-            quarterView.setText(quarter);
-        }
+        quarterSpinner.setSelection(Arrays.asList(QuarterName.types()).indexOf(quarter));
 
         String size = preferences.getString("size","");
-        TextView sizeView = findViewById(R.id.sizeTxt);
-        if (!size.isEmpty()) {
-            sizeView.setText(size);
-        }
+        sizeSpinner.setSelection(Arrays.asList(SizeName.types()).indexOf(size));
 
     }
 
-
     public void onDoneClicked(View view) {
+        savePreviousEntry();
         finish();
     }
 
@@ -204,7 +159,7 @@ public class AddClassActivity extends AppCompatActivity {
         text = findViewById(R.id.quarter_txt);
         String quarterTxt = text.getText().toString();
 
-        text = findViewById(R.id.sizeTxt);
+        text = findViewById(R.id.size_txt);
         String sizeTxt = text.getText().toString();
 
         int newCourseID = databaseHandler.db.courseEntryDAO().maxId()+1;
