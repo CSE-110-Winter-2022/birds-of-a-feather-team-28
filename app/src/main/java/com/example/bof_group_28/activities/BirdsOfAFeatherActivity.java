@@ -1,11 +1,11 @@
 package com.example.bof_group_28.activities;
 
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
+import static com.example.bof_group_28.utility.classes.SessionManager.DEFAULT_SESSION_NAME;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -17,11 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.util.ArraySet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.example.bof_group_28.utility.Utilities;
+import com.example.bof_group_28.utility.classes.SessionManager;
 import com.example.bof_group_28.utility.classes.Converters;
 import com.example.bof_group_28.utility.classes.DatabaseHandler;
 import com.example.bof_group_28.utility.classes.DummyStudentFinder;
@@ -48,6 +50,9 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     // User of the App
     public static PersonWithCourses user;
 
+    // AppDatabase Mediator
+    public static SessionManager sessionManager;
+
     // Student View Management
     private RecyclerView studentRecyclerView;
     private RecyclerView.LayoutManager studentLayoutManager;
@@ -69,7 +74,6 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     // Database
     public static DatabaseHandler databaseHandler;
-    private AppDatabase db;
 
     /**
      * Create the Birds of a Feather Activity on App Startup
@@ -80,11 +84,18 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = AppDatabase.singleton(getApplicationContext());
-        //db.clearAllTables();
-
+        sessionManager = new SessionManager(getApplicationContext());
         bofStarted = false;
-        databaseHandler = new DatabaseHandler(db, getApplicationContext());
+        databaseHandler = new DatabaseHandler(sessionManager.getAppDatabase(), getApplicationContext());
+
+        if (sessionManager.getCurrentSession().equals(DEFAULT_SESSION_NAME)) {
+            databaseHandler.clearNonUserEntries();
+        }
+
+        TextView sessionNameField = findViewById(R.id.sessionNameField);
+        sessionNameField.setText(sessionManager.getCurrentSession());
+
+        Log.v(TAG, "Sessions Available: " + sessionManager.sessions.toString());
 
         if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             Log.v(TAG, "User is not logged in through Google.");
@@ -108,14 +119,40 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             // Stop the Nearby Students Service
             stopService(nearbyStudentService);
         } else {
-            startBirdsOfFeather(user);
-            this.bofStarted = true;
-            setToStopButton();
-
-            // Start the Nearby Students Service to check for nearby students
-            nearbyStudentService = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
-            startService(nearbyStudentService);
+            showNewCurrentPrompt("Do you want to start a new session or use an existing one?");
         }
+    }
+
+    public void clickStartButton() {
+        startBirdsOfFeather(user);
+        this.bofStarted = true;
+        setToStopButton();
+
+        // Start the Nearby Students Service to check for nearby students
+        nearbyStudentService = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
+        startService(nearbyStudentService);
+    }
+
+    /**
+     * Show alert for prompt
+     * @param message the message
+     */
+    public void showNewCurrentPrompt(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setPositiveButton("New", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        sessionManager.changeSession(DEFAULT_SESSION_NAME);
+                        clickStartButton();
+                    }
+                })
+                .setNegativeButton("Previous", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        clickStartButton();
+                        //TODO: Prompt user to select a previous course
+                    }
+                });
+        builder.create().show();
     }
 
     /**
@@ -129,6 +166,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         // Faked list of nearby students
         List<PersonWithCourses> fakeNearby = new ArrayList<>();
 
+        AppDatabase db = sessionManager.getAppDatabase();
         if (db.personWithCoursesDAO().maxId() < 3) {
 
             Person fakePersonOne = new Person(db.personWithCoursesDAO().maxId() + 1, "Bob", null);
