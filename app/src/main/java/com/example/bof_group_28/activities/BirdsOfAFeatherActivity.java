@@ -15,12 +15,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.RoomOpenHelper;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bof_group_28.utility.Utilities;
 import com.example.bof_group_28.utility.classes.SessionManager;
@@ -106,24 +112,29 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         }
     }
 
+    public void updateSessionNameField() {
+        TextView sessionNameField = findViewById(R.id.sessionNameField);
+        sessionNameField.setText(sessionManager.getCurrentSession());
+    }
+
     /**
      * Handle pressing of the start / stop button
      * @param view the view
      */
     public void onBofButtonClick(View view) {
         if (bofStarted) {
-            stopBirdsOfFeather();
-            this.bofStarted = false;
-            setToStartButton();
-
-            // Stop the Nearby Students Service
-            stopService(nearbyStudentService);
+            if (sessionManager.isDefaultSession()) {
+                showSaveCurrentPrompt("Do you want to save this session?");
+            } else {
+                clickStopButton();
+            }
         } else {
             showNewCurrentPrompt("Do you want to start a new session or use an existing one?");
         }
     }
 
     public void clickStartButton() {
+        updateSessionNameField();
         startBirdsOfFeather(user);
         this.bofStarted = true;
         setToStopButton();
@@ -131,6 +142,16 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         // Start the Nearby Students Service to check for nearby students
         nearbyStudentService = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
         startService(nearbyStudentService);
+    }
+
+    public void clickStopButton() {
+        updateSessionNameField();
+        stopBirdsOfFeather();
+        this.bofStarted = false;
+        setToStartButton();
+
+        // Stop the Nearby Students Service
+        stopService(nearbyStudentService);
     }
 
     /**
@@ -152,6 +173,35 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                         //TODO: Prompt user to select a previous course
                     }
                 });
+        builder.create().show();
+    }
+
+    public void showSaveCurrentPrompt(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        final EditText input = new EditText(this);
+        builder.setMessage(message)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String inputName = input.getText().toString();
+                        // TODO: Prompt on override and do less lazy checking in general
+                        if (inputName.equals(DEFAULT_SESSION_NAME) || inputName.isEmpty()) {
+                            Toast.makeText(getApplicationContext(), "Invalid Session Name", Toast.LENGTH_SHORT).show();
+                            showSaveCurrentPrompt(message);
+                            return;
+                        }
+                        sessionManager.saveSession(inputName);
+                        sessionManager.changeSession(inputName);
+                        System.out.println("MASTER: " + databaseHandler.db.getOpenHelper().getDatabaseName());
+                        clickStopButton();
+                    }
+                })
+                .setNegativeButton("Don't Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        clickStopButton();
+                    }
+                });
+        builder.setView(input);
         builder.create().show();
     }
 

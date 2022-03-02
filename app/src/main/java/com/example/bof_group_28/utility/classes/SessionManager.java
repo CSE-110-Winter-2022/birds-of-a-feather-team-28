@@ -1,15 +1,16 @@
 package com.example.bof_group_28.utility.classes;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.ArraySet;
+import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +35,10 @@ public class SessionManager {
         this.appDatabase = AppDatabase.singleton(context, currentSession);
         sessions = getSessionsList();
         saveCurrentSessionAsLastUsed();
+    }
+
+    public boolean isDefaultSession() {
+        return (currentSession.equals(DEFAULT_SESSION_NAME));
     }
 
     public AppDatabase getAppDatabase() {
@@ -85,12 +90,23 @@ public class SessionManager {
     }
 
     /**
+     * "save" the current default session
+     * @param sessionName session
+     */
+    public void saveSession(String sessionName) {
+        Log.v(TAG, "Saving Session to: " + sessionName);
+        AppDatabase.renameCurrentDatabase(context, sessionName);
+        sessions.add(sessionName);
+    }
+
+    /**
      * Change the session to some session name.
      * Updates user for that session with the current user in memory, as that is most updated
      * @param sessionName new name of session
      */
     public void changeSession(String sessionName) {
         if (!sessions.contains(sessionName) && !sessionName.equals(DEFAULT_SESSION_NAME)) {
+            Log.v(TAG, "Changing Session to Non-Existing Session: " + sessionName);
             sessions.add(sessionName);
             saveSessionsList();
             // Start a new session and clear data which should not be here
@@ -98,9 +114,11 @@ public class SessionManager {
             databaseHandler.db.clearAllTables();
         } else {
             // Pull from existing session
+            Log.v(TAG, "Changing Session to Existing Session: " + sessionName);
             AppDatabase.singleton(context, sessionName);
         }
 
+        currentSession = sessionName;
         // Insert the original user stored in memory
         // Make sure to only delete original user if they actually exist in the database
         if (appDatabase.personWithCoursesDAO().count() > 0) {
@@ -113,9 +131,11 @@ public class SessionManager {
         databaseHandler.clearCourses(user.getId());
         databaseHandler.insertCourseList(courses);
 
+        // IMPORTANT: Always clear default database as it represents the unsaved database
         if (currentSession.equals(DEFAULT_SESSION_NAME)) {
             databaseHandler.clearNonUserEntries();
         }
+
         saveCurrentSessionAsLastUsed();
     }
 
