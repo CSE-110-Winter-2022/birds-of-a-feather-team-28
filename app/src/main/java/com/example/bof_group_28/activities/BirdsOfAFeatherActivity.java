@@ -86,13 +86,13 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         bofStarted = false;
         databaseHandler = new DatabaseHandler(db, getApplicationContext());
 
-        if (GoogleSignIn.getLastSignedInAccount(this) == null) {
+        /*if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             Log.v(TAG, "User is not logged in through Google.");
             Intent googleIntent = new Intent(this, GoogleSignInActivity.class);
             startActivity(googleIntent);
         } else {
             Log.v(TAG, "User is already logged in!");
-        }
+        }*/
     }
 
     /**

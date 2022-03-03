@@ -36,7 +36,7 @@
             <TextView
                 android:id="@+id/courseSubject"
                 android:layout_height="match_parent"
-                android:layout_width="125dp"
+                android:layout_width="40dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="25dp"
                 android:layout_toEndOf="@id/deleteCourseButton"
@@ -47,10 +47,21 @@
             <TextView
                 android:id="@+id/courseNum"
                 android:layout_height="match_parent"
-                android:layout_width="125dp"
-                android:layout_marginStart="15dp"
+                android:layout_width="40dp"
+                android:layout_marginStart="0dp"
                 android:layout_marginTop="25dp"
                 android:layout_toEndOf="@id/courseSubject"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/courseSize"
+                android:layout_height="match_parent"
+                android:layout_width="100dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_toEndOf="@id/courseNum"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
