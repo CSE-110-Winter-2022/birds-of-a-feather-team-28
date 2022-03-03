@@ -52,10 +52,10 @@ public class DatabaseInsertionTest {
 
         Person person = new Person(1, "John Doe", null);
         db.personWithCoursesDAO().insert(person);
-        CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110");
+        CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110", "Small (40-75)");
         db.courseEntryDAO().insert(courseEntry);
         //FIXME: bad quarter naming
-        courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101");
+        courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101", "Small (40-75)");
         db.courseEntryDAO().insert(courseEntry);
 
         assertEquals(2, db.courseEntryDAO().maxId());
@@ -76,9 +76,9 @@ public class DatabaseInsertionTest {
         person = new Person(2, "Jane Doe", null);
         db.personWithCoursesDAO().insert(person);
 
-        CourseEntry courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110");
+        CourseEntry courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110", "Small (40-75)");
         db.courseEntryDAO().insert(courseEntry);
-        courseEntry = new CourseEntry(4, 2, "2022", "WI22", "MGT", "181");
+        courseEntry = new CourseEntry(4, 2, "2022", "WI22", "MGT", "181", "Small (40-75)");
         db.courseEntryDAO().insert(courseEntry);
 
         assertEquals(2, db.personWithCoursesDAO().count());
