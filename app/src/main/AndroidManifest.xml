@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bof_group_28">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -28,6 +30,9 @@
 
         <activity
             android:name=".activities.AddClassActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SessionViewActivity"
             android:exported="false" />
         <activity
             android:name=".activities.ManageClassesActivity"

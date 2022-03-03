@@ -36,8 +36,7 @@ public class DatabaseHandler {
      * Setup the database for app startup
      */
     private void runDatabaseSetup(Context context) {
-        db = AppDatabase.singleton(context);
-        clearNonUserEntries();
+        //db = AppDatabase.singleton(context);
         firstTimeUserInitialize();
     }
 
@@ -47,7 +46,6 @@ public class DatabaseHandler {
     private void firstTimeUserInitialize() {
         // runs only when db is empty
         if (db.personWithCoursesDAO().maxId() < 1) {
-            //FIXME Replace with name from googleAccount
             String name = "Name Not Set";
 
             // Add the person to the Database
@@ -155,6 +153,26 @@ public class DatabaseHandler {
     public List<CourseEntry> getPersonsCourses(int personId) {
         updateUser();
         return db.personWithCoursesDAO().get(personId).getCourses();
+    }
+
+    /**
+     * Non UI-safe method to delete courses. DOES NOT UPDATE USER!
+     * @param personId the id of person to clear courses
+     */
+    public void clearCourses(int personId) {
+        for (CourseEntry courseEntry : getPersonsCourses(personId)) {
+            db.courseEntryDAO().deleteCourse(courseEntry.courseId);
+        }
+    }
+
+    /**
+     * Non UI-safe method to insert a list of courses. DOES NOT UPDATE USER
+     * @param courses list of courses
+     */
+    public void insertCourseList(List<CourseEntry> courses) {
+        for (CourseEntry courseEntry : courses) {
+            db.courseEntryDAO().insert(courseEntry);
+        }
     }
 
     /**

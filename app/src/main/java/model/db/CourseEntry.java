@@ -43,7 +43,7 @@ public class CourseEntry {
     @NonNull
     @Override
     public String toString() {
-        return subject + " "  + courseNum + " for " + quarter + " of " + year;
+        return subject + " "  + courseNum + " for " + quarter + " of " + year + " size " + size;
     }
 
     @Override

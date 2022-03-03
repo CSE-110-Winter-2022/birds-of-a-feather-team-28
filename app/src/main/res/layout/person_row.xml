@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/person_button"
+            android:id="@+id/session_button"
             android:layout_width="0dp"
             android:layout_height="57dp"
             android:layout_marginStart="6dp"
@@ -51,7 +51,7 @@
             android:text="Shared Classes"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/person_button"
+            app:layout_constraintStart_toEndOf="@+id/session_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.538" />
 
