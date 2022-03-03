@@ -115,6 +115,42 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         } else {
             Log.v(TAG, "User is already logged in!");
         }
+
+
+        // Setup the nearby students handler
+        Log.v(TAG, "Attempting to instantiate handler");
+        handler = new NearbyStudentsHandler(user, new DummyStudentFinder(new ArrayList<>(), databaseHandler));
+
+        // Setup student view
+        studentRecyclerView = findViewById(R.id.personRecyclerView);
+        studentLayoutManager = new LinearLayoutManager(this);
+        studentRecyclerView.setLayoutManager(studentLayoutManager);
+        studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
+        studentRecyclerView.setAdapter(studentViewAdapter);
+
+        // TODO: Current logic is to refresh every time there is a change. But to check for a change the handler must be
+        // updated which changes ordering and is generally inefficient. Come up with a better way to chekc for change.
+        Handler dbRunHandler = new Handler();
+        dbRunHandler.post (new Runnable() {
+            @Override
+            public void run() {
+                if (!bofStarted && isSessionDifferent(sessionManager.getCurrentSession())) {
+                    handler.refreshStudentClassMap();
+                    studentViewAdapter.clear();
+                    studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
+                    studentRecyclerView.setAdapter(studentViewAdapter);
+                }
+                updateSessionNameField();
+                dbRunHandler.postDelayed(this, 100);
+            }
+        });
+    }
+
+    public boolean isSessionDifferent(String session) {
+        TextView sessionNameField = findViewById(R.id.sessionNameField);
+        return !sessionNameField.getText().toString().equals(session)
+                || !(handler.getStudentsList().containsAll(studentViewAdapter.students)
+                && studentViewAdapter.students.containsAll(handler.getStudentsList()));
     }
 
     public void updateSessionNameField() {
@@ -174,10 +210,10 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                         clickStartButton();
                     }
                 })
-                .setNegativeButton("Previous", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Current", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        //Toast.makeText(getApplicationContext(), "Open a Previous Session in the Bottom Right", Toast.LENGTH_LONG).show();
                         clickStartButton();
-                        //TODO: Prompt user to select a previous course
                     }
                 });
         builder.create().show();
@@ -191,15 +227,23 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String inputName = input.getText().toString();
-                        // TODO: Prompt on override and do less lazy checking in general
                         if (inputName.equals(DEFAULT_SESSION_NAME) || inputName.isEmpty()) {
                             Toast.makeText(getApplicationContext(), "Invalid Session Name", Toast.LENGTH_SHORT).show();
                             showSaveCurrentPrompt(message);
                             return;
                         }
+                        if (sessionManager.getSessionsList().contains(inputName)) {
+                            Toast.makeText(getApplicationContext(), "Session Already Exists", Toast.LENGTH_SHORT).show();
+                            showSaveCurrentPrompt(message);
+                            return;
+                        }
+                        if (inputName.length() > 20) {
+                            Toast.makeText(getApplicationContext(), "Session Name too Long", Toast.LENGTH_SHORT).show();
+                            showSaveCurrentPrompt(message);
+                            return;
+                        }
                         sessionManager.saveSession(inputName);
                         sessionManager.changeSession(inputName);
-                        System.out.println("MASTER: " + databaseHandler.db.getOpenHelper().getDatabaseName());
                         clickStopButton();
                     }
                 })
@@ -230,15 +274,15 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             Person fakePersonTwo = new Person(db.personWithCoursesDAO().maxId() + 2, "Lily", null);
 
             CourseEntry fakeCourseOne = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonOne.personId,
-                    "2022", "WI", "CSE", "12", "Tiny");
+                    "2022", "Winter", "CSE", "12", "Tiny (<40)");
             databaseHandler.insertCourse(fakeCourseOne);
 
             CourseEntry fakeCourseTwo = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonTwo.personId,
-                    "2022", "WI", "CSE", "12", "Tiny");
+                    "2022", "Winter", "CSE", "12", "Tiny (<40)");
             databaseHandler.insertCourse(fakeCourseTwo);
 
             CourseEntry fakeCourseThree = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonTwo.personId,
-                    "2022", "WI", "CSE", "20", "Tiny");
+                    "2022", "Winter", "CSE", "20", "Tiny (<40)");
             databaseHandler.insertCourse(fakeCourseThree);
 
             databaseHandler.insertPersonWithCourses(fakePersonOne);
@@ -270,17 +314,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             fakeNearby.add(db.personWithCoursesDAO().get(2));
             fakeNearby.add(db.personWithCoursesDAO().get(3));
         }
-
-        // Setup the nearby students handler
-        Log.v(TAG, "Attempting to instantiate handler");
-        handler = new NearbyStudentsHandler(user, new DummyStudentFinder(fakeNearby, databaseHandler));
-
-        // Setup student view
-        studentRecyclerView = findViewById(R.id.personRecyclerView);
-        studentLayoutManager = new LinearLayoutManager(this);
-        studentRecyclerView.setLayoutManager(studentLayoutManager);
-        studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
-        studentRecyclerView.setAdapter(studentViewAdapter);
+        // TODO insert fake students
 
         // Setup runnable to check nearby students
         Handler runHandler = new Handler();
@@ -325,6 +359,11 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             studentRecyclerView.setAdapter(studentViewAdapter);
             Log.v(TAG, "Cleared Birds of a Feather student view.");
         }
+    }
+
+    public void onViewSessionsButtonClicked(View view) {
+        Intent intent = new Intent(this, SessionViewActivity.class);
+        startActivity(intent);
     }
 
     /**

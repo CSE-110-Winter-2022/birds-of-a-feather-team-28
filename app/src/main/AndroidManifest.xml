@@ -32,6 +32,9 @@
             android:name=".activities.AddClassActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.SessionViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ManageClassesActivity"
             android:exported="false" />
         <activity
