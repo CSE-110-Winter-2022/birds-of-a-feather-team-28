@@ -115,7 +115,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             //startActivity(googleIntent);
         } else {
             Log.v(TAG, "User is already logged in!");
-        }*/
+        }
 
 
         // Setup the nearby students handler
