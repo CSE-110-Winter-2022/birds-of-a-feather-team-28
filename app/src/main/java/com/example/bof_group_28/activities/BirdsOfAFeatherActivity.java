@@ -2,6 +2,7 @@ package com.example.bof_group_28.activities;
 
 import static com.example.bof_group_28.utility.classes.SessionManager.DEFAULT_SESSION_NAME;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -90,6 +92,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+
         sessionManager = new SessionManager(getApplicationContext());
         bofStarted = false;
         databaseHandler = new DatabaseHandler(sessionManager.getAppDatabase(), getApplicationContext());
@@ -101,12 +105,13 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         TextView sessionNameField = findViewById(R.id.sessionNameField);
         sessionNameField.setText(sessionManager.getCurrentSession());
 
-        Log.v(TAG, "Sessions Available: " + sessionManager.sessions.toString());
+        Log.v(TAG, "Sessions Available: " + sessionManager.getSessionsList().toString());
 
         if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             Log.v(TAG, "User is not logged in through Google.");
-            Intent googleIntent = new Intent(this, GoogleSignInActivity.class);
-            startActivity(googleIntent);
+            //TODO: uncomment
+            //Intent googleIntent = new Intent(this, GoogleSignInActivity.class);
+            //startActivity(googleIntent);
         } else {
             Log.v(TAG, "User is already logged in!");
         }
@@ -126,6 +131,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             if (sessionManager.isDefaultSession()) {
                 showSaveCurrentPrompt("Do you want to save this session?");
             } else {
+                // Certainly save the session
+                sessionManager.saveCurrentSessionToStorage();
                 clickStopButton();
             }
         } else {
