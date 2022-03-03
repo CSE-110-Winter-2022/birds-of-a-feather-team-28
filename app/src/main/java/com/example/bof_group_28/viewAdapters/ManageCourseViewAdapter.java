@@ -51,6 +51,7 @@ public class ManageCourseViewAdapter extends RecyclerView.Adapter<ManageCourseVi
         holder.courseNum.setText(course.courseNum);
         holder.courseQuarter.setText(course.quarter);
         holder.courseYear.setText(course.year);
+        holder.courseSize.setText(course.size);
         Log.v(TAG, "Bound Manage Course Item for " + course.toString());
     }
 
@@ -63,7 +64,7 @@ public class ManageCourseViewAdapter extends RecyclerView.Adapter<ManageCourseVi
     // View holder class for initializing of the manage class row card
     public class Viewholder extends RecyclerView.ViewHolder {
         private CourseEntry currentCourse;
-        private TextView courseSubject, courseNum, courseQuarter, courseYear;
+        private TextView courseSubject, courseNum, courseQuarter, courseYear, courseSize;
         private final Button deleteCourseButton;
         private final Button editCourseButton;
 
@@ -94,6 +95,8 @@ public class ManageCourseViewAdapter extends RecyclerView.Adapter<ManageCourseVi
             courseNum = itemView.findViewById(R.id.courseNum);
             courseQuarter = itemView.findViewById(R.id.courseQuarter);
             courseYear= itemView.findViewById(R.id.courseYear);
+            courseSize= itemView.findViewById(R.id.courseSize);
+
         }
     }
 }
