@@ -7,6 +7,9 @@ import androidx.room.Entity;
 
 @Entity(tableName = "courseentries")
 public class CourseEntry {
+
+    public static final String MSG_DELIMITER = ",";
+
     @PrimaryKey
     @ColumnInfo(name = "course_id")
     public int courseId;
@@ -44,6 +47,18 @@ public class CourseEntry {
     @Override
     public String toString() {
         return subject + " "  + courseNum + " for " + quarter + " of " + year + " size " + size;
+    }
+
+    @NonNull
+    public String toMsgString() {
+
+        return courseId  + MSG_DELIMITER +
+                personId + MSG_DELIMITER +
+                year + MSG_DELIMITER +
+                quarter + MSG_DELIMITER +
+                subject + MSG_DELIMITER +
+                courseNum + MSG_DELIMITER +
+                size + MSG_DELIMITER;
     }
 
     @Override

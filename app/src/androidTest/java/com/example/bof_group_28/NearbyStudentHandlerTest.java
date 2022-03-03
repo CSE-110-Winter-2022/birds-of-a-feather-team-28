@@ -7,15 +7,21 @@ import android.content.Context;
 
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.internal.inject.InstrumentationContext;
+import androidx.test.internal.runner.InstrumentationConnection;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.bof_group_28.utility.classes.DummyStudentFinder;
+import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
+import com.google.android.gms.nearby.messages.Message;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +41,71 @@ public class NearbyStudentHandlerTest {
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
         //userDao = db.getUserDao();
     }
+
+    @Test
+    public void StudentMessageTest() {
+        PersonWithCourses bob = new PersonWithCourses();
+        bob.person = new Person(11, "Bob", null);
+
+        List<CourseEntry> courseEntries = new ArrayList<CourseEntry>();
+        courseEntries.add(new CourseEntry(823741, 5, "2022", "WINTER", "CSE", "110", "500"));
+
+        bob.courseEntries = courseEntries;
+
+        String correctStr = "823741,5,2022,WINTER,CSE,110,500";
+        Message correctMsg = new Message(correctStr.getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(correctMsg, bob.toMessage());
+    }
+
+    @Test
+    public void OneNearbyStudentTest() {
+        PersonWithCourses bob = new PersonWithCourses();
+        bob.person = new Person(11, "Bob", null);
+
+        List<CourseEntry> courseEntries = new ArrayList<CourseEntry>();
+        courseEntries.add(new CourseEntry(823741, 5, "2022", "WINTER", "CSE", "110", "500"));
+
+        bob.courseEntries = courseEntries;
+
+        List<PersonWithCourses> nearbyStudents = new ArrayList<PersonWithCourses>();
+        nearbyStudents.add(bob);
+
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+
+        NearbyStudentsFinder nearbyStudentsFinder = new NearbyStudentsFinder(context);
+        nearbyStudentsFinder.getMessageListener().onFound(( bob).toMessage());
+
+        assertEquals(nearbyStudents.size(), nearbyStudentsFinder.returnNearbyStudents().size());
+    }
+
+    @Test
+    public void MultipleNearbyStudentsTest() {
+        List<CourseEntry> courseEntries = new ArrayList<CourseEntry>();
+        courseEntries.add(new CourseEntry(823741, 5, "2022", "WINTER", "CSE", "110", "500"));
+
+        PersonWithCourses bob = new PersonWithCourses();
+        bob.person = new Person(11, "Bob", null);
+
+        PersonWithCourses lily = new PersonWithCourses();
+        lily.person = new Person(12, "Lily", null);
+
+        bob.courseEntries = courseEntries;
+        lily.courseEntries = courseEntries;
+
+        List<PersonWithCourses> nearbyStudents = new ArrayList<PersonWithCourses>();
+        nearbyStudents.add(bob);
+        nearbyStudents.add(lily);
+
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+
+        NearbyStudentsFinder nearbyStudentsFinder = new NearbyStudentsFinder(context);
+        nearbyStudentsFinder.getMessageListener().onFound((bob).toMessage());
+        nearbyStudentsFinder.getMessageListener().onFound((lily).toMessage());
+
+        assertEquals(nearbyStudents.size(), nearbyStudentsFinder.returnNearbyStudents().size());
+    }
+
     /*@Test
     public void NaiveSharedCoursesTest() {
 
