@@ -107,7 +107,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
         Log.v(TAG, "Sessions Available: " + sessionManager.getSessionsList().toString());
 
-        /*if (GoogleSignIn.getLastSignedInAccount(this) == null) {
+        if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             Log.v(TAG, "User is not logged in through Google.");
 
             //TODO: uncomment
