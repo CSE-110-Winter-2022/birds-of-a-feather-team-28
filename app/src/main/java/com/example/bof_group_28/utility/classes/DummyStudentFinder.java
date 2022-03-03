@@ -28,24 +28,11 @@ public class DummyStudentFinder implements StudentFinder {
 
     @Override
     public void updateNearbyStudents() {
-        //FIXME: get nearby students from bluetooth nearby student service as parseable data
-        List<String> nearbyStudentsStrings = new ArrayList<>();
-        List<Person> personList = new ArrayList<>();
-        for (String studentString : nearbyStudentsStrings) {
-            //FIXME: properly parse bluetooth
-            String name = "TestStudent";
-            byte[] profilePic = null;
-            databaseHandler.insertPerson(name, profilePic);
-            /*for (String courseString : nearbyCourseStrings) {
-                //FIXME: properly parse bluetooth
-
-                List<String> years = new ArrayList<>();
-                List<String> quarters = new ArrayList<>();
-                List<String> subjects = new ArrayList<>();
-                List<String> courseNums = new ArrayList<>();
-
-                databaseHandler.insertPerson(name, profilePic);
-            }*/
+        nearbyStudents.clear();
+        // TODO move methods to databaseHandler instead of raw access db
+        // TODO Refactor such that this is not necessarily in the student finder. It should ALWAYS pull from database
+        for (int i = 2; i <= databaseHandler.db.personWithCoursesDAO().count(); i++) {
+            nearbyStudents.add(databaseHandler.db.personWithCoursesDAO().get(i));
         }
     }
 

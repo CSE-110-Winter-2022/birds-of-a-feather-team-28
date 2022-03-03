@@ -2,7 +2,6 @@ package com.example.bof_group_28.viewAdapters;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,8 +25,6 @@ import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.activities.StudentSelectedActivity;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -42,7 +39,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     public static final String PFP = "pfp";
 
     // Instance Variables
-    private final List<PersonWithCourses> students;
+    public final List<PersonWithCourses> students;
     private final NearbyStudentsHandler handler;
 
     // Constants
@@ -80,7 +77,6 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         holder.setPersonButton(students.get(position));
         holder.setSharedCoursesCount(handler.getStudentClassMap().get(students.get(position)).size());
         holder.setProfilePicture(students.get(position).getProfilePic());
-        Log.v(TAG, "Bound Student Item for " + students.get(position).getName());
     }
 
     @Override
@@ -116,7 +112,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
             this.classCount = itemView.findViewById(R.id.sharedClassesCount);
 
             // onclick to select a student
-            this.personButton = itemView.findViewById(R.id.person_button);
+            this.personButton = itemView.findViewById(R.id.session_button);
             personButton.setOnClickListener((view) -> {
                 Context c = view.getContext();
 

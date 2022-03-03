@@ -1,27 +1,37 @@
 package com.example.bof_group_28.activities;
 
-import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
+import static com.example.bof_group_28.utility.classes.SessionManager.DEFAULT_SESSION_NAME;
 
+import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.RoomOpenHelper;
 
 import android.os.Handler;
-import android.util.ArraySet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.bof_group_28.utility.Utilities;
+import com.example.bof_group_28.utility.classes.SessionManager;
 import com.example.bof_group_28.utility.classes.Converters;
 import com.example.bof_group_28.utility.classes.DatabaseHandler;
 import com.example.bof_group_28.utility.classes.DummyStudentFinder;
@@ -48,6 +58,9 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     // User of the App
     public static PersonWithCourses user;
 
+    // AppDatabase Mediator
+    public static SessionManager sessionManager;
+
     // Student View Management
     private RecyclerView studentRecyclerView;
     private RecyclerView.LayoutManager studentLayoutManager;
@@ -69,7 +82,6 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     // Database
     public static DatabaseHandler databaseHandler;
-    private AppDatabase db;
 
     /**
      * Create the Birds of a Feather Activity on App Startup
@@ -80,18 +92,72 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = AppDatabase.singleton(getApplicationContext());
-        //db.clearAllTables();
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
 
+        sessionManager = new SessionManager(getApplicationContext());
         bofStarted = false;
-        databaseHandler = new DatabaseHandler(db, getApplicationContext());
+        databaseHandler = new DatabaseHandler(sessionManager.getAppDatabase(), getApplicationContext());
 
-        if (GoogleSignIn.getLastSignedInAccount(this) == null) {
+        if (sessionManager.getCurrentSession().equals(DEFAULT_SESSION_NAME)) {
+            databaseHandler.clearNonUserEntries();
+        }
+
+        TextView sessionNameField = findViewById(R.id.sessionNameField);
+        sessionNameField.setText(sessionManager.getCurrentSession());
+
+        Log.v(TAG, "Sessions Available: " + sessionManager.getSessionsList().toString());
+
+        /*if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             Log.v(TAG, "User is not logged in through Google.");
+
+            //TODO: uncomment
             //Intent googleIntent = new Intent(this, GoogleSignInActivity.class);
             //startActivity(googleIntent);
         } else {
             Log.v(TAG, "User is already logged in!");
+        }*/
+
+
+        // Setup the nearby students handler
+        Log.v(TAG, "Attempting to instantiate handler");
+        handler = new NearbyStudentsHandler(user, new DummyStudentFinder(new ArrayList<>(), databaseHandler));
+
+        // Setup student view
+        studentRecyclerView = findViewById(R.id.personRecyclerView);
+        studentLayoutManager = new LinearLayoutManager(this);
+        studentRecyclerView.setLayoutManager(studentLayoutManager);
+        studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
+        studentRecyclerView.setAdapter(studentViewAdapter);
+
+        // TODO: Current logic is to refresh every time there is a change. But to check for a change the handler must be
+        // updated which changes ordering and is generally inefficient. Come up with a better way to chekc for change.
+        Handler dbRunHandler = new Handler();
+        dbRunHandler.post (new Runnable() {
+            @Override
+            public void run() {
+                if (!bofStarted && isSessionDifferent(sessionManager.getCurrentSession())) {
+                    handler.refreshStudentClassMap();
+                    studentViewAdapter.clear();
+                    studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
+                    studentRecyclerView.setAdapter(studentViewAdapter);
+                }
+                updateSessionNameField();
+                dbRunHandler.postDelayed(this, 100);
+            }
+        });
+    }
+
+    public boolean isSessionDifferent(String session) {
+        TextView sessionNameField = findViewById(R.id.sessionNameField);
+        return !sessionNameField.getText().toString().equals(session)
+                || !(handler.getStudentsList().containsAll(studentViewAdapter.students)
+                && studentViewAdapter.students.containsAll(handler.getStudentsList()));
+    }
+
+    public void updateSessionNameField() {
+        TextView sessionNameField = findViewById(R.id.sessionNameField);
+        sessionNameField.setText(sessionManager.getCurrentSession());
+
         }
     }
 
@@ -101,21 +167,96 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
      */
     public void onBofButtonClick(View view) {
         if (bofStarted) {
-            stopBirdsOfFeather();
-            this.bofStarted = false;
-            setToStartButton();
-
-            // Stop the Nearby Students Service
-            stopService(nearbyStudentService);
+            if (sessionManager.isDefaultSession()) {
+                showSaveCurrentPrompt("Do you want to save this session?");
+            } else {
+                // Certainly save the session
+                sessionManager.saveCurrentSessionToStorage();
+                clickStopButton();
+            }
         } else {
-            startBirdsOfFeather(user);
-            this.bofStarted = true;
-            setToStopButton();
-
-            // Start the Nearby Students Service to check for nearby students
-            nearbyStudentService = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
-            startService(nearbyStudentService);
+            showNewCurrentPrompt("Do you want to start a new session or use an existing one?");
         }
+    }
+
+    public void clickStartButton() {
+        updateSessionNameField();
+        startBirdsOfFeather(user);
+        this.bofStarted = true;
+        setToStopButton();
+
+        // Start the Nearby Students Service to check for nearby students
+        nearbyStudentService = new Intent(BirdsOfAFeatherActivity.this, NearbyStudentsService.class);
+        startService(nearbyStudentService);
+    }
+
+    public void clickStopButton() {
+        updateSessionNameField();
+        stopBirdsOfFeather();
+        this.bofStarted = false;
+        setToStartButton();
+
+        // Stop the Nearby Students Service
+        stopService(nearbyStudentService);
+    }
+
+    /**
+     * Show alert for prompt
+     * @param message the message
+     */
+    public void showNewCurrentPrompt(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setPositiveButton("New", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        sessionManager.changeSession(DEFAULT_SESSION_NAME);
+                        clickStartButton();
+                    }
+                })
+                .setNegativeButton("Current", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //Toast.makeText(getApplicationContext(), "Open a Previous Session in the Bottom Right", Toast.LENGTH_LONG).show();
+                        clickStartButton();
+                    }
+                });
+        builder.create().show();
+    }
+
+    public void showSaveCurrentPrompt(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        final EditText input = new EditText(this);
+        builder.setMessage(message)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String inputName = input.getText().toString();
+                        if (inputName.equals(DEFAULT_SESSION_NAME) || inputName.isEmpty()) {
+                            Toast.makeText(getApplicationContext(), "Invalid Session Name", Toast.LENGTH_SHORT).show();
+                            showSaveCurrentPrompt(message);
+                            return;
+                        }
+                        if (sessionManager.getSessionsList().contains(inputName)) {
+                            Toast.makeText(getApplicationContext(), "Session Already Exists", Toast.LENGTH_SHORT).show();
+                            showSaveCurrentPrompt(message);
+                            return;
+                        }
+                        if (inputName.length() > 20) {
+                            Toast.makeText(getApplicationContext(), "Session Name too Long", Toast.LENGTH_SHORT).show();
+                            showSaveCurrentPrompt(message);
+                            return;
+                        }
+                        sessionManager.saveSession(inputName);
+                        sessionManager.changeSession(inputName);
+                        clickStopButton();
+                    }
+                })
+                .setNegativeButton("Don't Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        clickStopButton();
+                    }
+                });
+        builder.setView(input);
+        builder.create().show();
     }
 
     /**
@@ -129,21 +270,22 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         // Faked list of nearby students
         List<PersonWithCourses> fakeNearby = new ArrayList<>();
 
+        AppDatabase db = sessionManager.getAppDatabase();
         if (db.personWithCoursesDAO().maxId() < 3) {
 
             Person fakePersonOne = new Person(db.personWithCoursesDAO().maxId() + 1, "Bob", null);
             Person fakePersonTwo = new Person(db.personWithCoursesDAO().maxId() + 2, "Lily", null);
 
             CourseEntry fakeCourseOne = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonOne.personId,
-                    "2022", "WI", "CSE", "12", "Tiny");
+                    "2022", "Winter", "CSE", "12", "Tiny (<40)");
             databaseHandler.insertCourse(fakeCourseOne);
 
             CourseEntry fakeCourseTwo = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonTwo.personId,
-                    "2022", "WI", "CSE", "12", "Tiny");
+                    "2022", "Winter", "CSE", "12", "Tiny (<40)");
             databaseHandler.insertCourse(fakeCourseTwo);
 
             CourseEntry fakeCourseThree = new CourseEntry(db.courseEntryDAO().maxId() + 1, fakePersonTwo.personId,
-                    "2022", "WI", "CSE", "20", "Tiny");
+                    "2022", "Winter", "CSE", "20", "Tiny (<40)");
             databaseHandler.insertCourse(fakeCourseThree);
 
             databaseHandler.insertPersonWithCourses(fakePersonOne);
@@ -175,17 +317,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             fakeNearby.add(db.personWithCoursesDAO().get(2));
             fakeNearby.add(db.personWithCoursesDAO().get(3));
         }
-
-        // Setup the nearby students handler
-        Log.v(TAG, "Attempting to instantiate handler");
-        handler = new NearbyStudentsHandler(user, new DummyStudentFinder(fakeNearby, databaseHandler));
-
-        // Setup student view
-        studentRecyclerView = findViewById(R.id.personRecyclerView);
-        studentLayoutManager = new LinearLayoutManager(this);
-        studentRecyclerView.setLayoutManager(studentLayoutManager);
-        studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
-        studentRecyclerView.setAdapter(studentViewAdapter);
+        // TODO insert fake students
 
         // Setup runnable to check nearby students
         Handler runHandler = new Handler();
@@ -230,6 +362,11 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             studentRecyclerView.setAdapter(studentViewAdapter);
             Log.v(TAG, "Cleared Birds of a Feather student view.");
         }
+    }
+
+    public void onViewSessionsButtonClicked(View view) {
+        Intent intent = new Intent(this, SessionViewActivity.class);
+        startActivity(intent);
     }
 
     /**

@@ -31,13 +31,14 @@ public class CourseEntryTests {
     //Empty Course insertion edge cases taken care of during add course insertion
     @Test
     public void createCourseTest() {
-        CourseEntry courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "110");
+        CourseEntry courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "110", "Tiny");
         assertEquals(2,courseEntry.courseId);
         assertEquals(1,courseEntry.personId);
         assertEquals("2022", courseEntry.year);
         assertEquals("WI22", courseEntry.quarter);
         assertEquals("CSE", courseEntry.subject);
         assertEquals("110", courseEntry.courseNum);
+        assertEquals("Tiny", courseEntry.size);
     }
 
 }

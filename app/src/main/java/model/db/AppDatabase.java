@@ -1,9 +1,17 @@
 package model.db;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+import static com.example.bof_group_28.utility.classes.SessionManager.DEFAULT_SESSION_NAME;
+
 import android.content.Context;
+import android.util.Log;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+
+import java.io.File;
+import java.util.Arrays;
 
 @Database(entities = {Person.class, CourseEntry.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
@@ -11,13 +19,14 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public static AppDatabase singleton(Context context) {
         if (singletonInstance == null) {
-            singletonInstance = Room.databaseBuilder(context, AppDatabase.class, "persons.db")
+            singletonInstance = Room.databaseBuilder(context, AppDatabase.class, "appDatabase.db")
                     //.createFromAsset("starter-persons.db")
                     .allowMainThreadQueries()
                     .build();
         }
         return singletonInstance;
     }
+
     public abstract PersonWithCoursesDAO personWithCoursesDAO();
     public abstract CourseEntryDAO courseEntryDAO();
 }

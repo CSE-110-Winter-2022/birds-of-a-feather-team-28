@@ -17,7 +17,7 @@ import model.db.AppDatabase;
 import model.db.CourseEntry;
 import model.db.Person;
 
-public class CourseEntryDAO {
+public class CourseEntryDAOTest {
 
     private AppDatabase db;
     ArrayList<CourseEntry> courseList;
