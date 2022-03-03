@@ -157,8 +157,6 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     public void updateSessionNameField() {
         TextView sessionNameField = findViewById(R.id.sessionNameField);
         sessionNameField.setText(sessionManager.getCurrentSession());
-
-        }
     }
 
     /**
