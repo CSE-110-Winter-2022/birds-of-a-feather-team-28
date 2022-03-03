@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.room.Room;
 
 import com.example.bof_group_28.utility.interfaces.StudentFinder;
 import com.google.android.gms.nearby.Nearby;
@@ -13,6 +14,7 @@ import com.google.android.gms.nearby.messages.MessageListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.db.AppDatabase;
 import model.db.CourseEntry;
 import model.db.PersonWithCourses;
 
@@ -20,6 +22,7 @@ public class NearbyStudentsFinder implements StudentFinder {
 
     public static final String TAG = "BOF-TEAM-28";
     public static final String MSG_DELIMITER = ",";
+    public static final int NUM_COURSE_FIELDS = 7;
 
     private MessageListener messageListener;
 
@@ -45,14 +48,12 @@ public class NearbyStudentsFinder implements StudentFinder {
 
     // NOTE: Is this the correct way to read from the DB?
     public void publishToNearbyStudents() {
-        /* Commenting out this code, as I'm not sure if this is the correct way to get Person from Room DB
 
-        AppDatabase db;
-        db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
-        Person curUser = ((Person) db.personWithCoursesDAO().get(1).person); // 1 is always the ID of the current user
+        AppDatabase db = AppDatabase.singleton(context);
+        PersonWithCourses curUser = db.personWithCoursesDAO().get(1); // 1 is always the ID of the current user
 
-        Message userDetailsMsg = ((DummyStudent) curUser).toMessage();
-        Nearby.getMessagesClient(context).publish(userDetailsMsg);*/
+        Message userDetailsMsg = curUser.toMessage();
+        Nearby.getMessagesClient(context).publish(userDetailsMsg);
     }
 
     @Override
@@ -92,23 +93,26 @@ public class NearbyStudentsFinder implements StudentFinder {
             // 2 is the offset, as the first element is the number of course and the second element is the student name
             // After that, we increment by one to get the next value for the course
 
-            String year = messageVals[(i*4)+2];
-            String quarter = messageVals[(i*4)+3];
-            String subject = messageVals[(i*4)+4];
-            String courseNum = messageVals[(i*4)+5];
+            int courseId        = Integer.parseInt(messageVals[(i*NUM_COURSE_FIELDS)+3]);
+            int personId        = Integer.parseInt(messageVals[(i*NUM_COURSE_FIELDS)+4]);
+            String year         = messageVals[(i*NUM_COURSE_FIELDS)+5];
+            String quarter      = messageVals[(i*NUM_COURSE_FIELDS)+6];
+            String subject      = messageVals[(i*NUM_COURSE_FIELDS)+7];
+            String courseNum    = messageVals[(i*NUM_COURSE_FIELDS)+8];
+            String size         = messageVals[(i*NUM_COURSE_FIELDS)+9];
 
-            //CourseEntry course = new DummyCourse(year, quarter, subject, courseNum);
+            CourseEntry course = new CourseEntry(courseId, personId, year, quarter, subject, courseNum, size);
             //FIXME fix course entry
-            CourseEntry course = null;
+
             Log.d(TAG, course.toString());
             studentCourses.add(course);
         }
 
-        //FIXME uncomment
-        //PersonWithCourses student = new PersonWithCourses(studentName);
-        //student.courses = studentCourses;
+        PersonWithCourses student = new PersonWithCourses();
 
-        //return student;
-        return null;
+        student.person.name = studentName;
+        student.courseEntries = studentCourses;
+
+        return student;
     }
 }

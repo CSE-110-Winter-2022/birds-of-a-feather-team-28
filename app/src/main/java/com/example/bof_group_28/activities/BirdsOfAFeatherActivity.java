@@ -109,12 +109,13 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
         /*if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             Log.v(TAG, "User is not logged in through Google.");
+
             //TODO: uncomment
             //Intent googleIntent = new Intent(this, GoogleSignInActivity.class);
             //startActivity(googleIntent);
         } else {
             Log.v(TAG, "User is already logged in!");
-        }
+        }*/
 
 
         // Setup the nearby students handler
@@ -157,7 +158,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         TextView sessionNameField = findViewById(R.id.sessionNameField);
         sessionNameField.setText(sessionManager.getCurrentSession());
 
-        }*/
+        }
     }
 
     /**

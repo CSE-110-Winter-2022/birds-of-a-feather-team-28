@@ -55,6 +55,21 @@ public class PersonWithCoursesDAOTest {
         db.personWithCoursesDAO().insert(person);
         personList.add(person);
 
+
+        CourseEntry courseEntry = new CourseEntry(1, 1, "2022", "WI22", "CSE", "110", "500");
+        db.courseEntryDAO().insert(courseEntry);
+        courseList.add(courseEntry);
+
+        courseEntry = new CourseEntry(2, 2, "2022", "WI22", "CSE", "110", "500");
+        db.courseEntryDAO().insert(courseEntry);
+        courseList.add(courseEntry);
+
+        courseEntry = new CourseEntry(3, 2, "2022", "WI22", "MGT", "181", "500");
+        db.courseEntryDAO().insert(courseEntry);
+        courseList.add(courseEntry);
+
+        courseEntry = new CourseEntry(4, 3, "2022", "WI22", "CSE", "110", "500");
+      
         CourseEntry courseEntry = new CourseEntry(1, 1, "2022", "WI22", "CSE", "110", "Small (40-75)");
         db.courseEntryDAO().insert(courseEntry);
         courseList.add(courseEntry);
@@ -68,6 +83,7 @@ public class PersonWithCoursesDAOTest {
         courseList.add(courseEntry);
 
         courseEntry = new CourseEntry(4, 3, "2022", "WI22", "CSE", "110", "Small (40-75)");
+
         db.courseEntryDAO().insert(courseEntry);
         courseList.add(courseEntry);
     }
