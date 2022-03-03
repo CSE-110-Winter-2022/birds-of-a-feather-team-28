@@ -88,8 +88,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
         if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             Log.v(TAG, "User is not logged in through Google.");
-            Intent googleIntent = new Intent(this, GoogleSignInActivity.class);
-            startActivity(googleIntent);
+            //Intent googleIntent = new Intent(this, GoogleSignInActivity.class);
+            //startActivity(googleIntent);
         } else {
             Log.v(TAG, "User is already logged in!");
         }
