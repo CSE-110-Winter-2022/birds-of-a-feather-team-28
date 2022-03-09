@@ -80,7 +80,7 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        databaseHandler.updatePerson(personToUpdate.personId, name, personToUpdate.profilePic);
+        databaseHandler.updateAndSaveUser(name, personToUpdate.profilePic);
         Toast.makeText(this, "Name updated successfully", Toast.LENGTH_SHORT).show();
     }
 }

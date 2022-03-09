@@ -5,11 +5,16 @@ import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.ArraySet;
 import android.util.Log;
+
+import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,9 +36,8 @@ import model.db.PersonWithCourses;
 
 public class SessionManager {
 
-    public static String SESSION_LIST = "sessionList";
     public static String LAST_USED_SESSION = "lastUsedSession";
-    public static String DEFAULT_SESSION_NAME = "default";
+    public static String NO_SESSION = "No Session Active";
 
     private AppDatabase appDatabase;
     private Context context;
@@ -43,30 +47,147 @@ public class SessionManager {
         this.context = context;
         currentSession = getLastUsedSession();
         this.appDatabase = AppDatabase.singleton(context);
+        databaseHandler = new DatabaseHandler(this.appDatabase);
 
-        if (!isDefaultSession()) {
+        if (!noSessionActive()) {
             openSessionFromStorage(currentSession);
+            user = databaseHandler.getUser();
+        } else {
+            firstTimeUserInitialize();
         }
         saveCurrentSessionAsLastUsed();
+    }
+
+    public void renameSession(String session) {
+        currentSession = session;
+    }
+
+    public boolean noSessionActive() {
+        return currentSession.equals(NO_SESSION);
+    }
+
+    public String getCurrentSession() {
+        return currentSession;
+    }
+
+    /**
+     * Get list of sessions as an array list
+     * @return the list of sessions
+     */
+    public List<String> getSessionsList() {
+        List<String> fileList = new ArrayList<>();
+        File directory = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles");
+        if (directory.exists()) {
+            Log.v(TAG, "Retrieving Sessions List from " + directory.getPath());
+            for (String s : directory.list()) {
+                fileList.add(s);
+            }
+        }
+        return fileList;
+    }
+
+    public boolean sessionExists(String sessionName) {
+        return getSessionsList().contains(sessionName);
+    }
+
+    /**
+     * Get the last used session
+     * @return the last used session
+     */
+    public String getLastUsedSession() {
+        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return preferences.getString(LAST_USED_SESSION, NO_SESSION);
+    }
+
+    /**
+     * Save the current session to the last used session
+     */
+    public void saveCurrentSessionAsLastUsed() {
+        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(LAST_USED_SESSION, currentSession);
+        editor.apply();
+    }
+
+    /**
+     * "save" the current session
+     */
+    public void saveCurrentSession() {
+        Log.v(TAG, "Saving Session: " + currentSession);
+        saveCurrentSessionToStorage();
+    }
+
+    /**
+     * Change the session to some session name.
+     * Updates user for that session with the current user in memory, as that is most updated
+     * @param sessionName new name of session
+     */
+    public void changeSession(String sessionName) {
+        Log.v(TAG, "Changing session to " + sessionName);
+        currentSession = sessionName;
+        if (sessionExists(sessionName)) {
+            openSessionFromStorage(sessionName);
+        } else {
+            databaseHandler.clearNonUserEntries();
+        }
+
+        databaseHandler.saveMemoryUser();
+        saveCurrentSessionAsLastUsed();
+    }
+
+    /**
+     * Check if it's the user's first time logging in and set up the user if it is
+     */
+    private void firstTimeUserInitialize() {
+        // runs only when db is empty
+        if (appDatabase.personWithCoursesDAO().maxId() < 1) {
+            String name = "Name Not Set";
+
+            // Add the person to the Database
+            // PFP is initially null until updated slightly later
+            Person userPerson = new Person(1, name, null);
+            appDatabase.personWithCoursesDAO().insert(userPerson);
+
+            // Update PFP when default PFP is loaded
+            FetchImage fetchImage = new FetchImage("https://i.imgur.com/OLWcBAL.png");
+            fetchImage.start();
+            Handler handler = new Handler();
+
+            handler.post (new Runnable() {
+                @Override
+                public void run() {
+                    if (fetchImage.isAlive()) {
+                        Log.v(TAG, "Still processing fetch image");
+                        //FIXME: not elegant way to check if done
+                        handler.postDelayed(this, 1000);
+                    } else {
+                        Bitmap bitmap = fetchImage.getBitmap();
+                        //FIXME: fix if file is too large for db
+                        Log.v(TAG, "Converted Bitmap to Byte Array");
+                        byte[] byteArr = Converters.bitmapToByteArr(bitmap);
+                        databaseHandler.updatePerson(user.getId(), user.getName(), byteArr);
+                    }
+                }
+            });
+
+        }
+        databaseHandler.updateUser();
     }
 
     /**
      * Save the current session to storage
      */
     public void saveCurrentSessionToStorage() {
-        this.appDatabase = AppDatabase.singleton(context);
         StringBuilder personsText = new StringBuilder();
         StringBuilder coursesText = new StringBuilder();
 
         // Build CSV string for people
-        for (int i = 0; i < appDatabase.personWithCoursesDAO().count(); i++) {
-            PersonWithCourses p = appDatabase.personWithCoursesDAO().get(i + 1);
+        for (PersonWithCourses p : databaseHandler.getAllPeople()) {
             personsText.append(p.person.personId + "," + p.person.name + "," + bytesToHex(p.person.profilePic) + "\n");
         }
 
         // Build CSV string for courses
-        for (int i = appDatabase.courseEntryDAO().maxId() - appDatabase.courseEntryDAO().count() + 1; i < appDatabase.courseEntryDAO().maxId(); i++) {
-            CourseEntry course = appDatabase.courseEntryDAO().get(i + 1);
+        for (CourseEntry course : databaseHandler.getAllCourses()) {
             coursesText.append(course.courseId + "," + course.personId + ","
                     + course.year + "," + course.quarter + ","
                     + course.subject + "," + course.courseNum + "," + course.size + "\n");
@@ -121,14 +242,12 @@ public class SessionManager {
     //TODO: IMPORTANT!!!! COURSES ARE DISAPPEARING? LIKE ONE AT A TIME?
     //https://www.baeldung.com/java-csv-file-array
     public boolean openSessionFromStorage(String sessionToOpen) {
-        this.appDatabase = AppDatabase.singleton(context);
         Log.v(TAG, "Opening session from storage " + sessionToOpen);
         File file = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + sessionToOpen);
         if (!file.exists()) {
             Log.e(TAG, "Session to open from storage did not exist");
             return false;
         }
-
 
         appDatabase.clearAllTables();
         Log.v(TAG, "Cleared tables to counts: " + appDatabase.personWithCoursesDAO().count() + " and " + appDatabase.courseEntryDAO().count());
@@ -165,93 +284,6 @@ public class SessionManager {
             e.printStackTrace();
         }
         return true;
-    }
-
-    public boolean isDefaultSession() {
-        return (currentSession.equals(DEFAULT_SESSION_NAME));
-    }
-
-    public AppDatabase getAppDatabase() {
-        this.appDatabase = AppDatabase.singleton(context);
-        return appDatabase;
-    }
-
-    public String getCurrentSession() {
-        return currentSession;
-    }
-
-    /**
-     * Get list of sessions as an array list
-     * @return the list of sessions
-     */
-    public List<String> getSessionsList() {
-        List<String> fileList = new ArrayList<>();
-        File directory = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles");
-        if (directory.exists()) {
-            Log.v(TAG, "Retrieving Sessions List from " + directory.getPath());
-            for (String s : directory.list()) {
-                fileList.add(s);
-            }
-        }
-        return fileList;
-    }
-
-    /**
-     * Get the last used session
-     * @return the last used session
-     */
-    public String getLastUsedSession() {
-        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return preferences.getString(LAST_USED_SESSION, DEFAULT_SESSION_NAME);
-    }
-
-    /**
-     * Save the current session to the last used session
-     */
-    public void saveCurrentSessionAsLastUsed() {
-        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(LAST_USED_SESSION, currentSession);
-        editor.apply();
-    }
-
-    /**
-     * "save" the current default session
-     * @param sessionName session
-     */
-    public void saveSession(String sessionName) {
-        Log.v(TAG, "Saving Session: " + sessionName);
-        currentSession = sessionName;
-        saveCurrentSessionToStorage();
-    }
-
-    /**
-     * Change the session to some session name.
-     * Updates user for that session with the current user in memory, as that is most updated
-     * @param sessionName new name of session
-     */
-    public void changeSession(String sessionName) {
-        this.appDatabase = AppDatabase.singleton(context);
-        Log.v(TAG, "Changing session to " + sessionName);
-        // IMPORTANT: Always clear default database as it represents the unsaved database. Otherwise get from file
-        currentSession = sessionName;
-        if (sessionName.equals(DEFAULT_SESSION_NAME)) {
-            databaseHandler.clearNonUserEntries();
-        } else {
-            openSessionFromStorage(sessionName);
-        }
-
-        // TODO: Doublecheck logic that ensures user object is actually up to date
-
-        appDatabase.personWithCoursesDAO().deletePerson(1);
-        appDatabase.personWithCoursesDAO().insert(user.person);
-
-        // Update db with original user's courses
-        List<CourseEntry> courses = user.getCourses();
-        databaseHandler.clearCourses(user.getId());
-        databaseHandler.insertCourseList(courses);
-
-        saveCurrentSessionAsLastUsed();
     }
 
 }

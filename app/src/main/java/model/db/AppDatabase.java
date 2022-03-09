@@ -1,7 +1,6 @@
 package model.db;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
-import static com.example.bof_group_28.utility.classes.SessionManager.DEFAULT_SESSION_NAME;
 
 import android.content.Context;
 import android.util.Log;

@@ -68,7 +68,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
                                //FIXME: fix if file is too large for db
                                Log.v(TAG, "Converted Bitmap to Byte Array");
                                byte[] byteArr = Converters.bitmapToByteArr(bitmap);
-                               databaseHandler.updatePerson(user.getId(), user.getName(), byteArr);
+                               databaseHandler.updateAndSaveUser(user.getName(), byteArr);
                                binding.editProfilePicture.setImageBitmap(bitmap);
                            } else {
                                Log.e(TAG, "Bitmap is null!");

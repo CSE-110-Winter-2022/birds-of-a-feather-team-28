@@ -1,6 +1,6 @@
 package com.example.bof_group_28.activities;
 
-import static com.example.bof_group_28.utility.classes.SessionManager.DEFAULT_SESSION_NAME;
+import static com.example.bof_group_28.utility.classes.SessionManager.NO_SESSION;
 
 import android.Manifest;
 import android.app.Activity;
@@ -42,7 +42,11 @@ import com.example.bof_group_28.utility.services.NearbyStudentsService;
 import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import model.db.AppDatabase;
@@ -80,6 +84,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private static final int BOF_STOP_BTN_COLOR = Color.RED;
     private static final int UPDATE_TIME = 5000;
 
+    private static final String DATE_FORMAT = "MM∕dd∕yyyy hh꞉mm:ss aa";
+
     // Database
     public static DatabaseHandler databaseHandler;
 
@@ -92,15 +98,11 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Request file permissions for session storing
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
 
         sessionManager = new SessionManager(getApplicationContext());
         bofStarted = false;
-        databaseHandler = new DatabaseHandler(sessionManager.getAppDatabase(), getApplicationContext());
-
-        if (sessionManager.getCurrentSession().equals(DEFAULT_SESSION_NAME)) {
-            databaseHandler.clearNonUserEntries();
-        }
 
         TextView sessionNameField = findViewById(R.id.sessionNameField);
         sessionNameField.setText(sessionManager.getCurrentSession());
@@ -114,8 +116,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             //startActivity(googleIntent);
         } else {
             Log.v(TAG, "User is already logged in!");
-        }
-
+        }*/
 
         // Setup the nearby students handler
         Log.v(TAG, "Attempting to instantiate handler");
@@ -125,12 +126,10 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         studentRecyclerView = findViewById(R.id.personRecyclerView);
         studentLayoutManager = new LinearLayoutManager(this);
         studentRecyclerView.setLayoutManager(studentLayoutManager);
-        studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
+        studentViewAdapter = new StudentViewAdapter(databaseHandler.getPeople(), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
 
-        // TODO: Current logic is to refresh every time there is a change. But to check for a change the handler must be
-        // updated which changes ordering and is generally inefficient. Come up with a better way to chekc for change.
-        Handler dbRunHandler = new Handler();
+        /*Handler dbRunHandler = new Handler();
         dbRunHandler.post (new Runnable() {
             @Override
             public void run() {
@@ -143,21 +142,25 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                 updateSessionNameField();
                 dbRunHandler.postDelayed(this, 100);
             }
-        });
+        });*/
     }
 
-    public boolean isSessionDifferent(String session) {
+    public void updateStudentsView() {
+        studentViewAdapter.clear();
+        studentViewAdapter = new StudentViewAdapter(databaseHandler.getPeople(), handler);
+        studentRecyclerView.setAdapter(studentViewAdapter);
+    }
+
+    /*public boolean isSessionDifferent(String session) {
         TextView sessionNameField = findViewById(R.id.sessionNameField);
         return !sessionNameField.getText().toString().equals(session)
                 || !(handler.getStudentsList().containsAll(studentViewAdapter.students)
                 && studentViewAdapter.students.containsAll(handler.getStudentsList()));
-    }
+    }*/
 
     public void updateSessionNameField() {
         TextView sessionNameField = findViewById(R.id.sessionNameField);
         sessionNameField.setText(sessionManager.getCurrentSession());
-
-        }*/
     }
 
     /**
@@ -165,22 +168,23 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
      * @param view the view
      */
     public void onBofButtonClick(View view) {
-        if (bofStarted) {
-            if (sessionManager.isDefaultSession()) {
+        if (bofStarted) { // stop button
+            // If the current session has not yet been saved, prompt to save
+            if (!sessionManager.sessionExists(sessionManager.getCurrentSession())) {
                 showSaveCurrentPrompt("Do you want to save this session?");
             } else {
                 // Certainly save the session
                 sessionManager.saveCurrentSessionToStorage();
                 clickStopButton();
             }
-        } else {
-            showNewCurrentPrompt("Do you want to start a new session or use an existing one?");
+        } else { // start button
+            showNewCurrentPrompt("Do you want to start a new session or resume the current one?");
         }
     }
 
     public void clickStartButton() {
         updateSessionNameField();
-        startBirdsOfFeather(user);
+        startBirdsOfFeather();
         this.bofStarted = true;
         setToStopButton();
 
@@ -208,7 +212,12 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         builder.setMessage(message)
                 .setPositiveButton("New", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        sessionManager.changeSession(DEFAULT_SESSION_NAME);
+
+                        Date currentTime = Calendar.getInstance().getTime();
+                        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+                        String strDate = dateFormat.format(currentTime);
+
+                        sessionManager.changeSession(strDate);
                         clickStartButton();
                     }
                 })
@@ -225,11 +234,12 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         final EditText input = new EditText(this);
+        input.setText(sessionManager.getCurrentSession());
         builder.setMessage(message)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String inputName = input.getText().toString();
-                        if (inputName.equals(DEFAULT_SESSION_NAME) || inputName.isEmpty()) {
+                        if (inputName.equals(NO_SESSION) || inputName.isEmpty()) {
                             Toast.makeText(getApplicationContext(), "Invalid Session Name", Toast.LENGTH_SHORT).show();
                             showSaveCurrentPrompt(message);
                             return;
@@ -244,8 +254,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                             showSaveCurrentPrompt(message);
                             return;
                         }
-                        sessionManager.saveSession(inputName);
-                        sessionManager.changeSession(inputName);
+                        sessionManager.renameSession(inputName);
+                        sessionManager.saveCurrentSession();
                         clickStopButton();
                     }
                 })
@@ -260,16 +270,15 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     /**
      * Start running birds of a feather
-     * @param user the user
      */
-    public void startBirdsOfFeather(PersonWithCourses user) {
+    public void startBirdsOfFeather() {
         //TODO: Have students come into range for this "fake startup", so you can demo multiple things.
         //ie. You clear then somebody new shows up, but others dont. Or of course realtime you see somebody show up.
 
         // Faked list of nearby students
         List<PersonWithCourses> fakeNearby = new ArrayList<>();
 
-        AppDatabase db = sessionManager.getAppDatabase();
+        AppDatabase db = databaseHandler.db;
         if (db.personWithCoursesDAO().maxId() < 3) {
 
             Person fakePersonOne = new Person(db.personWithCoursesDAO().maxId() + 1, "Bob", null);
@@ -365,8 +374,19 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     public void onViewSessionsButtonClicked(View view) {
         Intent intent = new Intent(this, SessionViewActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 0);
+        //startActivity(intent);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            updateSessionNameField();
+            updateStudentsView();
+        }
+    }
+
 
     /**
      * Handle edit profile button
