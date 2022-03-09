@@ -142,7 +142,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
         }
         Toast.makeText(this, "Name confirmed!", Toast.LENGTH_SHORT).show();
 
-        databaseHandler.updatePerson(user.getId(), editGoogleName.getText().toString(), user.getProfilePic());
+        databaseHandler.updateAndSaveUser(editGoogleName.getText().toString(), user.getProfilePic());
         finish();
     }
 }

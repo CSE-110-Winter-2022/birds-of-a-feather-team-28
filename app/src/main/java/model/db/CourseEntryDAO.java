@@ -12,6 +12,10 @@ import java.util.List;
 @Dao
 public interface CourseEntryDAO {
     @Transaction
+    @Query("SELECT * FROM courseentries")
+    List<CourseEntry> getAll();
+
+    @Transaction
     @Query("SELECT * FROM courseentries where person_id=:personId")
     List<CourseEntry> getForPerson(int personId);
 

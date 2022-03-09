@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import model.db.AppDatabase;
@@ -25,58 +26,9 @@ public class DatabaseHandler {
     /**
      * Construct a database handler
      * @param db the app database
-     * @param context app context
      */
-    public DatabaseHandler(AppDatabase db, Context context) {
+    public DatabaseHandler(AppDatabase db) {
         this.db = db;
-        runDatabaseSetup(context);
-    }
-
-    /**
-     * Setup the database for app startup
-     */
-    private void runDatabaseSetup(Context context) {
-        //db = AppDatabase.singleton(context);
-        firstTimeUserInitialize();
-    }
-
-    /**
-     * Check if it's the user's first time logging in and set up the user if it is
-     */
-    private void firstTimeUserInitialize() {
-        // runs only when db is empty
-        if (db.personWithCoursesDAO().maxId() < 1) {
-            String name = "Name Not Set";
-
-            // Add the person to the Database
-            // PFP is initially null until updated slightly later
-            Person userPerson = new Person(1, name, null);
-            db.personWithCoursesDAO().insert(userPerson);
-
-            // Update PFP when default PFP is loaded
-            FetchImage fetchImage = new FetchImage("https://i.imgur.com/OLWcBAL.png");
-            fetchImage.start();
-            Handler handler = new Handler();
-
-            handler.post (new Runnable() {
-                @Override
-                public void run() {
-                    if (fetchImage.isAlive()) {
-                        Log.v(TAG, "Still processing fetch image");
-                        //FIXME: not elegant way to check if done
-                        handler.postDelayed(this, 1000);
-                    } else {
-                        Bitmap bitmap = fetchImage.getBitmap();
-                        //FIXME: fix if file is too large for db
-                        Log.v(TAG, "Converted Bitmap to Byte Array");
-                        byte[] byteArr = Converters.bitmapToByteArr(bitmap);
-                        updatePerson(user.getId(), user.getName(), byteArr);
-                    }
-                }
-            });
-
-        }
-        updateUser();
     }
 
     /**
@@ -84,6 +36,10 @@ public class DatabaseHandler {
      */
     public void updateUser() {
         user = db.personWithCoursesDAO().get(1);
+    }
+
+    public PersonWithCourses getUser() {
+        return db.personWithCoursesDAO().get(1);
     }
 
     /**
@@ -125,6 +81,34 @@ public class DatabaseHandler {
                     ));
         }
         updateUser();
+    }
+
+    public List<PersonWithCourses> getPeople() {
+        List<PersonWithCourses> people = new ArrayList<>();
+        for (PersonWithCourses pwc : db.personWithCoursesDAO().getAll()) {
+            if (pwc.getId() != 1) {
+                people.add(pwc);
+            }
+        }
+        return people;
+    }
+
+    public List<PersonWithCourses> getAllPeople() {
+        return db.personWithCoursesDAO().getAll();
+    }
+
+    public List<CourseEntry> getAllCourses() {
+        return db.courseEntryDAO().getAll();
+    }
+
+    public void saveMemoryUser() {
+        db.personWithCoursesDAO().deletePerson(1);
+        db.personWithCoursesDAO().insert(user.person);
+
+        // Update db with original user's courses
+        List<CourseEntry> courses = user.getCourses();
+        clearCourses(user.getId());
+        insertCourseList(courses);
     }
 
     /**
@@ -182,6 +166,14 @@ public class DatabaseHandler {
     public void insertCourse(CourseEntry courseEntry) {
         db.courseEntryDAO().insert(courseEntry);
         updateUser();
+    }
+
+    public void updateAndSaveUser(String name, byte[] profilePic) {
+        db.personWithCoursesDAO().update(1, name, profilePic);
+        updateUser();
+
+        // Save every time user is updated
+        sessionManager.saveCurrentSession();
     }
 
     /**
