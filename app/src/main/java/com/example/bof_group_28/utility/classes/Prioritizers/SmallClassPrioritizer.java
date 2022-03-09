@@ -12,17 +12,17 @@ public class SmallClassPrioritizer implements Prioritizer{
         double weight = 0;
 
         for(CourseEntry course: sharedCourses){
-            if(course.size.equals(SizeName.TINY)){
+            if(course.size.equals(SizeName.types()[1])){
                 weight = weight + 1;
-            } else if(course.size.equals(SizeName.SMALL)){
+            } else if(course.size.equals(SizeName.types()[2])){
                 weight = weight + .33;
-            } else if(course.size.equals(SizeName.MEDIUM)){
+            } else if(course.size.equals(SizeName.types()[3])){
                 weight = weight + .18;
-            } else if(course.size.equals(SizeName.LARGE)){
+            } else if(course.size.equals(SizeName.types()[4])){
                 weight = weight + .1;
-            } else if(course.size.equals(SizeName.HUGE)){
+            } else if(course.size.equals(SizeName.types()[5])){
                 weight = weight + .06;
-            } else if(course.size.equals(SizeName.GIGANTIC)){
+            } else if(course.size.equals(SizeName.types()[6])){
                 weight = weight + .03;
             }
         }
