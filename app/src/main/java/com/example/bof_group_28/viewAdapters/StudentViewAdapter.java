@@ -126,8 +126,8 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
                 // get the shared courses as a set, and pass as an extra
                 Set<String> sharedCourses = new ArraySet<>();
-                if (handler.getStudentClassMap() != null && handler.getStudentClassMap().containsKey(student)) {
-                    for (CourseEntry course : handler.getStudentClassMap().get(student)) {
+                if (handler != null && handler.getStudentSorterMap().containsKey(student)) {
+                    for (CourseEntry course : handler.getStudentSorterMap().get(student)) {
                         sharedCourses.add(course.toString());
                     }
                 } else {

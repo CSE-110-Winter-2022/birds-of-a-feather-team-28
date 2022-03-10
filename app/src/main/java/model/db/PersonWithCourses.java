@@ -64,4 +64,11 @@ public class PersonWithCourses implements IPerson {
         String msg = numCourses + MSG_DELIMITER + name + MSG_DELIMITER + coursesStr;
         return new Message(msg.getBytes(StandardCharsets.UTF_8));
     }
+
+    public boolean hasSameInformation(PersonWithCourses pwc) {
+        return (this.getName().equals(pwc.getName())
+                && this.getProfilePic().equals(pwc.getProfilePic())
+                && this.getCourses().containsAll(pwc.getCourses())
+                && pwc.getCourses().containsAll(this.getCourses()));
+    }
 }

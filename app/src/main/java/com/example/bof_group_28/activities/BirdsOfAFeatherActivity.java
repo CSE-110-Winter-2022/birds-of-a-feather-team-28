@@ -109,7 +109,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
         Log.v(TAG, "Sessions Available: " + sessionManager.getSessionsList().toString());
 
-        if (GoogleSignIn.getLastSignedInAccount(this) == null) {
+        /*if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             Log.v(TAG, "User is not logged in through Google.");
 
             //TODO: uncomment
@@ -146,10 +146,14 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         });*/
     }
 
+    /**
+     * Update the nearby students view
+     */
     public void updateStudentsView() {
         studentViewAdapter.clear();
         studentViewAdapter = new StudentViewAdapter(databaseHandler.getPeople(), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
+        Log.v(TAG, "Updated nearby students view");
     }
 
     /*public boolean isSessionDifferent(String session) {
@@ -333,14 +337,14 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         final Runnable r = new Runnable() {
             public void run() {
                 if (bofStarted) {
-                    handler.refreshStudentClassMap();
-
+                    handler.refreshNearbyStudents();
                     Log.v(TAG, "Refreshed student class map from main activity.");
 
-                    studentViewAdapter.clear();
-                    studentViewAdapter = new StudentViewAdapter(handler.getSortedStudentsList(), handler);
-                    studentRecyclerView.setAdapter(studentViewAdapter);
+                    /*studentViewAdapter.clear();
+                    studentViewAdapter = new StudentViewAdapter(handler.getNearbyStudentsSharedCourses(), handler);
+                    studentRecyclerView.setAdapter(studentViewAdapter);*/
 
+                    updateStudentsView();
                     Log.v(TAG, "Updated nearby students view in main activity.");
                     runHandler.postDelayed(this, UPDATE_TIME);
                 }
@@ -373,12 +377,22 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handle the view sessions button
+     * @param view the view
+     */
     public void onViewSessionsButtonClicked(View view) {
         Intent intent = new Intent(this, SessionViewActivity.class);
         startActivityForResult(intent, 0);
         //startActivity(intent);
     }
 
+    /**
+     * Handle returning from the view session to update the view
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

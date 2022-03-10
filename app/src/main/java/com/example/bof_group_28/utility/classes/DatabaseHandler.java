@@ -51,6 +51,15 @@ public class DatabaseHandler {
         updateUser();
     }
 
+    public boolean hasPerson(PersonWithCourses pwc) {
+        for (PersonWithCourses p : getAllPeople()) {
+            if (p.hasSameInformation(pwc)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Insert a person given name and pfp
      * @param name name
