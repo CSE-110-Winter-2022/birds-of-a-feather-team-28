@@ -8,6 +8,7 @@ import com.example.bof_group_28.utility.classes.Prioritizers.Prioritizer;
 import com.example.bof_group_28.utility.classes.Prioritizers.RecentPrioritizer;
 import com.example.bof_group_28.utility.classes.Prioritizers.SmallClassPrioritizer;
 import com.example.bof_group_28.utility.classes.Prioritizers.ThisQuarterPrioritizer;
+import com.example.bof_group_28.utility.enums.QuarterName;
 import com.example.bof_group_28.utility.enums.SizeName;
 
 import org.junit.Before;
@@ -41,8 +42,12 @@ public class PrioritizerTests {
 
     @Test
     public void testRecentPrio(){
+        DateFinder df = new DateFinder();
+        prio = new RecentPrioritizer(df.getCurrYear(), df.getCurrQuarter());
+        sharedCourses.add(new CourseEntry(2,1,"2022", QuarterName.types()[1], "CSE", "110", SizeName.types()[1]));
+        sharedCourses.add(new CourseEntry(2,1,"2021", QuarterName.types()[2], "CSE", "110", SizeName.types()[1]));
 
-
+        assertEquals(7, prio.determineWeight(sharedCourses), .01);
     }
 
     @Test
