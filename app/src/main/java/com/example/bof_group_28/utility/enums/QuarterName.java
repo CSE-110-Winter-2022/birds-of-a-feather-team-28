@@ -16,7 +16,7 @@ public enum QuarterName {
         this.text = text;
     }
 
-    String getText() {
+    public String getText() {
         return text;
     }
 

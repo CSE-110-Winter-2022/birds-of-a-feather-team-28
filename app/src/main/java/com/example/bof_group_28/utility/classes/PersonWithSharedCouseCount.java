@@ -8,32 +8,32 @@ import model.db.PersonWithCourses;
 public class PersonWithSharedCouseCount implements Comparable{
 
     private PersonWithCourses personWithCourses;
-    private int count;
+    private double weight;
 
-    public PersonWithSharedCouseCount(PersonWithCourses personWithCourses, int count) {
+    public PersonWithSharedCouseCount(PersonWithCourses personWithCourses, double weight) {
         this.personWithCourses = personWithCourses;
-        this.count = count;
+        this.weight = weight;
     }
 
     public PersonWithCourses getPersonWithCourses() {
         return personWithCourses;
     }
 
-    public int getCount() {
-        return count;
+    public double getWeight() {
+        return this.weight;
     }
 
     @Override
     public int compareTo(Object o) {
         if (o instanceof PersonWithSharedCouseCount) {
             PersonWithSharedCouseCount pwc = (PersonWithSharedCouseCount) o;
-            if (getCount() == pwc.getCount()) {
+            if (getWeight() == pwc.getWeight()) {
                 return 0;
             }
-            if (getCount() > pwc.getCount()) {
+            if (getWeight() > pwc.getWeight()) {
                 return 1;
             }
-            if (getCount() < pwc.getCount()) {
+            if (getWeight() < pwc.getWeight()) {
                 return -1;
             }
         }

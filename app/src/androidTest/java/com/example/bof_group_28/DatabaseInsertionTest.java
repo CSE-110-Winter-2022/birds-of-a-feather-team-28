@@ -58,7 +58,7 @@ public class DatabaseInsertionTest {
         //FIXME: bad quarter naming
         courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101", "500");
 
-        CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110", "Small (40-75)");
+        courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110", "Small (40-75)");
         db.courseEntryDAO().insert(courseEntry);
         //FIXME: bad quarter naming
         courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101", "Small (40-75)");
@@ -88,7 +88,7 @@ public class DatabaseInsertionTest {
         db.courseEntryDAO().insert(courseEntry);
         courseEntry = new CourseEntry(4, 2, "2022", "WI22", "MGT", "181", "500");
 
-        CourseEntry courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110", "Small (40-75)");
+        courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110", "Small (40-75)");
         db.courseEntryDAO().insert(courseEntry);
         courseEntry = new CourseEntry(4, 2, "2022", "WI22", "MGT", "181", "Small (40-75)");
 
