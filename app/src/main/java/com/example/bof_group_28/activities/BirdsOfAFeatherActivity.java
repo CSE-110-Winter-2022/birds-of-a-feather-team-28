@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bof_group_28.utility.Utilities;
+import com.example.bof_group_28.utility.classes.Prioritizers.StudentSorter;
 import com.example.bof_group_28.utility.classes.SessionManager;
 import com.example.bof_group_28.utility.classes.Converters;
 import com.example.bof_group_28.utility.classes.DatabaseHandler;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import model.db.AppDatabase;
 import model.db.CourseEntry;
@@ -59,6 +61,7 @@ import model.db.PersonWithCourses;
 public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
     // User of the App
+    public static UUID userId;
     public static PersonWithCourses user;
 
     // AppDatabase Mediator
@@ -110,13 +113,15 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
 
         // Setup the nearby students handler
         Log.d(TAG, "Attempting to instantiate handler");
-        handler = new NearbyStudentsHandler(user, new DummyStudentFinder(new ArrayList<>(), databaseHandler));
+        StudentSorter sorter = new StudentSorter(user);
+        handler = new NearbyStudentsHandler(user, new DummyStudentFinder(new ArrayList<>(), databaseHandler), sorter);
+        sessionManager.setSorter(sorter);
 
         // Setup student view
         studentRecyclerView = findViewById(R.id.personRecyclerView);
         studentLayoutManager = new LinearLayoutManager(this);
         studentRecyclerView.setLayoutManager(studentLayoutManager);
-        studentViewAdapter = new StudentViewAdapter(databaseHandler.getPeople(), handler);
+        studentViewAdapter = new StudentViewAdapter(sessionManager.getPeople(), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
     }
 
@@ -127,7 +132,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     public void onBofButtonClick(View view) {
         if (bofStarted) {
             // Always prompt the user if they want to save the session
-            showSaveCurrentPrompt("Do you want to save this session?");
+            showSaveCurrentPrompt("Please save this session.");
         } else {
             // certainly start a new session
             startNewSession();
@@ -143,7 +148,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         final EditText input = new EditText(this);
         input.setText(sessionManager.getCurrentSession());
         builder.setMessage(message)
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Save Session", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Log.d(TAG, "User attempting to save current session");
                         String inputName = input.getText().toString();
@@ -157,7 +162,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                             showSaveCurrentPrompt(message);
                             return;
                         }
-                        if (inputName.length() > 20) {
+                        if (inputName.length() > 30) {
                             Toast.makeText(getApplicationContext(), "Session Name too Long", Toast.LENGTH_SHORT).show();
                             showSaveCurrentPrompt(message);
                             return;
@@ -167,12 +172,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                         Log.d(TAG, "User successfully saved current session");
                         clickStopButton();
                     }
-                })
-                .setNegativeButton("Don't Save", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        clickStopButton();
-                    }
-                });
+                }).setCancelable(false);
         builder.setView(input);
         builder.create().show();
     }
@@ -226,7 +226,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
      */
     public void updateStudentsView() {
         studentViewAdapter.clear();
-        studentViewAdapter = new StudentViewAdapter(databaseHandler.getPeople(), handler);
+        studentViewAdapter = new StudentViewAdapter(sessionManager.getPeople(), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
         Log.d(TAG, "Updated nearby students view");
     }

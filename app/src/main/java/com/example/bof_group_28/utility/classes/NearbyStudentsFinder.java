@@ -1,5 +1,7 @@
 package com.example.bof_group_28.utility.classes;
 
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -109,6 +111,23 @@ public class NearbyStudentsFinder implements StudentFinder {
         }
 
         PersonWithCourses student = new PersonWithCourses();
+
+        instead add student to database and update accordingly
+
+        if (!databaseHandler.databaseHasPerson(student)) {
+            // If the person has never been seen by the database, add all their information
+            for (CourseEntry course : p.getCourses()) {
+                databaseHandler.insertCourse(course);
+            }
+            databaseHandler.insertPersonWithCourses(p.person);
+        } else {
+            // If the person is already in the database, update their information
+            databaseHandler.deleteCourses(p.getId());
+            for (CourseEntry course : p.getCourses()) {
+                databaseHandler.insertCourse(course);
+            }
+            databaseHandler.updatePerson(p.getId(), p.getName(), p.getProfilePic());
+        }
 
         student.person.name = studentName;
         student.courseEntries = studentCourses;

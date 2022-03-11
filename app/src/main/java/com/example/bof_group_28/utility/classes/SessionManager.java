@@ -3,7 +3,9 @@ package com.example.bof_group_28.utility.classes;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.sessionManager;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.userId;
 
 import android.app.Application;
 import android.content.Context;
@@ -15,6 +17,9 @@ import android.util.ArraySet;
 import android.util.Log;
 
 import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
+import com.example.bof_group_28.utility.classes.Prioritizers.DefaultPrioritizer;
+import com.example.bof_group_28.utility.classes.Prioritizers.Prioritizer;
+import com.example.bof_group_28.utility.classes.Prioritizers.StudentSorter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,9 +30,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import model.db.AppDatabase;
 import model.db.CourseEntry;
@@ -38,16 +46,26 @@ public class SessionManager {
 
     public static String LAST_USED_SESSION = "lastUsedSession";
     public static String NO_SESSION = "No Session Active";
+    public static String DIRECTORY_PATH = "";
 
     private AppDatabase appDatabase;
     private Context context;
     private String currentSession;
+    private StudentSorter sorter;
+
+    private List<PersonWithCourses> peopleInCurrentSession;
 
     public SessionManager(Context context) {
+        DIRECTORY_PATH = context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getPath();
+
+        userId = getUserId();
+
         this.context = context;
         currentSession = getLastUsedSession();
         this.appDatabase = AppDatabase.singleton(context);
         databaseHandler = new DatabaseHandler(this.appDatabase);
+
+        peopleInCurrentSession = new ArrayList<>();
 
         if (!noSessionActive()) {
             openSessionFromStorage(currentSession);
@@ -55,19 +73,41 @@ public class SessionManager {
         } else {
             firstTimeUserInitialize();
         }
+
         saveCurrentSessionAsLastUsed();
     }
 
-    public void renameSession(String session) {
-        currentSession = session;
+    public void setSorter(StudentSorter sorter) {
+        this.sorter = sorter;
     }
 
-    public boolean noSessionActive() {
-        return currentSession.equals(NO_SESSION);
+    public UUID getUserId() {
+        fix this
+        return new UUID(10,5);
     }
 
-    public String getCurrentSession() {
-        return currentSession;
+    public List<PersonWithCourses> getPeople() {
+        return peopleInCurrentSession;
+    }
+
+    public List<PersonWithCourses> getSortedPeople(Prioritizer prioritizer) {
+        return sorter.getSortedStudents(peopleInCurrentSession, prioritizer);
+    }
+
+    public void updatePeopleWithNearby(List<PersonWithCourses> people) {
+        Map<PersonWithCourses, List<CourseEntry>> map = sorter.generateStudentClassMap(people);
+        for (PersonWithCourses pwc : people) {
+            // For all nearby people, if they aren't already in the session, and they share courses, add them!
+            if (!getPeople().contains(pwc)) {
+                if (map.containsKey(pwc)) {
+                    getPeople().add(pwc);
+                }
+            } else {
+                // A person may have different information, so update their information.
+                getPeople().remove(pwc);
+                getPeople().add(pwc);
+            }
+        }
     }
 
     /**
@@ -76,37 +116,16 @@ public class SessionManager {
      */
     public List<String> getSessionsList() {
         List<String> fileList = new ArrayList<>();
-        File directory = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles");
-        if (directory.exists()) {
-            Log.d(TAG, "Retrieving Sessions List from " + directory.getPath());
-            for (String s : directory.list()) {
-                fileList.add(s);
-            }
+        File directory = new File(DIRECTORY_PATH);
+        Log.d(TAG, "Retrieving Sessions List from " + directory.getPath());
+        if (directory.list() != null) {
+            Collections.addAll(fileList, directory.list());
         }
         return fileList;
     }
 
     public boolean sessionExists(String sessionName) {
         return getSessionsList().contains(sessionName);
-    }
-
-    /**
-     * Get the last used session
-     * @return the last used session
-     */
-    public String getLastUsedSession() {
-        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return preferences.getString(LAST_USED_SESSION, NO_SESSION);
-    }
-
-    /**
-     * Save the current session to the last used session
-     */
-    public void saveCurrentSessionAsLastUsed() {
-        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(LAST_USED_SESSION, currentSession);
-        editor.apply();
     }
 
     /**
@@ -128,49 +147,44 @@ public class SessionManager {
         if (sessionExists(sessionName)) {
             openSessionFromStorage(sessionName);
         } else {
-            databaseHandler.clearNonUserEntries();
+            clearCurrentPeople();
         }
-
-        databaseHandler.saveMemoryUser();
         saveCurrentSessionAsLastUsed();
+    }
+
+    public void clearCurrentPeople() {
+        getPeople().clear();
     }
 
     /**
      * Check if it's the user's first time logging in and set up the user if it is
      */
     private void firstTimeUserInitialize() {
-        // runs only when db is empty
-        if (appDatabase.personWithCoursesDAO().maxId() < 1) {
-            String name = "Name Not Set";
+        String name = "Name Not Set";
 
-            // Add the person to the Database
-            // PFP is initially null until updated slightly later
-            Person userPerson = new Person(1, name, null);
-            appDatabase.personWithCoursesDAO().insert(userPerson);
+        // Add the person to the Database
+        Person userPerson = new Person(UUID.randomUUID(), name, "https://i.imgur.com/OLWcBAL.png");
+        appDatabase.personWithCoursesDAO().insert(userPerson);
 
-            // Update PFP when default PFP is loaded
-            FetchImage fetchImage = new FetchImage("https://i.imgur.com/OLWcBAL.png");
-            fetchImage.start();
-            Handler handler = new Handler();
+        /*FetchImage fetchImage = new FetchImage("https://i.imgur.com/OLWcBAL.png");
+        fetchImage.start();
+        Handler handler = new Handler();
 
-            handler.post (new Runnable() {
-                @Override
-                public void run() {
-                    if (fetchImage.isAlive()) {
-                        Log.d(TAG, "Still processing fetch image");
-                        //FIXME: not elegant way to check if done
-                        handler.postDelayed(this, 1000);
-                    } else {
-                        Bitmap bitmap = fetchImage.getBitmap();
-                        //FIXME: fix if file is too large for db
-                        Log.d(TAG, "Converted Bitmap to Byte Array");
-                        byte[] byteArr = Converters.bitmapToByteArr(bitmap);
-                        databaseHandler.updatePerson(user.getId(), user.getName(), byteArr);
-                    }
+        handler.post (new Runnable() {
+            @Override
+            public void run() {
+                if (fetchImage.isAlive()) {
+                    Log.d(TAG, "Still processing image");
+                    handler.postDelayed(this, 200);
+                } else {
+                    Bitmap bitmap = fetchImage.getBitmap();
+                    Log.d(TAG, "Converted Bitmap to Byte Array");
+                    byte[] byteArr = Converters.bitmapToByteArr(bitmap);
+                    databaseHandler.updatePerson(user.getId(), user.getName(), byteArr);
                 }
-            });
+            }
+        });*/
 
-        }
         databaseHandler.updateUser();
     }
 
@@ -178,112 +192,81 @@ public class SessionManager {
      * Save the current session to storage
      */
     public void saveCurrentSessionToStorage() {
+        Log.d(TAG, "Attempting to save " + currentSession + " to storage");
         StringBuilder personsText = new StringBuilder();
-        StringBuilder coursesText = new StringBuilder();
 
-        // Build CSV string for people
-        for (PersonWithCourses p : databaseHandler.getAllPeople()) {
-            personsText.append(p.person.personId + "," + p.person.name + "," + bytesToHex(p.person.profilePic) + "\n");
+        for (PersonWithCourses pwc : getPeople()) {
+            personsText.append(pwc.getId()).append("\n");
         }
+        Log.d(TAG, "Saving: " + personsText);
 
-        // Build CSV string for courses
-        for (CourseEntry course : databaseHandler.getAllCourses()) {
-            coursesText.append(course.courseId + "," + course.personId + ","
-                    + course.year + "," + course.quarter + ","
-                    + course.subject + "," + course.courseNum + "," + course.size + "\n");
-        }
-
-        Log.d(TAG, "Appending to File " + currentSession + "/persons.csv: \n" + personsText);
-        Log.d(TAG, "Appending to File " + currentSession + "/courses.csv: \n" + coursesText);
-
-        // Create necessary files
-        File directory = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + currentSession);
-        File personsFile = new File(directory, "/persons.csv");
-        File coursesFile = new File(directory, "/courses.csv");
-        if (!directory.exists()) {
-            Log.d(TAG, "Parent Directory doesn't exist. Generating directory");
-            boolean madeDir = directory.mkdirs();
-            Log.d(TAG, "Directory creation status: " + madeDir);
-        }
-        FileOutputStream outputStream;
+        File sessionFile = new File(DIRECTORY_PATH + "/" + currentSession + ".txt");
         try {
-            boolean fileStatus = personsFile.createNewFile();
-            coursesFile.createNewFile();
-            Log.d(TAG, "Creation Status for PersonFile: " + fileStatus);
+            boolean fileStatus = sessionFile.createNewFile();
+            Log.d(TAG, "File creation status for " + currentSession + ".txt : " + fileStatus);
 
-            // Append CSV strings to files
-            outputStream = new FileOutputStream(personsFile, false);
-            outputStream.write(personsText.toString().getBytes());
-            outputStream.flush();
-            outputStream.close();
-
-            outputStream = new FileOutputStream(coursesFile, false);
-            outputStream.write(coursesText.toString().getBytes());
-            outputStream.flush();
-            outputStream.close();
+            FileOutputStream stream;
+            stream = new FileOutputStream(sessionFile, false);
+            stream.write(personsText.toString().getBytes());
+            stream.flush();
+            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    //https://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java
-    // This makes it easy to store in CSV
-    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
-    public static String bytesToHex(byte[] bytes) {
-        byte[] hexChars = new byte[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars, StandardCharsets.UTF_8);
-    }
-
-    //TODO: IMPORTANT!!!! COURSES ARE DISAPPEARING? LIKE ONE AT A TIME?
-    //https://www.baeldung.com/java-csv-file-array
-    public boolean openSessionFromStorage(String sessionToOpen) {
+    public void openSessionFromStorage(String sessionToOpen) {
         Log.d(TAG, "Opening session from storage " + sessionToOpen);
-        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + sessionToOpen);
-        if (!file.exists()) {
+        File sessionFile = new File(DIRECTORY_PATH + "/" + sessionToOpen + ".txt");
+        if (!sessionFile.exists()) {
             Log.e(TAG, "Session to open from storage did not exist");
-            return false;
+            return;
         }
 
-        appDatabase.clearAllTables();
-        Log.d(TAG, "Cleared tables to counts: " + appDatabase.personWithCoursesDAO().count() + " and " + appDatabase.courseEntryDAO().count());
-
-        try (BufferedReader personsReader = new BufferedReader(new FileReader(
-                Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + currentSession + "/persons.csv"))) {
+        try (BufferedReader personsReader = new BufferedReader(new FileReader(sessionFile))) {
             String line;
             while ((line = personsReader.readLine()) != null) {
-                Log.d(TAG, "Parsing line: " + line);
-                String[] values = new String[3];
-                values[0] = line.substring(0, line.indexOf(","));
-                String second = line.substring(line.indexOf(",") + 1);
-                values[1] = second.substring(0, second.indexOf(","));
-                values[2] = second.substring(second.indexOf(",") + 1);
-                Log.d(TAG, "Attempting to load " + Arrays.asList(values).toString());
-                Person p = new Person(Integer.parseInt(values[0]), values[1], values[2].getBytes());
-                appDatabase.personWithCoursesDAO().insert(p);
-                Log.d(TAG, "Loaded person " + p.name + " " + p.personId + " " + Arrays.toString(p.profilePic));
+                if (!line.isEmpty()) {
+                    Log.d(TAG, "Reading line: " + line);
+                    if (databaseHandler.databaseHasUUID(UUID.fromString(line))) {
+                        getPeople().add(databaseHandler.getPersonFromUUID(UUID.fromString(line)));
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        try (BufferedReader coursesReader = new BufferedReader(new FileReader(
-                Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + currentSession + "/courses.csv"))) {
-            String line;
-            while ((line = coursesReader.readLine()) != null) {
-                String[] values = line.split(",");
-                CourseEntry c = new CourseEntry(Integer.parseInt(values[0]), Integer.parseInt(values[1]), values[2], values[3], values[4], values[5], values[6]);
-                appDatabase.courseEntryDAO().insert(c);
-                Log.d(TAG, "Loaded course " + c.toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return true;
+    /**
+     * Get the last used session
+     * @return the last used session
+     */
+    public String getLastUsedSession() {
+        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return preferences.getString(LAST_USED_SESSION, NO_SESSION);
+    }
+
+    /**
+     * Save the current session to the last used session
+     */
+    public void saveCurrentSessionAsLastUsed() {
+        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(LAST_USED_SESSION, currentSession);
+        editor.apply();
+    }
+
+    public void renameSession(String session) {
+        currentSession = session;
+    }
+
+    public boolean noSessionActive() {
+        return currentSession.equals(NO_SESSION);
+    }
+
+    public String getCurrentSession() {
+        return currentSession;
     }
 
 }

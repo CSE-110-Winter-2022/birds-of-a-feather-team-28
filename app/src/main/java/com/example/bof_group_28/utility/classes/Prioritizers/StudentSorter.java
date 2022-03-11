@@ -75,7 +75,7 @@ public class StudentSorter {
     public HashMap<PersonWithCourses, List<CourseEntry>> generateStudentClassMap(List<PersonWithCourses> nearbyStudents) {
         if (nearbyStudents == null) {
             Log.e(TAG,"Attempted to generate a student class map off null nearby students");
-            return null;
+            return new HashMap<>();
         }
 
         HashMap<PersonWithCourses, List<CourseEntry>> matchingStudents = new HashMap<>();

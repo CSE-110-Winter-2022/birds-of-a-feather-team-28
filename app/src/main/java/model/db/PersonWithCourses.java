@@ -8,6 +8,7 @@ import com.google.android.gms.nearby.messages.Message;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import model.IPerson;
 
@@ -23,7 +24,7 @@ public class PersonWithCourses implements IPerson {
     //projection = {"text"}
 
     @Override
-    public int getId() {
+    public UUID getId() {
         return this.person.personId;
     }
 
@@ -33,7 +34,7 @@ public class PersonWithCourses implements IPerson {
     }
 
     @Override
-    public byte[] getProfilePic(){
+    public String getProfilePic(){
         return this.person.profilePic;
     }
 
@@ -70,5 +71,23 @@ public class PersonWithCourses implements IPerson {
                 && this.getProfilePic().equals(pwc.getProfilePic())
                 && this.getCourses().containsAll(pwc.getCourses())
                 && pwc.getCourses().containsAll(this.getCourses()));
+    }
+
+    public boolean sameUUID(PersonWithCourses pwc) {
+        return getId().toString().equals(pwc.getId().toString());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof PersonWithCourses) {
+            PersonWithCourses pwc = (PersonWithCourses) o;
+            return sameUUID(pwc);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 }

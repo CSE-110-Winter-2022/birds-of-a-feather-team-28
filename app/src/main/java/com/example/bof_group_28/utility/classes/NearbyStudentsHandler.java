@@ -3,6 +3,7 @@ package com.example.bof_group_28.utility.classes;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.sessionManager;
 
 import android.util.Log;
 
@@ -45,10 +46,11 @@ public class NearbyStudentsHandler {
      * @param user user
      * @param studentFinder StudentFinder used to retrieve students to handle
      */
-    public NearbyStudentsHandler(PersonWithCourses user, StudentFinder studentFinder) {
+    public NearbyStudentsHandler(PersonWithCourses user, StudentFinder studentFinder, StudentSorter sorter) {
         this.user = user;
         this.studentFinder = studentFinder;
-        this.sorter = new StudentSorter(user);
+        this.sorter = sorter;
+
     }
 
     /**
@@ -58,19 +60,7 @@ public class NearbyStudentsHandler {
         Log.d(TAG, "Refreshed nearby students finder");
         refreshUser();
         studentFinder.updateNearbyStudents();
-        appendNearbyStudentsToDatabase();
-    }
-
-    public void appendNearbyStudentsToDatabase() {
-        for (PersonWithCourses p : studentFinder.returnNearbyStudents()) {
-            if (!databaseHandler.hasPerson(p)) {
-                //TODO: need to append to the datbase, but how do u know if the student is a new addition or not.
-                for (CourseEntry course : p.getCourses()) {
-                    databaseHandler.insertCourse(course);
-                }
-                databaseHandler.insertPersonWithCourses(p.person);
-            }
-        }
+        sessionManager.updatePeopleWithNearby(getAllNearbyStudents());
     }
 
     /**
@@ -83,11 +73,6 @@ public class NearbyStudentsHandler {
 
     public HashMap<PersonWithCourses, List<CourseEntry>> getStudentSorterMap() {
         return sorter.generateStudentClassMap(getAllNearbyStudents());
-    }
-
-    public List<PersonWithCourses> getNearbyStudentsSharedCourses() {
-        //TODO: Change to prioritize by type
-        return sorter.getSortedStudents(studentFinder.returnNearbyStudents(), new DefaultPrioritizer());
     }
 
     /**
