@@ -28,7 +28,7 @@ public class StudentSorter {
      */
     public List<PersonWithCourses> getSortedStudents(List<PersonWithCourses> inpList, Prioritizer prioritizer) {
 
-        Log.v(TAG, "Sorted Student List");
+        Log.d(TAG, "Sorted Student List");
         List<PersonWithSharedCouseCount> sharedCourseCount = new ArrayList<>();
         HashMap<PersonWithCourses, List<CourseEntry>> studentClassMap = generateStudentClassMap(inpList);
 

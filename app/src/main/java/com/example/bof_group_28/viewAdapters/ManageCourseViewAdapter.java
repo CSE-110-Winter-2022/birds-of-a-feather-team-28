@@ -52,7 +52,7 @@ public class ManageCourseViewAdapter extends RecyclerView.Adapter<ManageCourseVi
         holder.courseQuarter.setText(course.quarter);
         holder.courseYear.setText(course.year);
         holder.courseSize.setText(course.size);
-        Log.v(TAG, "Bound Manage Course Item for " + course.toString());
+        Log.d(TAG, "Bound Manage Course Item for " + course.toString());
     }
 
     @Override

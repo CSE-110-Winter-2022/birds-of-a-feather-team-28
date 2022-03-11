@@ -18,12 +18,12 @@ public class Converters {
     public static byte[] bitmapToByteArr(Bitmap bitmap){
         OutputStream oStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 25, oStream);
-        Log.v(TAG, "Converted Bitmap to Byte Array");
+        Log.d(TAG, "Converted Bitmap to Byte Array");
         return ((ByteArrayOutputStream) oStream).toByteArray();
     }
 
     public static Bitmap byteArrToBitmap(byte[] byteArr){
-        Log.v(TAG, "Converted Byte Array to Bitmap");
+        Log.d(TAG, "Converted Byte Array to Bitmap");
         return BitmapFactory.decodeByteArray(byteArr,0, byteArr.length);
     }
 }

@@ -59,14 +59,14 @@ public class EditProfilePictureActivity extends AppCompatActivity {
                    @Override
                    public void run() {
                        if (fetchImage.isAlive()) {
-                           Log.v(TAG, "Still processing fetch image");
+                           Log.d(TAG, "Still processing fetch image");
                            //FIXME: not elegant way to check if done
                            handler.postDelayed(this, 1000);
                        } else {
                            Bitmap bitmap = fetchImage.getBitmap();
                            if(bitmap != null){
                                //FIXME: fix if file is too large for db
-                               Log.v(TAG, "Converted Bitmap to Byte Array");
+                               Log.d(TAG, "Converted Bitmap to Byte Array");
                                byte[] byteArr = Converters.bitmapToByteArr(bitmap);
                                databaseHandler.updateAndSaveUser(user.getName(), byteArr);
                                binding.editProfilePicture.setImageBitmap(bitmap);

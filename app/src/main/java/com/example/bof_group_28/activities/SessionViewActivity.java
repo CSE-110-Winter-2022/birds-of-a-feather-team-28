@@ -38,7 +38,7 @@ public class SessionViewActivity extends AppCompatActivity {
         super.onDestroy();
         Intent intent=new Intent();
         setResult(0,intent);
-        Log.v(TAG, "Update based on selected session");
+        Log.d(TAG, "Update based on selected session");
         finish();
     }
 }

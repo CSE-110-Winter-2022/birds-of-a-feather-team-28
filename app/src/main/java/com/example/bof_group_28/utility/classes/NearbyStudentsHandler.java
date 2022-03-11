@@ -55,7 +55,7 @@ public class NearbyStudentsHandler {
      * Get nearby students and refresh the student map
      */
     public void refreshNearbyStudents() {
-        Log.v(TAG, "Refreshed nearby students finder");
+        Log.d(TAG, "Refreshed nearby students finder");
         refreshUser();
         studentFinder.updateNearbyStudents();
         appendNearbyStudentsToDatabase();

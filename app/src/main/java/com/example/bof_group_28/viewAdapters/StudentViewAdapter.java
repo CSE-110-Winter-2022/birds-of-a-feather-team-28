@@ -76,7 +76,11 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     public void onBindViewHolder(@NonNull StudentViewAdapter.ViewHolder holder, int position) {
         holder.setPersonButton(students.get(position));
         //TODO: Reimplement
-        //holder.setSharedCoursesCount(handler.getStudentClassMap().get(students.get(position)).size());
+        if (handler.getStudentSorterMap().containsKey(students.get(position))) {
+            holder.setSharedCoursesCount(handler.getStudentSorterMap().get(students.get(position)).size());
+        } else {
+            holder.setSharedCoursesCount(0);
+        }
         holder.setProfilePicture(students.get(position).getProfilePic());
     }
 

@@ -36,7 +36,7 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull CourseViewAdapter.ViewHolder holder, int position) {
         holder.setCourseName(courses.get(position));
-        Log.v(TAG, "Bound Course Item for " + courses.get(position));
+        Log.d(TAG, "Bound Course Item for " + courses.get(position));
     }
 
     @Override

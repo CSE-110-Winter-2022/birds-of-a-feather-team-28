@@ -24,9 +24,6 @@
             android:name=".utility.services.NearbyStudentsService"
             android:enabled="true"
             android:exported="true" /> <!-- TODO: Replace hard-coded API Key with .gitIgnore and env file -->
-        <meta-data
-            android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="AIzaSyC8BpGrCBo52SNG4SkmrlSqztpNHBt7cyI" />
 
         <activity
             android:name=".activities.AddClassActivity"
@@ -36,9 +33,6 @@
             android:exported="false" />
         <activity
             android:name=".activities.ManageClassesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.GoogleSignInActivity"
             android:exported="false" />
         <activity
             android:name=".activities.BirdsOfAFeatherActivity"

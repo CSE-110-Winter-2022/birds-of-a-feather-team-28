@@ -78,7 +78,7 @@ public class SessionManager {
         List<String> fileList = new ArrayList<>();
         File directory = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles");
         if (directory.exists()) {
-            Log.v(TAG, "Retrieving Sessions List from " + directory.getPath());
+            Log.d(TAG, "Retrieving Sessions List from " + directory.getPath());
             for (String s : directory.list()) {
                 fileList.add(s);
             }
@@ -113,7 +113,7 @@ public class SessionManager {
      * "save" the current session
      */
     public void saveCurrentSession() {
-        Log.v(TAG, "Saving Session: " + currentSession);
+        Log.d(TAG, "Saving Session: " + currentSession);
         saveCurrentSessionToStorage();
     }
 
@@ -123,7 +123,7 @@ public class SessionManager {
      * @param sessionName new name of session
      */
     public void changeSession(String sessionName) {
-        Log.v(TAG, "Changing session to " + sessionName);
+        Log.d(TAG, "Changing session to " + sessionName);
         currentSession = sessionName;
         if (sessionExists(sessionName)) {
             openSessionFromStorage(sessionName);
@@ -157,13 +157,13 @@ public class SessionManager {
                 @Override
                 public void run() {
                     if (fetchImage.isAlive()) {
-                        Log.v(TAG, "Still processing fetch image");
+                        Log.d(TAG, "Still processing fetch image");
                         //FIXME: not elegant way to check if done
                         handler.postDelayed(this, 1000);
                     } else {
                         Bitmap bitmap = fetchImage.getBitmap();
                         //FIXME: fix if file is too large for db
-                        Log.v(TAG, "Converted Bitmap to Byte Array");
+                        Log.d(TAG, "Converted Bitmap to Byte Array");
                         byte[] byteArr = Converters.bitmapToByteArr(bitmap);
                         databaseHandler.updatePerson(user.getId(), user.getName(), byteArr);
                     }
@@ -193,23 +193,23 @@ public class SessionManager {
                     + course.subject + "," + course.courseNum + "," + course.size + "\n");
         }
 
-        Log.v(TAG, "Appending to File " + currentSession + "/persons.csv: \n" + personsText);
-        Log.v(TAG, "Appending to File " + currentSession + "/courses.csv: \n" + coursesText);
+        Log.d(TAG, "Appending to File " + currentSession + "/persons.csv: \n" + personsText);
+        Log.d(TAG, "Appending to File " + currentSession + "/courses.csv: \n" + coursesText);
 
         // Create necessary files
         File directory = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + currentSession);
         File personsFile = new File(directory, "/persons.csv");
         File coursesFile = new File(directory, "/courses.csv");
         if (!directory.exists()) {
-            Log.v(TAG, "Parent Directory doesn't exist. Generating directory");
+            Log.d(TAG, "Parent Directory doesn't exist. Generating directory");
             boolean madeDir = directory.mkdirs();
-            Log.v(TAG, "Directory creation status: " + madeDir);
+            Log.d(TAG, "Directory creation status: " + madeDir);
         }
         FileOutputStream outputStream;
         try {
             boolean fileStatus = personsFile.createNewFile();
             coursesFile.createNewFile();
-            Log.v(TAG, "Creation Status for PersonFile: " + fileStatus);
+            Log.d(TAG, "Creation Status for PersonFile: " + fileStatus);
 
             // Append CSV strings to files
             outputStream = new FileOutputStream(personsFile, false);
@@ -242,7 +242,7 @@ public class SessionManager {
     //TODO: IMPORTANT!!!! COURSES ARE DISAPPEARING? LIKE ONE AT A TIME?
     //https://www.baeldung.com/java-csv-file-array
     public boolean openSessionFromStorage(String sessionToOpen) {
-        Log.v(TAG, "Opening session from storage " + sessionToOpen);
+        Log.d(TAG, "Opening session from storage " + sessionToOpen);
         File file = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + sessionToOpen);
         if (!file.exists()) {
             Log.e(TAG, "Session to open from storage did not exist");
@@ -250,22 +250,22 @@ public class SessionManager {
         }
 
         appDatabase.clearAllTables();
-        Log.v(TAG, "Cleared tables to counts: " + appDatabase.personWithCoursesDAO().count() + " and " + appDatabase.courseEntryDAO().count());
+        Log.d(TAG, "Cleared tables to counts: " + appDatabase.personWithCoursesDAO().count() + " and " + appDatabase.courseEntryDAO().count());
 
         try (BufferedReader personsReader = new BufferedReader(new FileReader(
                 Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + currentSession + "/persons.csv"))) {
             String line;
             while ((line = personsReader.readLine()) != null) {
-                Log.v(TAG, "Parsing line: " + line);
+                Log.d(TAG, "Parsing line: " + line);
                 String[] values = new String[3];
                 values[0] = line.substring(0, line.indexOf(","));
                 String second = line.substring(line.indexOf(",") + 1);
                 values[1] = second.substring(0, second.indexOf(","));
                 values[2] = second.substring(second.indexOf(",") + 1);
-                Log.v(TAG, "Attempting to load " + Arrays.asList(values).toString());
+                Log.d(TAG, "Attempting to load " + Arrays.asList(values).toString());
                 Person p = new Person(Integer.parseInt(values[0]), values[1], values[2].getBytes());
                 appDatabase.personWithCoursesDAO().insert(p);
-                Log.v(TAG, "Loaded person " + p.name + " " + p.personId + " " + Arrays.toString(p.profilePic));
+                Log.d(TAG, "Loaded person " + p.name + " " + p.personId + " " + Arrays.toString(p.profilePic));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -278,7 +278,7 @@ public class SessionManager {
                 String[] values = line.split(",");
                 CourseEntry c = new CourseEntry(Integer.parseInt(values[0]), Integer.parseInt(values[1]), values[2], values[3], values[4], values[5], values[6]);
                 appDatabase.courseEntryDAO().insert(c);
-                Log.v(TAG, "Loaded course " + c.toString());
+                Log.d(TAG, "Loaded course " + c.toString());
             }
         } catch (IOException e) {
             e.printStackTrace();
