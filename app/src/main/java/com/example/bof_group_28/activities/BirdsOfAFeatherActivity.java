@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.bof_group_28.utility.Utilities;
 import com.example.bof_group_28.utility.classes.Calendar.DateFinder;
+import com.example.bof_group_28.utility.classes.FakePersonParser;
 import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
 import com.example.bof_group_28.utility.classes.Prioritizers.DefaultPrioritizer;
 import com.example.bof_group_28.utility.classes.Prioritizers.Prioritizer;
@@ -286,6 +287,27 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     public void updateSessionNameField() {
         TextView sessionNameField = findViewById(R.id.sessionNameField);
         sessionNameField.setText(sessionManager.getCurrentSession());
+    }
+
+    public void onMockButton(View view) {
+        mockUserPrompt("Mock a user.");
+    }
+
+    public void mockUserPrompt(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText input = new EditText(this);
+        input.setText(sessionManager.getCurrentSession());
+        builder.setMessage(message)
+                .setPositiveButton("Mock", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Log.d(TAG, "User attempting to mock fake user with Nearby");
+                        String inputText = input.getText().toString();
+                        FakePersonParser.addFakePersonToDatabaseFromString(inputText);
+                        Toast.makeText(getApplicationContext(), "Mocking user...", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        builder.setView(input);
+        builder.create().show();
     }
 
     /**

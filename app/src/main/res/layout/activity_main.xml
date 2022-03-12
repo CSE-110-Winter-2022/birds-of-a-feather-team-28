@@ -35,18 +35,26 @@
 
         <Button
             android:id="@+id/editProfileButton"
-            android:layout_width="143dp"
+            android:layout_width="110dp"
             android:layout_height="61dp"
             android:onClick="onEditProfileButtonClicked"
             android:text="Edit Profile" />
 
         <Button
             android:id="@+id/viewSessionsButton"
-            android:layout_width="143dp"
+            android:layout_width="110dp"
             android:layout_height="61dp"
-            android:layout_marginStart="50dp"
+            android:layout_marginStart="25dp"
             android:onClick="onViewSessionsButtonClicked"
             android:text="View Sessions" />
+
+        <Button
+            android:id="@+id/mockButton"
+            android:layout_width="110dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="25dp"
+            android:onClick="onMockButton"
+            android:text="Mock Users" />
 
     </LinearLayout>
 
