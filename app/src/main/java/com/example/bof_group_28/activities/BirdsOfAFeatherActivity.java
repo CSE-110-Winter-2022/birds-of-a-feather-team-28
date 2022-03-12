@@ -85,7 +85,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private static final String BOF_STOP_BTN_TEXT = "STOP";
     private static final int BOF_START_BTN_COLOR = Color.rgb(76, 175, 80);
     private static final int BOF_STOP_BTN_COLOR = Color.RED;
-    private static final int UPDATE_TIME = 5000;
+    private static final int UPDATE_TIME = 2000;
 
     private static final String DATE_FORMAT = "MM∕dd∕yyyy hh꞉mm:ss aa";
 
@@ -116,6 +116,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         Log.d(TAG, "Attempting to instantiate handler");
         StudentSorter sorter = new StudentSorter(user);
         handler = new NearbyStudentsHandler(user, new NearbyStudentsFinder(this.getApplicationContext()), sorter);
+
         sessionManager.setSorter(sorter);
 
         // Setup student view
@@ -183,8 +184,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
      */
     public void clickStartButton() {
         updateSessionNameField();
-        startBirdsOfFeather();
         this.bofStarted = true;
+        startBirdsOfFeather();
         setToStopButton();
 
         // Start the Nearby Students Service to check for nearby students
@@ -315,6 +316,11 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             updateSessionNameField();
             updateStudentsView();
         }
+
+        if (requestCode == 5) {
+            Log.d(TAG, "Updating views as profile was edited");
+            updateStudentsView();
+        }
     }
 
     /**
@@ -323,6 +329,6 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
      */
     public void onEditProfileButtonClicked(View view) {
         Intent intent = new Intent(this, EditProfileActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 5);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.bof_group_28.activities;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
@@ -112,9 +113,12 @@ public class AddClassActivity extends AppCompatActivity {
         editor.putString("size", sizeView.getText().toString());
         editor.apply();
 
+        Log.d(TAG, "Saved Add Class in preferences");
+
     }
 
     public void loadPreviousEntry() {
+        Log.d(TAG, "Loading previous Add Class entry from Preferences");
         //Load previously entered strings in views
         SharedPreferences preferences = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
 

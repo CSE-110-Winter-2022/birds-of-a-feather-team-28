@@ -49,7 +49,7 @@ public class DatabaseHandler {
 
     public boolean databaseHasUUID(UUID id) {
         for (PersonWithCourses p : db.personWithCoursesDAO().getAll()) {
-            if (p.getId() == id) {
+            if (p.getId().equals(id)) {
                 return true;
             }
         }
@@ -115,6 +115,37 @@ public class DatabaseHandler {
 
     public void deleteCourses(UUID personId) {
         db.courseEntryDAO().deleteCourses(personId);
+    }
+
+    public boolean sharesCourses(UUID other) {
+        PersonWithCourses otherUser = getPersonFromUUID(other);
+        for (CourseEntry course : otherUser.getCourses()) {
+            if (user.getCourses().contains(course)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int sharedCoursesCount(UUID other) {
+        PersonWithCourses otherUser = getPersonFromUUID(other);
+        int count = 0;
+        for (CourseEntry course : otherUser.getCourses()) {
+            if (user.getCourses().contains(course)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public List<CourseEntry> getSharedCourses(UUID other) {
+        List<CourseEntry> sharedCourses = new ArrayList<>();
+        for (CourseEntry course : getPersonFromUUID(other).getCourses()) {
+            if (user.getCourses().contains(course)) {
+                sharedCourses.add(course);
+            }
+        }
+        return sharedCourses;
     }
 
 }

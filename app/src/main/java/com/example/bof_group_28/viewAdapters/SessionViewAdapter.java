@@ -63,13 +63,13 @@ public class SessionViewAdapter extends RecyclerView.Adapter<SessionViewAdapter.
 
             this.sessionButton = itemView.findViewById(R.id.session_button);
             sessionButton.setOnClickListener((view) -> {
-                sessionManager.changeSession(sessionButton.getText().toString());
+                sessionManager.changeSession(sessionButton.getText().toString().substring(0, sessionButton.getText().toString().length() - 4));
                 ((Activity)c).finish();
             });
 
             this.deleteButton = itemView.findViewById(R.id.deleteSession);
             deleteButton.setOnClickListener((view) -> {
-                if (sessionManager.getCurrentSession().equals(sessionButton.getText().toString())) {
+                if ((sessionManager.getCurrentSession() + ".txt").equals(sessionButton.getText().toString())) {
                     Toast.makeText(c, "Can't delete a session you're in! Change sessions first.", Toast.LENGTH_LONG).show();
 
                 } else {

@@ -53,7 +53,7 @@ public class SessionManager {
     private String currentSession;
     private StudentSorter sorter;
 
-    private List<PersonWithCourses> peopleInCurrentSession;
+    private List<UUID> uuidList;
 
     public SessionManager(Context context) {
         DIRECTORY_PATH = context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getPath();
@@ -63,7 +63,7 @@ public class SessionManager {
         this.appDatabase = AppDatabase.singleton(context);
         databaseHandler = new DatabaseHandler(this.appDatabase);
 
-        peopleInCurrentSession = new ArrayList<>();
+        uuidList = new ArrayList<>();
 
         if (getUserId() != null) {
             userId = getUserId();
@@ -117,22 +117,29 @@ public class SessionManager {
     }
 
     public List<PersonWithCourses> getPeople() {
-        return peopleInCurrentSession;
+        List<PersonWithCourses> peopleList = new ArrayList<>();
+        Log.d(TAG, "Loading people from list of UUID size " + uuidList.size());
+        for (UUID id : uuidList) {
+            peopleList.add(databaseHandler.getPersonFromUUID(id));
+        }
+        Log.d(TAG, "Returned a list of people with size " + peopleList.size());
+        return peopleList;
+    }
+
+    public void addUUID(UUID id) {
+        uuidList.add(id);
     }
 
     public List<PersonWithCourses> getSortedPeople(Prioritizer prioritizer) {
-        return sorter.getSortedStudents(peopleInCurrentSession, prioritizer);
+        return sorter.getSortedStudents(getPeople(), prioritizer);
     }
 
     public void updatePeopleWithNearby(List<PersonWithCourses> people) {
-        Map<PersonWithCourses, List<CourseEntry>> map = sorter.generateStudentClassMap(people);
         for (PersonWithCourses pwc : people) {
-            // For all nearby people, if they aren't already in the session, and they share courses, add them!
-            if (!getPeople().contains(pwc)) {
-                if (map.containsKey(pwc)) {
-                    Log.d(TAG, "Added new nearby person " + pwc.person + " to current Session");
-                    getPeople().add(pwc);
-                }
+            // If we don't have them yet, and they share courses, add them!
+            if (!uuidList.contains(pwc.getId()) && databaseHandler.sharesCourses(pwc.getId())) {
+                uuidList.add(pwc.getId());
+                Log.d(TAG, "Added new UUID to nearby " + pwc.getId());
             }
         }
     }
@@ -153,7 +160,7 @@ public class SessionManager {
     }
 
     public boolean sessionExists(String sessionName) {
-        return getSessionsList().contains(sessionName);
+        return getSessionsList().contains(sessionName + ".txt");
     }
 
     /**
@@ -172,16 +179,16 @@ public class SessionManager {
     public void changeSession(String sessionName) {
         Log.d(TAG, "Changing session to " + sessionName);
         currentSession = sessionName;
+        clearCurrentPeople();
         if (sessionExists(sessionName)) {
+            Log.d(TAG, "Session exists!");
             openSessionFromStorage(sessionName);
-        } else {
-            clearCurrentPeople();
         }
         saveCurrentSessionAsLastUsed();
     }
 
     public void clearCurrentPeople() {
-        getPeople().clear();
+        uuidList.clear();
     }
 
     /**
@@ -247,7 +254,8 @@ public class SessionManager {
                 if (!line.isEmpty()) {
                     Log.d(TAG, "Reading line: " + line);
                     if (databaseHandler.databaseHasUUID(UUID.fromString(line))) {
-                        getPeople().add(databaseHandler.getPersonFromUUID(UUID.fromString(line)));
+                        Log.d(TAG, "Line loaded to user successfully!");
+                        addUUID(UUID.fromString(line));
                     }
                 }
             }

@@ -100,4 +100,12 @@ public class EditProfileActivity extends AppCompatActivity {
             new DownloadImageTask((ImageView) findViewById(R.id.profilePictureProfile)).execute(user.getProfilePic());
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent();
+        setResult(5,intent);
+        finish();
+    }
 }

@@ -2,6 +2,8 @@ package com.example.bof_group_28.viewAdapters;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.sessionManager;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import android.content.Context;
@@ -77,12 +79,15 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     @Override
     public void onBindViewHolder(@NonNull StudentViewAdapter.ViewHolder holder, int position) {
         holder.setPersonButton(students.get(position));
-        //TODO: Reimplement
-        if (handler.getStudentSorterMap().containsKey(students.get(position))) {
-            holder.setSharedCoursesCount(handler.getStudentSorterMap().get(students.get(position)).size());
+
+        if (sessionManager.getPeople().contains(students.get(position))) {
+            Log.d(TAG, "Setting shared course count for " + students.get(position).getName() + " to " + databaseHandler.sharedCoursesCount(students.get(position).getId()));
+            holder.setSharedCoursesCount(databaseHandler.sharedCoursesCount(students.get(position).getId()));
         } else {
+            Log.d(TAG, "Defaulting shared course count for " + students.get(position).getName() + " to 0 as they were not in UUID LIST");
             holder.setSharedCoursesCount(0);
         }
+
         holder.setProfilePicture(students.get(position).getProfilePic());
     }
 
@@ -132,12 +137,8 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
                 // get the shared courses as a set, and pass as an extra
                 Set<String> sharedCourses = new ArraySet<>();
-                if (handler != null && handler.getStudentSorterMap().containsKey(student)) {
-                    for (CourseEntry course : handler.getStudentSorterMap().get(student)) {
-                        sharedCourses.add(course.toString());
-                    }
-                } else {
-                    Log.e(BirdsOfAFeatherActivity.TAG, "ERROR! Student button pressed for student that does not exist in map.");
+                for (CourseEntry course : databaseHandler.getSharedCourses(student.getId())) {
+                    sharedCourses.add(course.toString());
                 }
                 editor.putStringSet(SELECTED_STUDENT_COURSES, sharedCourses);
 
