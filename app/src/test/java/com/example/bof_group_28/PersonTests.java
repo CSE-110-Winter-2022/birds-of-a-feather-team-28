@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import android.content.Context;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -31,8 +32,9 @@ public class PersonTests {
     //Empty Person edge cases taken care of during name insertion/saving
     @Test
     public void createPersonTest() {
-        Person person = new Person(1, "John Doe", null);
-        assertEquals(1,person.personId);
+        UUID id = UUID.randomUUID();
+        Person person = new Person(id, "John Doe", null);
+        assertEquals(id,person.personId);
         assertEquals("John Doe",person.name);
     }
 

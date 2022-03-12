@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import model.IPerson;
 import model.db.AppDatabase;
@@ -34,7 +35,12 @@ import model.db.PersonWithCourses;
 @RunWith(AndroidJUnit4.class)
 public class NearbyStudentHandlerTest {
     private AppDatabase db;
-
+    private UUID id = UUID.randomUUID();
+    private UUID id2 = UUID.randomUUID();
+    private UUID id3 = UUID.randomUUID();
+    private UUID c1 = UUID.randomUUID();
+    private UUID c2 = UUID.randomUUID();
+    private UUID c3 = UUID.randomUUID();
     @Before
     public void createDb() {
         Context context = ApplicationProvider.getApplicationContext();
@@ -45,10 +51,10 @@ public class NearbyStudentHandlerTest {
     @Test
     public void StudentMessageTest() {
         PersonWithCourses bob = new PersonWithCourses();
-        bob.person = new Person(11, "Bob", null);
+        bob.person = new Person(id, "Bob", null);
 
         List<CourseEntry> courseEntries = new ArrayList<CourseEntry>();
-        courseEntries.add(new CourseEntry(823741, 5, "2022", "WINTER", "CSE", "110", "500"));
+        courseEntries.add(new CourseEntry(c1, id2, "2022", "WINTER", "CSE", "110", "500"));
 
         bob.courseEntries = courseEntries;
 
@@ -61,10 +67,10 @@ public class NearbyStudentHandlerTest {
     @Test
     public void OneNearbyStudentTest() {
         PersonWithCourses bob = new PersonWithCourses();
-        bob.person = new Person(11, "Bob", null);
+        bob.person = new Person(id, "Bob", null);
 
         List<CourseEntry> courseEntries = new ArrayList<CourseEntry>();
-        courseEntries.add(new CourseEntry(823741, 5, "2022", "WINTER", "CSE", "110", "500"));
+        courseEntries.add(new CourseEntry(c1, id2, "2022", "WINTER", "CSE", "110", "500"));
 
         bob.courseEntries = courseEntries;
 
@@ -82,13 +88,13 @@ public class NearbyStudentHandlerTest {
     @Test
     public void MultipleNearbyStudentsTest() {
         List<CourseEntry> courseEntries = new ArrayList<CourseEntry>();
-        courseEntries.add(new CourseEntry(823741, 5, "2022", "WINTER", "CSE", "110", "500"));
+        courseEntries.add(new CourseEntry(c1, id, "2022", "WINTER", "CSE", "110", "500"));
 
         PersonWithCourses bob = new PersonWithCourses();
-        bob.person = new Person(11, "Bob", null);
+        bob.person = new Person(id2, "Bob", null);
 
         PersonWithCourses lily = new PersonWithCourses();
-        lily.person = new Person(12, "Lily", null);
+        lily.person = new Person(id3, "Lily", null);
 
         bob.courseEntries = courseEntries;
         lily.courseEntries = courseEntries;
@@ -106,26 +112,26 @@ public class NearbyStudentHandlerTest {
         assertEquals(nearbyStudents.size(), nearbyStudentsFinder.returnNearbyStudents().size());
     }
 
-    /*@Test
+    @Test
     public void NaiveSharedCoursesTest() {
 
-        Person person = new Person(1, "John Doe", null);
+        Person person = new Person(id, "John Doe", null);
         db.personWithCoursesDAO().insert(person);
-        CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI", "CSE", "110");
+        CourseEntry courseEntry = new CourseEntry(c1,id,"2022", "WI", "CSE", "110", "500");
         db.courseEntryDAO().insert(courseEntry);
-        courseEntry = new CourseEntry(2,1,"2022", "WI", "CSE", "101");
+        courseEntry = new CourseEntry(c2,id,"2022", "WI", "CSE", "101", "500");
         db.courseEntryDAO().insert(courseEntry);
 
-        Person personTwo = new Person(2, "Jeff Bezos", null);
+        Person personTwo = new Person(id2, "Jeff Bezos", null);
         db.personWithCoursesDAO().insert(personTwo);
-        courseEntry = new CourseEntry(3,2,"2022", "WI", "CSE", "110");
+        courseEntry = new CourseEntry(c3,id2,"2022", "WI", "CSE", "110","500");
         db.courseEntryDAO().insert(courseEntry);
 
         List<PersonWithCourses> fakePeople = new ArrayList<>();
-        fakePeople.add(db.personWithCoursesDAO().get(2));
-        NearbyStudentsHandler handler = new NearbyStudentsHandler(db.personWithCoursesDAO().get(1), new DummyStudentFinder(fakePeople, null));
+        fakePeople.add(db.personWithCoursesDAO().get(id2));
+        //NearbyStudentsHandler handler = new NearbyStudentsHandler(db.personWithCoursesDAO().get(id), new DummyStudentFinder(fakePeople, null));
 
-        assertTrue(handler.getStudentClassMap().containsKey(db.personWithCoursesDAO().get(2)));
-        assertEquals(handler.getStudentClassMap().get(db.personWithCoursesDAO().get(2)).get(0), courseEntry);
-    }*/
+        //assertTrue(handler.getStudentClassMap().containsKey(db.personWithCoursesDAO().get(2)));
+        //assertEquals(handler.getStudentClassMap().get(db.personWithCoursesDAO().get(2)).get(0), courseEntry);
+    }
 }

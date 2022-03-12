@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import model.IPerson;
 import model.db.AppDatabase;
@@ -40,6 +41,12 @@ public class DatabaseInsertionTest {
     }*/
 
     private AppDatabase db;
+    private UUID c1 = UUID.randomUUID();
+    private UUID c2 = UUID.randomUUID();
+    private UUID c3 = UUID.randomUUID();
+    private UUID c4 = UUID.randomUUID();
+    private UUID id = UUID.randomUUID();
+    private UUID id2 = UUID.randomUUID();
 
     @Before
     public void createDb() {
@@ -50,22 +57,21 @@ public class DatabaseInsertionTest {
     @Test
     public void SinglePersonInsertionTest() {
 
-        Person person = new Person(1, "John Doe", null);
+        Person person = new Person(id, "John Doe", null);
         db.personWithCoursesDAO().insert(person);
 
-        CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110", "500");
+        CourseEntry courseEntry = new CourseEntry(c1, id,"2022", "WI22", "CSE", "110", "500");
         db.courseEntryDAO().insert(courseEntry);
         //FIXME: bad quarter naming
-        courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101", "500");
-
-        courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110", "Small (40-75)");
+        courseEntry = new CourseEntry(c2, id,"2022", "WI22", "CSE", "101", "500");
+        db.courseEntryDAO().insert(courseEntry);
+        courseEntry = new CourseEntry(c1, id,"2022", "WI22", "CSE", "110", "Small (40-75)");
         db.courseEntryDAO().insert(courseEntry);
         //FIXME: bad quarter naming
-        courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101", "Small (40-75)");
+        courseEntry = new CourseEntry(c2, id,"2022", "WI22", "CSE", "101", "Small (40-75)");
 
         db.courseEntryDAO().insert(courseEntry);
 
-        assertEquals(2, db.courseEntryDAO().maxId());
 
         List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
         assertEquals("John Doe", persons.get(0).getName());
@@ -78,19 +84,19 @@ public class DatabaseInsertionTest {
     @Test
     public void DoublePersonInsertionTest() {
 
-        Person person = new Person(1, "John Doe", null);
+        Person person = new Person(id, "John Doe", null);
         db.personWithCoursesDAO().insert(person);
-        person = new Person(2, "Jane Doe", null);
+        person = new Person(id2, "Jane Doe", null);
         db.personWithCoursesDAO().insert(person);
 
 
-        CourseEntry courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110", "500");
+        CourseEntry courseEntry = new CourseEntry(c3, id, "2022", "WI22", "CSE", "110", "500");
         db.courseEntryDAO().insert(courseEntry);
-        courseEntry = new CourseEntry(4, 2, "2022", "WI22", "MGT", "181", "500");
-
-        courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110", "Small (40-75)");
+        courseEntry = new CourseEntry(c4, id2, "2022", "WI22", "MGT", "181", "500");
         db.courseEntryDAO().insert(courseEntry);
-        courseEntry = new CourseEntry(4, 2, "2022", "WI22", "MGT", "181", "Small (40-75)");
+        courseEntry = new CourseEntry(c3, id, "2022", "WI22", "CSE", "110", "Small (40-75)");
+        db.courseEntryDAO().insert(courseEntry);
+        courseEntry = new CourseEntry(c4, id2, "2022", "WI22", "MGT", "181", "Small (40-75)");
 
         db.courseEntryDAO().insert(courseEntry);
 
