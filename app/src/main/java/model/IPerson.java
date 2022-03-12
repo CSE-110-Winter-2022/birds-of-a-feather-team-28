@@ -1,14 +1,14 @@
 package model;
 
-import android.media.Image;
-
 import java.util.List;
+import java.util.UUID;
+
 import model.db.CourseEntry;
 
 public interface IPerson {
-    int getId();
+    UUID getId();
     String getName();
-    byte[] getProfilePic();
+    String getProfilePic();
     List<CourseEntry> getCourses();
 
 }

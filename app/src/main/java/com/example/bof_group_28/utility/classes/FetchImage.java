@@ -58,7 +58,7 @@ public class FetchImage extends Thread{
         handler.post(new Runnable(){
             @Override
             public void run(){
-                Log.v(TAG, "Processing image conversion");
+                Log.d(TAG, "Processing image conversion");
                 if (context != null) {
                     progressDialog = new ProgressDialog(context);
                     progressDialog.setMessage("Loading profile picture");

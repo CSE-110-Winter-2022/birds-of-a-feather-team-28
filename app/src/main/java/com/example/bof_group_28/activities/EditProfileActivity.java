@@ -1,5 +1,6 @@
 package com.example.bof_group_28.activities;
 
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
@@ -9,6 +10,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.utility.classes.Converters;
+import com.example.bof_group_28.utility.classes.DownloadImageTask;
 
 import model.db.Person;
 
@@ -33,11 +36,7 @@ public class EditProfileActivity extends AppCompatActivity {
         TextView nameField = findViewById(R.id.personsNameField);
         nameField.setText(userName);
 
-        byte[] pfp = user.getProfilePic();
-        if(pfp != null){
-            Bitmap pfpBitmap = Converters.byteArrToBitmap(pfp);
-            ((ImageView) findViewById(R.id.profilePictureProfile)).setImageBitmap(pfpBitmap);
-        }
+        new DownloadImageTask((ImageView) findViewById(R.id.profilePictureProfile)).execute(user.getProfilePic());
     }
 
     public void onHomeButtonClicked(View view) {
@@ -56,8 +55,9 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public void onEditProfilePicButtonClicked(View view) {
+
         Intent intent = new Intent(this, EditProfilePictureActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 10);
     }
 
     /**
@@ -82,5 +82,22 @@ public class EditProfileActivity extends AppCompatActivity {
 
         databaseHandler.updateAndSaveUser(name, personToUpdate.profilePic);
         Toast.makeText(this, "Name updated successfully", Toast.LENGTH_SHORT).show();
+    }
+
+
+    /**
+     * Handle returning from the view session to update the view
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 10) {
+            Log.d(TAG, "Updating PFP view");
+
+            new DownloadImageTask((ImageView) findViewById(R.id.profilePictureProfile)).execute(user.getProfilePic());
+        }
     }
 }

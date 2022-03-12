@@ -2,6 +2,7 @@ package com.example.bof_group_28.viewAdapters;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
 import com.example.bof_group_28.utility.classes.Converters;
+import com.example.bof_group_28.utility.classes.DownloadImageTask;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.activities.StudentSelectedActivity;
@@ -76,7 +78,11 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     public void onBindViewHolder(@NonNull StudentViewAdapter.ViewHolder holder, int position) {
         holder.setPersonButton(students.get(position));
         //TODO: Reimplement
-        //holder.setSharedCoursesCount(handler.getStudentClassMap().get(students.get(position)).size());
+        if (handler.getStudentSorterMap().containsKey(students.get(position))) {
+            holder.setSharedCoursesCount(handler.getStudentSorterMap().get(students.get(position)).size());
+        } else {
+            holder.setSharedCoursesCount(0);
+        }
         holder.setProfilePicture(students.get(position).getProfilePic());
     }
 
@@ -99,7 +105,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         private final Button personButton;
         private PersonWithCourses student;
         private final TextView classCount;
-        private byte[] pfp;
+        private String pfp;
 
         /**
          * Construct a Recycler View Item with onClick to select a student
@@ -126,8 +132,8 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
                 // get the shared courses as a set, and pass as an extra
                 Set<String> sharedCourses = new ArraySet<>();
-                if (handler.getStudentClassMap() != null && handler.getStudentClassMap().containsKey(student)) {
-                    for (CourseEntry course : handler.getStudentClassMap().get(student)) {
+                if (handler != null && handler.getStudentSorterMap().containsKey(student)) {
+                    for (CourseEntry course : handler.getStudentSorterMap().get(student)) {
                         sharedCourses.add(course.toString());
                     }
                 } else {
@@ -158,12 +164,9 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
          * Set the profile picture
          * @param pfp byte array
          */
-        public void setProfilePicture(byte[] pfp) {
-            if(pfp != null){
-                this.pfp = pfp;
-                Bitmap pfpBitmap = Converters.byteArrToBitmap(pfp);
-                ((ImageView) itemView.findViewById(R.id.smallProfilePicture)).setImageBitmap(pfpBitmap);
-            }
+        public void setProfilePicture(String pfp) {
+            this.pfp = pfp;
+            new DownloadImageTask((ImageView) itemView.findViewById(R.id.smallProfilePicture)).execute(pfp);
         }
     }
 }

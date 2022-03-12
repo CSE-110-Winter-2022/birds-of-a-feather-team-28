@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import java.util.List;
+import java.util.UUID;
 
 @Dao
 public interface PersonWithCoursesDAO {
@@ -16,29 +17,19 @@ public interface PersonWithCoursesDAO {
     List<PersonWithCourses> getAll();
 
     @Query("SELECT * FROM persons WHERE person_id=:id")
-    PersonWithCourses get(int id);
+    PersonWithCourses get(UUID id);
 
     @Query("SELECT COUNT(*) FROM persons")
     int count();
 
-    @Query("SELECT MAX(person_id) FROM persons")
-    int maxId();
-
     @Query("UPDATE persons SET name = :personName, profile_pic = :profilePic WHERE person_id = :id")
-    void update(int id, String personName, byte[] profilePic);
-
-    //Only use after person's courses have been deleted
-    @Query("DELETE FROM persons WHERE person_id != 1")
-    void deleteNonUserPersons();
-
-    @Query("DELETE FROM courseentries WHERE person_id != 1")
-    void deleteNonUserCourses();
+    void update(UUID id, String personName, String profilePic);
 
     @Query("DELETE FROM persons WHERE person_id = :id")
-    void deletePerson(int id);
+    void deletePerson(UUID id);
 
     @Query("DELETE FROM courseentries WHERE person_id = :id")
-    void deletePersonCourses(int id);
+    void deletePersonCourses(UUID id);
 
     @Insert
     void insert(Person person);
