@@ -3,6 +3,7 @@ package com.example.bof_group_28.utility.classes;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.finder;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.sessionManager;
 
 import android.util.Log;
@@ -37,18 +38,14 @@ public class NearbyStudentsHandler {
     public PersonWithCourses getUser() {
         return user;
     }
-
-    private StudentFinder studentFinder;
     private StudentSorter sorter;
 
     /**
      * Constructor
      * @param user user
-     * @param studentFinder StudentFinder used to retrieve students to handle
      */
-    public NearbyStudentsHandler(PersonWithCourses user, StudentFinder studentFinder, StudentSorter sorter) {
+    public NearbyStudentsHandler(PersonWithCourses user, StudentSorter sorter) {
         this.user = user;
-        this.studentFinder = studentFinder;
         this.sorter = sorter;
 
     }
@@ -59,7 +56,7 @@ public class NearbyStudentsHandler {
     public void refreshNearbyStudents() {
         Log.d(TAG, "Refreshed nearby students finder");
         refreshUser();
-        studentFinder.updateNearbyStudents();
+        finder.updateNearbyStudents();
         sessionManager.updatePeopleWithNearby(getAllNearbyStudents());
     }
 
@@ -76,11 +73,11 @@ public class NearbyStudentsHandler {
      * @return the students list
      */
     public List<PersonWithCourses> getAllNearbyStudents() {
-        return studentFinder.returnNearbyStudents();
+        return finder.returnNearbyStudents();
     }
 
     public void clear() {
-        studentFinder.returnNearbyStudents().clear();
+        finder.returnNearbyStudents().clear();
     }
 
 

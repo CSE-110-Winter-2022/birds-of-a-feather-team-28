@@ -1,10 +1,14 @@
 package com.example.bof_group_28.utility.services;
 
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.finder;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
 import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
 
 public class NearbyStudentsService extends Service {
@@ -13,8 +17,8 @@ public class NearbyStudentsService extends Service {
     public static final String STOP_SEARCHING = "Stopping the search...";
     public static final String TAG = "BOF-TEAM-28";
 
-    public NearbyStudentsService() {
 
+    public NearbyStudentsService() {
     }
 
     @Override
@@ -22,9 +26,12 @@ public class NearbyStudentsService extends Service {
         Toast.makeText(NearbyStudentsService.this, SEARCHING_FOR_STUDENTS, Toast.LENGTH_SHORT).show();
 
         synchronized (this) {
-            NearbyStudentsFinder nearbyStudentsFinder = new NearbyStudentsFinder(this);
-            nearbyStudentsFinder.publishToNearbyStudents();
-            nearbyStudentsFinder.updateNearbyStudents();
+            finder.updateNearbyStudents();
+            /*if (finder != null) {
+                Log.d(TAG, "Finder publishing to Nearby");
+                finder.publishToNearbyStudents();
+                finder.updateNearbyStudents();
+            }*/
         }
 
         return super.onStartCommand(intent, flags, startId);

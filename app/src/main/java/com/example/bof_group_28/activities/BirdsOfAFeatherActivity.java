@@ -89,7 +89,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private NearbyStudentsHandler handler;
     private Intent nearbyStudentService;
     private Prioritizer currentPrioritizer;
-    private NearbyStudentsFinder finder;
+    public static NearbyStudentsFinder finder;
 
     // Constants
     public static final String PREF_NAME = "preferences";
@@ -129,7 +129,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         Log.d(TAG, "Attempting to instantiate handler");
         StudentSorter sorter = new StudentSorter(user);
         finder = new NearbyStudentsFinder(this.getApplicationContext());
-        handler = new NearbyStudentsHandler(user, finder, sorter);
+        handler = new NearbyStudentsHandler(user, sorter);
 
         sessionManager.setSorter(sorter);
         currentPrioritizer = new DefaultPrioritizer();
@@ -326,6 +326,10 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         final Runnable r = new Runnable() {
             public void run() {
                 if (bofStarted) {
+
+                    Log.d(TAG, "Finder publishing to Nearby");
+                    finder.publishToNearbyStudents();
+
                     handler.refreshNearbyStudents();
                     updateStudentsView();
                     Log.d(TAG, "Refreshed and updated nearby students view in main activity.");
