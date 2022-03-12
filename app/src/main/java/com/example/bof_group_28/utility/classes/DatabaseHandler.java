@@ -148,4 +148,13 @@ public class DatabaseHandler {
         return sharedCourses;
     }
 
+    public void setFavStatus(UUID id, boolean favStatus) {
+        db.personWithCoursesDAO().setFavStatus(id, favStatus);
+    }
+
+    public boolean getFavStatus(UUID id) {
+
+        return db.personWithCoursesDAO().get(id).getFavStatus();
+    }
+
 }

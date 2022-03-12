@@ -39,14 +39,13 @@ public class PersonWithCourses implements IPerson {
     }
 
     @Override
-    public boolean getFavStatus(){
-        return this.person.favStatus;
-    }
+    public boolean getFavStatus(){ return this.person.favStatus;}
 
     @Override
     public List<CourseEntry> getCourses() {
         return this.courseEntries;
     }
+
 
     public int getNumCourses() { return this.courseEntries.size(); }
 

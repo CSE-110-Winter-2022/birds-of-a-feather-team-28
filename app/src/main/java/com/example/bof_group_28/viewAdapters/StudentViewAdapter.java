@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -79,6 +80,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     @Override
     public void onBindViewHolder(@NonNull StudentViewAdapter.ViewHolder holder, int position) {
         holder.setPersonButton(students.get(position));
+        holder.setFavoriteButton(students.get(position));
 
         if (sessionManager.getPeople().contains(students.get(position))) {
             Log.d(TAG, "Setting shared course count for " + students.get(position).getName() + " to " + databaseHandler.sharedCoursesCount(students.get(position).getId()));
@@ -108,6 +110,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     public static class ViewHolder
             extends RecyclerView.ViewHolder {
         private final Button personButton;
+        private final ImageButton favoriteButton;
         private PersonWithCourses student;
         private final TextView classCount;
         private String pfp;
@@ -122,6 +125,8 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
             // shared count
             this.classCount = itemView.findViewById(R.id.sharedClassesCount);
+
+
 
             // onclick to select a student
             this.personButton = itemView.findViewById(R.id.session_button);
@@ -150,6 +155,17 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
                 view.getContext().startActivity(intent);
             });
+
+            //Should be refactored
+            this.favoriteButton = itemView.findViewById(R.id.favorite);
+
+            favoriteButton.setOnClickListener((view) -> {
+                boolean currFavStatus = databaseHandler.getFavStatus(student.getId());
+                databaseHandler.setFavStatus(student.getId(), !currFavStatus);
+                Log.v("StudentViewAdapter:", "Favorited: " + currFavStatus);
+                setFavoriteButton(this.student);
+            });
+
         }
 
         public void setPersonButton(PersonWithCourses student) {
@@ -159,6 +175,15 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
         public void setSharedCoursesCount(int courses) {
             classCount.setText(courses + " shared courses.");
+        }
+
+        public void setFavoriteButton(PersonWithCourses student) {
+            if (databaseHandler.getFavStatus(student.getId())) {
+                favoriteButton.setImageResource(R.drawable.button_on);
+            }
+            else {
+                favoriteButton.setImageResource(R.drawable.button_off);
+            }
         }
 
         /**

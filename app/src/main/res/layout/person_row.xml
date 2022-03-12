@@ -16,8 +16,8 @@
             android:id="@+id/session_button"
             android:layout_width="0dp"
             android:layout_height="57dp"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:backgroundTint="@color/white"
             android:text="PERSON"
             android:textColor="@color/black"
@@ -28,17 +28,46 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/sharedClassesCount"
+            android:layout_width="58dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Shared Classes"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/favorite"
+            app:layout_constraintStart_toEndOf="@+id/session_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.538" />
+
+
         <ImageButton android:id="@+id/favorite"
-            android:src="@drawable/star"
+            android:src="@drawable/button_off"
             android:background="#00ffffff"
             android:onClick="onSwitchFavorite"
             android:layout_width="0dp"
             android:layout_height="57dp"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/session_button"
+            app:layout_constraintEnd_toStartOf="@+id/wave"
+            app:layout_constraintStart_toEndOf="@+id/sharedClassesCount"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageButton android:id="@+id/wave"
+            android:src="@drawable/wave_off"
+            android:background="#00ffffff"
+            android:onClick="onSwitchWave"
+            android:layout_width="0dp"
+            android:layout_height="57dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/smallProfilePicture"
+            app:layout_constraintStart_toEndOf="@+id/favorite"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
@@ -46,27 +75,17 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginTop="1dp"
-            android:layout_marginEnd="4dp"
             android:layout_marginBottom="1dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/wave"
             app:layout_constraintVertical_bias="0.0"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <TextView
-            android:id="@+id/sharedClassesCount"
-            android:layout_width="58dp"
-            android:layout_height="41dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="77dp"
-            android:layout_marginBottom="5dp"
-            android:text="Shared Classes"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/favorite"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.538" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
