@@ -153,14 +153,18 @@ public class SessionManager {
         File directory = new File(DIRECTORY_PATH);
         Log.d(TAG, "Retrieving Sessions List from " + directory.getPath());
         if (directory.list() != null) {
-            Collections.addAll(fileList, directory.list());
+            for(String f : directory.list()) {
+                if (f.equals("uuidFile.text")) {
+                    continue;
+                }
+                fileList.add(f.substring(0, f.length() - 4));
+            }
         }
-        fileList.remove("uuidFile.text");
         return fileList;
     }
 
     public boolean sessionExists(String sessionName) {
-        return getSessionsList().contains(sessionName + ".txt");
+        return getSessionsList().contains(sessionName);
     }
 
     /**
@@ -235,7 +239,7 @@ public class SessionManager {
     }
 
     public void deleteSession(String session) {
-        File sessionFile = new File(DIRECTORY_PATH + "/" + session);
+        File sessionFile = new File(DIRECTORY_PATH + "/" + session + ".txt");
         boolean del = sessionFile.delete();
         Log.d(TAG, "Deleted session " + session + " STATUS: " + del);
     }
@@ -285,6 +289,12 @@ public class SessionManager {
 
     public void renameSession(String session) {
         currentSession = session;
+    }
+
+    public void renameSessionFile(String session, String newSession) {
+        File file = new File(DIRECTORY_PATH + "/" + session + ".txt");
+        boolean rename = file.renameTo(new File(DIRECTORY_PATH + "/" + newSession + ".txt"));
+        Log.d(TAG, "Renamed session " + session + " to " + newSession + " status: " + rename);
     }
 
     public boolean noSessionActive() {
