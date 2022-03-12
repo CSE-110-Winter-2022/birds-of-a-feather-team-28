@@ -51,7 +51,7 @@
         <activity android:name=".activities.StudentSelectedActivity" />
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="AIzaSyA-C-uMnxzzuRop1-wM90w0crUlArnMUqQ">
+            android:value="AIzaSyC8BpGrCBo52SNG4SkmrlSqztpNHBt7cyI">
         </meta-data>
     </application>
 
