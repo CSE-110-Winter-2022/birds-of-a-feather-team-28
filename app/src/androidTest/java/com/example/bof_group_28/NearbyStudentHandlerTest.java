@@ -31,7 +31,7 @@ import model.db.AppDatabase;
 import model.db.CourseEntry;
 import model.db.Person;
 import model.db.PersonWithCourses;
-
+/**
 @RunWith(AndroidJUnit4.class)
 public class NearbyStudentHandlerTest {
     private AppDatabase db;
@@ -134,4 +134,4 @@ public class NearbyStudentHandlerTest {
         //assertTrue(handler.getStudentClassMap().containsKey(db.personWithCoursesDAO().get(2)));
         //assertEquals(handler.getStudentClassMap().get(db.personWithCoursesDAO().get(2)).get(0), courseEntry);
     }
-}
+}*/

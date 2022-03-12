@@ -43,7 +43,7 @@ public class PersonWithCoursesDAOTest {
 
     ArrayList<CourseEntry> courseList;
     ArrayList<Person> personList;
-
+    /**
     @Before
     public void createDb() {
         Context context = ApplicationProvider.getApplicationContext();
@@ -138,7 +138,7 @@ public class PersonWithCoursesDAOTest {
     public void maxIDPersons() {
         assertEquals(4, db.personWithCoursesDAO().maxId());
     }*/
-
+    /**
     @Test
     public void updatePersons() {
         db.personWithCoursesDAO().update(id, "Jane Doe", null);

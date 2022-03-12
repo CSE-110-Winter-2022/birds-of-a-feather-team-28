@@ -39,7 +39,7 @@ public class DatabaseInsertionTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.example.bof_group_28", appContext.getPackageName());
     }*/
-
+    /**
     private AppDatabase db;
     private UUID c1 = UUID.randomUUID();
     private UUID c2 = UUID.randomUUID();
