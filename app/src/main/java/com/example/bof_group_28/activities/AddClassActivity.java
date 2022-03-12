@@ -21,6 +21,7 @@ import com.example.bof_group_28.utility.enums.QuarterName;
 import com.example.bof_group_28.utility.enums.SizeName;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import model.db.CourseEntry;
 
@@ -162,7 +163,7 @@ public class AddClassActivity extends AppCompatActivity {
         text = findViewById(R.id.size_txt);
         String sizeTxt = text.getText().toString();
 
-        int newCourseID = databaseHandler.db.courseEntryDAO().maxId()+1;
+        UUID newCourseID = UUID.randomUUID();
         CourseEntry courseToAdd = new CourseEntry(newCourseID, user.getId(), yearTxt, quarterTxt, subjectTxt, courseNumTxt, sizeTxt);
 
         if (validateCourse(courseToAdd)) {

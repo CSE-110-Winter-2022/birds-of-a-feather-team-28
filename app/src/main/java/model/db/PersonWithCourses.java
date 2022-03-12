@@ -56,21 +56,16 @@ public class PersonWithCourses implements IPerson {
     public Message toMessage() {
         String numCourses = String.valueOf(this.getNumCourses());
         String name = getName();
+        String uuid = getId().toString();
+        String profilePic = getProfilePic();
         String coursesStr = "";
 
         for (int i = 0; i < getNumCourses(); i++) {
             coursesStr += ((CourseEntry) courseEntries.get(i)).toMsgString();
         }
 
-        String msg = numCourses + MSG_DELIMITER + name + MSG_DELIMITER + coursesStr;
+        String msg = numCourses + MSG_DELIMITER + uuid + MSG_DELIMITER + name + MSG_DELIMITER + profilePic + MSG_DELIMITER + coursesStr;
         return new Message(msg.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public boolean hasSameInformation(PersonWithCourses pwc) {
-        return (this.getName().equals(pwc.getName())
-                && this.getProfilePic().equals(pwc.getProfilePic())
-                && this.getCourses().containsAll(pwc.getCourses())
-                && pwc.getCourses().containsAll(this.getCourses()));
     }
 
     public boolean sameUUID(PersonWithCourses pwc) {

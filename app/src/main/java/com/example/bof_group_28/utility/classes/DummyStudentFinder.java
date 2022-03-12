@@ -29,11 +29,6 @@ public class DummyStudentFinder implements StudentFinder {
     @Override
     public void updateNearbyStudents() {
         nearbyStudents.clear();
-        // TODO move methods to databaseHandler instead of raw access db
-        // TODO Refactor such that this is not necessarily in the student finder. It should ALWAYS pull from database
-        for (int i = 2; i <= databaseHandler.db.personWithCoursesDAO().count(); i++) {
-            nearbyStudents.add(databaseHandler.db.personWithCoursesDAO().get(i));
-        }
     }
 
     @Override

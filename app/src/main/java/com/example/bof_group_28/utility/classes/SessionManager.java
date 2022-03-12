@@ -58,8 +58,6 @@ public class SessionManager {
     public SessionManager(Context context) {
         DIRECTORY_PATH = context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getPath();
 
-        userId = getUserId();
-
         this.context = context;
         currentSession = getLastUsedSession();
         this.appDatabase = AppDatabase.singleton(context);
@@ -67,11 +65,15 @@ public class SessionManager {
 
         peopleInCurrentSession = new ArrayList<>();
 
-        if (!noSessionActive()) {
-            openSessionFromStorage(currentSession);
-            user = databaseHandler.getUser();
+        if (getUserId() != null) {
+            userId = getUserId();
         } else {
             firstTimeUserInitialize();
+        }
+        user = databaseHandler.getUser();
+
+        if (!noSessionActive()) {
+            openSessionFromStorage(currentSession);
         }
 
         saveCurrentSessionAsLastUsed();
@@ -82,8 +84,36 @@ public class SessionManager {
     }
 
     public UUID getUserId() {
-        fix this
-        return new UUID(10,5);
+        File uuidFile = new File(DIRECTORY_PATH + "/uuidFile.text");
+        if (!uuidFile.exists()) {
+            return null;
+        }
+        try (BufferedReader uuidReader = new BufferedReader(new FileReader(uuidFile))) {
+            String line;
+            while ((line = uuidReader.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    Log.d(TAG, "Reading UUID line: " + line);
+                    return UUID.fromString(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveUUIDToFile() {
+        File uuidFile = new File(DIRECTORY_PATH + "/uuidFile.text");
+        try {
+            uuidFile.createNewFile();
+            FileOutputStream stream;
+            stream = new FileOutputStream(uuidFile, false);
+            stream.write(userId.toString().getBytes());
+            stream.flush();
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<PersonWithCourses> getPeople() {
@@ -100,12 +130,9 @@ public class SessionManager {
             // For all nearby people, if they aren't already in the session, and they share courses, add them!
             if (!getPeople().contains(pwc)) {
                 if (map.containsKey(pwc)) {
+                    Log.d(TAG, "Added new nearby person " + pwc.person + " to current Session");
                     getPeople().add(pwc);
                 }
-            } else {
-                // A person may have different information, so update their information.
-                getPeople().remove(pwc);
-                getPeople().add(pwc);
             }
         }
     }
@@ -121,6 +148,7 @@ public class SessionManager {
         if (directory.list() != null) {
             Collections.addAll(fileList, directory.list());
         }
+        fileList.remove("uuidFile.text");
         return fileList;
     }
 
@@ -163,27 +191,11 @@ public class SessionManager {
         String name = "Name Not Set";
 
         // Add the person to the Database
-        Person userPerson = new Person(UUID.randomUUID(), name, "https://i.imgur.com/OLWcBAL.png");
+        userId = UUID.randomUUID();
+        Log.d(TAG, "First time user initialize ran, generated new UUID " + userId);
+        Person userPerson = new Person(userId, name, "https://i.imgur.com/OLWcBAL.png");
         appDatabase.personWithCoursesDAO().insert(userPerson);
-
-        /*FetchImage fetchImage = new FetchImage("https://i.imgur.com/OLWcBAL.png");
-        fetchImage.start();
-        Handler handler = new Handler();
-
-        handler.post (new Runnable() {
-            @Override
-            public void run() {
-                if (fetchImage.isAlive()) {
-                    Log.d(TAG, "Still processing image");
-                    handler.postDelayed(this, 200);
-                } else {
-                    Bitmap bitmap = fetchImage.getBitmap();
-                    Log.d(TAG, "Converted Bitmap to Byte Array");
-                    byte[] byteArr = Converters.bitmapToByteArr(bitmap);
-                    databaseHandler.updatePerson(user.getId(), user.getName(), byteArr);
-                }
-            }
-        });*/
+        saveUUIDToFile();
 
         databaseHandler.updateUser();
     }
@@ -213,6 +225,12 @@ public class SessionManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteSession(String session) {
+        File sessionFile = new File(DIRECTORY_PATH + "/" + session);
+        boolean del = sessionFile.delete();
+        Log.d(TAG, "Deleted session " + session + " STATUS: " + del);
     }
 
     public void openSessionFromStorage(String sessionToOpen) {

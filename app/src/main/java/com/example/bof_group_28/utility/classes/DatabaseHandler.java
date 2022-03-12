@@ -91,9 +91,6 @@ public class DatabaseHandler {
     public void updateAndSaveUser(String name, String profilePic) {
         db.personWithCoursesDAO().update(userId, name, profilePic);
         updateUser();
-
-        // Save every time user is updated
-        sessionManager.saveCurrentSession();
     }
 
     /**
@@ -119,4 +116,5 @@ public class DatabaseHandler {
     public void deleteCourses(UUID personId) {
         db.courseEntryDAO().deleteCourses(personId);
     }
+
 }

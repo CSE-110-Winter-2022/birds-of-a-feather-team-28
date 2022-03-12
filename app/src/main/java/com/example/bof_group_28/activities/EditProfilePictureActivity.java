@@ -5,6 +5,7 @@ import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databa
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.databinding.ActivityEditProfilePictureBinding;
 import com.example.bof_group_28.utility.classes.Converters;
+import com.example.bof_group_28.utility.classes.DownloadImageTask;
 import com.example.bof_group_28.utility.classes.FetchImage;
 
 /**
@@ -28,7 +30,6 @@ import com.example.bof_group_28.utility.classes.FetchImage;
 public class EditProfilePictureActivity extends AppCompatActivity {
 
     ActivityEditProfilePictureBinding binding;
-    Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,52 +39,23 @@ public class EditProfilePictureActivity extends AppCompatActivity {
         binding = ActivityEditProfilePictureBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        byte[] pfp = user.getProfilePic();
-        if(pfp != null){
-            Bitmap pfpBitmap = Converters.byteArrToBitmap(pfp);
-            ((ImageView) findViewById(R.id.editProfilePicture)).setImageBitmap(pfpBitmap);
-        }
-
-        Context c = this;
+        new DownloadImageTask((ImageView) findViewById(R.id.editProfilePicture)).execute(user.getProfilePic());
 
         binding.saveProfilePicture.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //FIXME CHECK VALID LINK OR CHECK IN FETCH IMAGE CLASS BELOW - THIS MIGHT ALR BE DONE
-                //FIXME HAVE CONSISTENT PROFILE PICTURE SIZES
                 String url = binding.URLTextField.getText().toString();
-                FetchImage fetchImage = new FetchImage(url, c);
-                fetchImage.start();
-
-                handler.post (new Runnable() {
-                   @Override
-                   public void run() {
-                       if (fetchImage.isAlive()) {
-                           Log.d(TAG, "Still processing fetch image");
-                           //FIXME: not elegant way to check if done
-                           handler.postDelayed(this, 1000);
-                       } else {
-                           Bitmap bitmap = fetchImage.getBitmap();
-                           if(bitmap != null){
-                               //FIXME: fix if file is too large for db
-                               Log.d(TAG, "Converted Bitmap to Byte Array");
-                               byte[] byteArr = Converters.bitmapToByteArr(bitmap);
-                               databaseHandler.updateAndSaveUser(user.getName(), byteArr);
-                               binding.editProfilePicture.setImageBitmap(bitmap);
-                           } else {
-                               Log.e(TAG, "Bitmap is null!");
-                               Toast.makeText(c, "Invalid image URL", Toast.LENGTH_SHORT).show();
-                           }
-                       }
-                       //FIXME: update pfp from menu page once returning
-                   }
-                });
+                databaseHandler.updateAndSaveUser(user.getName(), url);
+                Log.d(TAG, "New PFP added: " + url);
+                new DownloadImageTask((ImageView) findViewById(R.id.editProfilePicture)).execute(user.getProfilePic());
             }
         });
     }
 
 
     public void onDoneButtonClicked(View view) {
+        Intent intent=new Intent();
+        setResult(10,intent);
         finish();
     }
 }

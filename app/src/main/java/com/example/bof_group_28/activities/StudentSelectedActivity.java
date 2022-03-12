@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.utility.classes.Converters;
+import com.example.bof_group_28.utility.classes.DownloadImageTask;
 import com.example.bof_group_28.viewAdapters.CourseViewAdapter;
 
 import java.util.ArrayList;
@@ -51,8 +52,7 @@ public class StudentSelectedActivity extends AppCompatActivity {
         courseRecyclerView.setAdapter(courseViewAdapter);
 
         if (getIntent().hasExtra(PFP)) {
-            ((ImageView) findViewById(R.id.largeProfilePicture))
-                    .setImageBitmap(Converters.byteArrToBitmap(getIntent().getByteArrayExtra(PFP)));
+            new DownloadImageTask((ImageView) findViewById(R.id.largeProfilePicture)).execute(getIntent().getStringExtra(PFP));
         }
     }
 

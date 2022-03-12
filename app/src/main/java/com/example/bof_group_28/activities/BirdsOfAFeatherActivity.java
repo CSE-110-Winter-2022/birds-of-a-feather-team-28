@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bof_group_28.utility.Utilities;
+import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
 import com.example.bof_group_28.utility.classes.Prioritizers.StudentSorter;
 import com.example.bof_group_28.utility.classes.SessionManager;
 import com.example.bof_group_28.utility.classes.Converters;
@@ -114,7 +115,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         // Setup the nearby students handler
         Log.d(TAG, "Attempting to instantiate handler");
         StudentSorter sorter = new StudentSorter(user);
-        handler = new NearbyStudentsHandler(user, new DummyStudentFinder(new ArrayList<>(), databaseHandler), sorter);
+        handler = new NearbyStudentsHandler(user, new NearbyStudentsFinder(this.getApplicationContext()), sorter);
         sessionManager.setSorter(sorter);
 
         // Setup student view

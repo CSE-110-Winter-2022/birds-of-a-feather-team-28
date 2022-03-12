@@ -15,6 +15,8 @@ public class CourseEntry {
     @ColumnInfo(name = "person_id")
     public UUID personId;
 
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "course_id")
     public UUID courseId;
 

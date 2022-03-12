@@ -6,6 +6,7 @@ import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.sessio
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,6 +32,10 @@ public class SessionViewActivity extends AppCompatActivity {
         sessionRecyclerView.setLayoutManager(sessionLayoutManager);
         sessionViewAdapter = new SessionViewAdapter(sessionManager.getSessionsList(), this);
         sessionRecyclerView.setAdapter(sessionViewAdapter);
+    }
+
+    public void onBackButtonClick(View view) {
+        finish();
     }
 
     @Override

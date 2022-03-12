@@ -1,5 +1,6 @@
 package com.example.bof_group_28.viewAdapters;
 
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.sessionManager;
 
 import android.app.Activity;
@@ -20,7 +21,7 @@ import java.util.List;
 public class SessionViewAdapter extends RecyclerView.Adapter<SessionViewAdapter.ViewHolder> {
 
     // Instance Variables
-    private final List<String> sessions;
+    private List<String> sessions;
 
     public Context c;
 
@@ -51,9 +52,10 @@ public class SessionViewAdapter extends RecyclerView.Adapter<SessionViewAdapter.
         return this.sessions.size();
     }
 
-    public static class ViewHolder
+    public class ViewHolder
             extends RecyclerView.ViewHolder {
         private final Button sessionButton;
+        private final Button deleteButton;
         private Context c;
 
         ViewHolder(View itemView) {
@@ -64,6 +66,24 @@ public class SessionViewAdapter extends RecyclerView.Adapter<SessionViewAdapter.
                 sessionManager.changeSession(sessionButton.getText().toString());
                 ((Activity)c).finish();
             });
+
+            this.deleteButton = itemView.findViewById(R.id.deleteSession);
+            deleteButton.setOnClickListener((view) -> {
+                if (sessionManager.getCurrentSession().equals(sessionButton.getText().toString())) {
+                    Toast.makeText(c, "Can't delete a session you're in! Change sessions first.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    sessionManager.deleteSession(sessionButton.getText().toString());
+
+
+                    int pos = this.getLayoutPosition();
+                    String seshName = sessions.get(pos);
+                    sessions.remove(pos);
+                    notifyItemRemoved(pos);
+                    Toast.makeText(c, "Deleted Session: " + seshName, Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
 
         public void setSessionButton(String session) {
