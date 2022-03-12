@@ -35,8 +35,8 @@ public class FakePersonParser {
             if (c.contains(",,,")) {
                 Log.d(TAG, c + " parsing as a wave");
                 String[] waveData = c.split(",");
-                UUID toWave = UUID.fromString(waveData[0]);
-                Log.d(TAG, "Waving to " + toWave.toString());
+                UUID wavedBy = UUID.fromString(waveData[0]);
+                Log.d(TAG, "The mocked user received a wave from " + wavedBy.toString());
 
                 // WAVE HERE!
             } else {
