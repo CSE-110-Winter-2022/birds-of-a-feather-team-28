@@ -21,6 +21,7 @@ public class FavoritesViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.favorites_layout);
+        setContentView(R.layout.favorites_layout);
 
         favoritesRecyclerView = findViewById(R.id.favoritesRecyclerView);
         RecyclerView.LayoutManager favoritesLayoutManager = new LinearLayoutManager(this);

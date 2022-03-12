@@ -47,25 +47,6 @@ public class NearbyStudentsFinder implements StudentFinder {
         this.messageListener = createMessageListener();
         this.nearbyStudents = new ArrayList<>();
         this.context = context;
-        addFakeUser();
-    }
-
-    public void addFakeUser() {
-        UUID personId = UUID.randomUUID();
-        databaseHandler.insertCourse(new CourseEntry(UUID.randomUUID(), personId, "2021", QuarterName.FALL.getText(), "CSE", "101", SizeName.SMALL.getText()));
-        databaseHandler.insertPersonWithCourses(new Person(personId, "Bob", "https://i.imgur.com/6ieINZP_d.webp?maxwidth=520&shape=thumb&fidelity=high"));
-        nearbyStudents.add(databaseHandler.getPersonFromUUID(personId));
-
-
-        UUID personId2 = UUID.randomUUID();
-        databaseHandler.insertCourse(new CourseEntry(UUID.randomUUID(), personId2, "2021", QuarterName.WINTER.getText(), "CSE", "101", SizeName.GIGANTIC.getText()));
-        databaseHandler.insertPersonWithCourses(new Person(personId2, "Bobette", "https://i.imgur.com/6ieINZP_d.webp?maxwidth=520&shape=thumb&fidelity=high"));
-        nearbyStudents.add(databaseHandler.getPersonFromUUID(personId2));
-
-        UUID personId3 = UUID.randomUUID();
-        databaseHandler.insertCourse(new CourseEntry(UUID.randomUUID(), personId3, "2021", QuarterName.SPRING.getText(), "CSE", "101", SizeName.GIGANTIC.getText()));
-        databaseHandler.insertPersonWithCourses(new Person(personId3, "Joe", "https://i.imgur.com/6ieINZP_d.webp?maxwidth=520&shape=thumb&fidelity=high"));
-        nearbyStudents.add(databaseHandler.getPersonFromUUID(personId3));
     }
 
     @Override
