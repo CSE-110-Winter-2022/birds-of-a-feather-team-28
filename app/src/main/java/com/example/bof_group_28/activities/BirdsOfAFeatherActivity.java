@@ -89,6 +89,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private NearbyStudentsHandler handler;
     private Intent nearbyStudentService;
     private Prioritizer currentPrioritizer;
+    private NearbyStudentsFinder finder;
 
     // Constants
     public static final String PREF_NAME = "preferences";
@@ -127,7 +128,8 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         // Setup the nearby students handler
         Log.d(TAG, "Attempting to instantiate handler");
         StudentSorter sorter = new StudentSorter(user);
-        handler = new NearbyStudentsHandler(user, new NearbyStudentsFinder(this.getApplicationContext()), sorter);
+        finder = new NearbyStudentsFinder(this.getApplicationContext());
+        handler = new NearbyStudentsHandler(user, finder, sorter);
 
         sessionManager.setSorter(sorter);
         currentPrioritizer = new DefaultPrioritizer();
@@ -301,7 +303,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         Log.d(TAG, "User attempting to mock fake user with Nearby");
                         String inputText = input.getText().toString();
-                        FakePersonParser.addFakePersonToDatabaseFromString(inputText);
+                        FakePersonParser.addFakePersonToDatabaseFromString(inputText, finder);
                         Toast.makeText(getApplicationContext(), "Mocking user...", Toast.LENGTH_SHORT).show();
                     }
                 });

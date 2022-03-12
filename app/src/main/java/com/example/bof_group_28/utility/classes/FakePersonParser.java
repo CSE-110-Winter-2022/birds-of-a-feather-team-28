@@ -7,12 +7,13 @@ import android.util.Log;
 
 import com.example.bof_group_28.utility.enums.QuarterName;
 import com.example.bof_group_28.utility.enums.SizeName;
+import com.google.android.gms.nearby.messages.Message;
 
 import java.util.UUID;
 
 public class FakePersonParser {
 
-    public static void addFakePersonToDatabaseFromString(String message) {
+    public static void addFakePersonToDatabaseFromString(String message, NearbyStudentsFinder finder) {
         StringBuilder builder = new StringBuilder();
 
         String[] fields = message.split(",,,,\n");
@@ -92,7 +93,7 @@ public class FakePersonParser {
 
         Log.d(TAG, "Faking string : " + builder.toString());
 
-        // nearby publish this msg
+        finder.getMessageListener().onFound(new Message(builder.toString().getBytes()));
 
     }
 
