@@ -49,11 +49,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.StudentSelectedActivity" />
+        <meta-data
+            android:name="com.google.android.nearby.messages.API_KEY"
+            android:value="AIzaSyA-C-uMnxzzuRop1-wM90w0crUlArnMUqQ">
+        </meta-data>
     </application>
-
-    <meta-data
-        android:name="com.google.android.nearby.messages.API_KEY"
-        android:value="AIzaSyA-C-uMnxzzuRop1-wM90w0crUlArnMUqQ">
-    </meta-data>
 
 </manifest>
