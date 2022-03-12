@@ -115,7 +115,7 @@ public class NearbyStudentsFinder implements StudentFinder {
                     Log.d(TAG, "Wave content: " + message.getContent());
                     Log.d(TAG, Nearby.getMessagesClient(context).getClass().getSimpleName());
 
-                    Toast.makeText(context, wave.getSenderID().toString() " just waved to you!");
+                    Toast.makeText(context, wave.getSenderID().toString() + " just waved to you!", Toast.LENGTH_SHORT);
                 }
 
                 else {

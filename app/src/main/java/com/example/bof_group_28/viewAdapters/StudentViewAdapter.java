@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
 import com.example.bof_group_28.utility.classes.Converters;
 import com.example.bof_group_28.utility.classes.DownloadImageTask;
+import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.R;
 import com.example.bof_group_28.activities.StudentSelectedActivity;
@@ -108,6 +109,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
             extends RecyclerView.ViewHolder {
         private final Button personButton;
         private final ImageButton favoriteButton;
+        private final ImageButton waveButton;
         private PersonWithCourses student;
         private final TextView classCount;
         private String pfp;
@@ -158,10 +160,16 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
             favoriteButton.setOnClickListener((view) -> {
                 boolean currFavStatus = databaseHandler.getFavStatus(student.getId());
                 databaseHandler.setFavStatus(student.getId(), !currFavStatus);
-                Log.v("StudentViewAdapter:", "Favorited: " + currFavStatus);
+                Log.d("StudentViewAdapter:", "Favorited: " + currFavStatus);
                 setFavoriteButton(this.student);
             });
 
+            this.waveButton = itemView.findViewById(R.id.wave);
+
+            waveButton.setOnClickListener((view) -> {
+                Log.d(TAG, "Sending wave to student: " + student.person.name);
+                setFavoriteButton(this.student);
+            });
         }
 
         public void setPersonButton(PersonWithCourses student) {
