@@ -22,6 +22,6 @@ public class DateFinderTests {
         DateFinder finder = new DateFinder();
         String quarter = finder.getCurrQuarter();
         System.out.println(QuarterName.WINTER);
-        assertEquals(QuarterName.WINTER, quarter);
+        assertEquals(QuarterName.types()[2], quarter);
     }
 }

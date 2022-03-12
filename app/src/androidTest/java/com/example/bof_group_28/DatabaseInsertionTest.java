@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import model.IPerson;
 import model.db.AppDatabase;
@@ -39,115 +40,72 @@ public class DatabaseInsertionTest {
         assertEquals("com.example.bof_group_28", appContext.getPackageName());
     }*/
 
-    private AppDatabase db;
+     private AppDatabase db;
+     private UUID c1 = UUID.randomUUID();
+     private UUID c2 = UUID.randomUUID();
+     private UUID c3 = UUID.randomUUID();
+     private UUID c4 = UUID.randomUUID();
+     private UUID id = UUID.randomUUID();
+     private UUID id2 = UUID.randomUUID();
 
-    @Before
-    public void createDb() {
-        Context context = ApplicationProvider.getApplicationContext();
-        db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
-        //userDao = db.getUserDao();
-    }
-    @Test
-    public void SinglePersonInsertionTest() {
+     @Before
+     public void createDb() {
+          Context context = ApplicationProvider.getApplicationContext();
+          db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
+          //userDao = db.getUserDao();
+     }
+     @Test
+     public void SinglePersonInsertionTest() {
 
-        Person person = new Person(1, "John Doe", null);
-        db.personWithCoursesDAO().insert(person);
+          Person person = new Person(id, "John Doe", null);
+          db.personWithCoursesDAO().insert(person);
 
-        CourseEntry courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110", "500");
-        db.courseEntryDAO().insert(courseEntry);
-        //FIXME: bad quarter naming
-        courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101", "500");
+          CourseEntry courseEntry = new CourseEntry(c1, id,"2022", "WI22", "CSE", "110", "500");
+          db.courseEntryDAO().insert(courseEntry);
+          //FIXME: bad quarter naming
+          courseEntry = new CourseEntry(c2, id,"2022", "WI22", "CSE", "101", "500");
+          db.courseEntryDAO().insert(courseEntry);
+          courseEntry = new CourseEntry(c3, id,"2022", "WI22", "CSE", "110", "Small (40-75)");
+          db.courseEntryDAO().insert(courseEntry);
+          //FIXME: bad quarter naming
+          courseEntry = new CourseEntry(c4, id,"2022", "WI22", "CSE", "101", "Small (40-75)");
 
-        courseEntry = new CourseEntry(1,1,"2022", "WI22", "CSE", "110", "Small (40-75)");
-        db.courseEntryDAO().insert(courseEntry);
-        //FIXME: bad quarter naming
-        courseEntry = new CourseEntry(2,1,"2022", "WI22", "CSE", "101", "Small (40-75)");
-
-        db.courseEntryDAO().insert(courseEntry);
-
-        assertEquals(2, db.courseEntryDAO().maxId());
-
-        List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
-        assertEquals("John Doe", persons.get(0).getName());
-        assertEquals("CSE", persons.get(0).getCourses().get(0).subject);
-        assertEquals("110", persons.get(0).getCourses().get(0).courseNum);
-        assertEquals("CSE", persons.get(0).getCourses().get(1).subject);
-        assertEquals("101", persons.get(0).getCourses().get(1).courseNum);
-    }
-
-    @Test
-    public void DoublePersonInsertionTest() {
-
-        Person person = new Person(1, "John Doe", null);
-        db.personWithCoursesDAO().insert(person);
-        person = new Person(2, "Jane Doe", null);
-        db.personWithCoursesDAO().insert(person);
+          db.courseEntryDAO().insert(courseEntry);
 
 
-        CourseEntry courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110", "500");
-        db.courseEntryDAO().insert(courseEntry);
-        courseEntry = new CourseEntry(4, 2, "2022", "WI22", "MGT", "181", "500");
+          List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
+          assertEquals("John Doe", persons.get(0).getName());
+          assertEquals("CSE", persons.get(0).getCourses().get(0).subject);
+          assertEquals("110", persons.get(0).getCourses().get(0).courseNum);
+          assertEquals("CSE", persons.get(0).getCourses().get(1).subject);
+          assertEquals("101", persons.get(0).getCourses().get(1).courseNum);
+     }
 
-        courseEntry = new CourseEntry(3, 1, "2022", "WI22", "CSE", "110", "Small (40-75)");
-        db.courseEntryDAO().insert(courseEntry);
-        courseEntry = new CourseEntry(4, 2, "2022", "WI22", "MGT", "181", "Small (40-75)");
+     @Test
+     public void DoublePersonInsertionTest() {
 
-        db.courseEntryDAO().insert(courseEntry);
+          Person person = new Person(id, "John Doe", null);
+          db.personWithCoursesDAO().insert(person);
+          person = new Person(id2, "Jane Doe", null);
+          db.personWithCoursesDAO().insert(person);
 
-        assertEquals(2, db.personWithCoursesDAO().count());
 
-        List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
-        assertEquals("John Doe", persons.get(0).getName());
-        assertEquals("CSE", persons.get(0).getCourses().get(0).subject);
-        assertEquals("Jane Doe", persons.get(1).getName());
-        assertEquals("MGT", persons.get(1).getCourses().get(0).subject);
-    }
+          CourseEntry courseEntry = new CourseEntry(c1, id, "2022", "WI22", "CSE", "110", "500");
+          db.courseEntryDAO().insert(courseEntry);
+          courseEntry = new CourseEntry(c2, id2, "2022", "WI22", "MGT", "181", "500");
+          db.courseEntryDAO().insert(courseEntry);
+          courseEntry = new CourseEntry(c3, id, "2022", "WI22", "CSE", "110", "Small (40-75)");
+          db.courseEntryDAO().insert(courseEntry);
+          courseEntry = new CourseEntry(c4, id2, "2022", "WI22", "MGT", "181", "Small (40-75)");
 
-    /*@Test
-    public void StudentMessageTest() {
-        DummyStudent bob = new DummyStudent("Bob");
-        bob.addCourse(new DummyCourse("2020","fall", "CSE", "110"));
+          db.courseEntryDAO().insert(courseEntry);
 
-        String correctStr = "1,Bob,2020,fall,CSE,110,";
-        Message correctMsg = new Message(correctStr.getBytes(StandardCharsets.UTF_8));
+          assertEquals(2, db.personWithCoursesDAO().count());
 
-        assertEquals(correctMsg, bob.toMessage());
-    }
-
-    @Test
-    public void OneNearbyStudentTest() {
-        com.example.bof_group_28.utility.interfaces.Person bob = new DummyStudent("Bob");
-        ((DummyStudent) bob).addCourse(new DummyCourse("2020","fall", "CSE", "110"));
-
-        List<com.example.bof_group_28.utility.interfaces.Person> nearbyStudents = new ArrayList<com.example.bof_group_28.utility.interfaces.Person>();
-        nearbyStudents.add((com.example.bof_group_28.utility.interfaces.Person) bob);
-
-        Context context = InstrumentationRegistry.getInstrumentation().getContext();
-
-        NearbyStudentsFinder nearbyStudentsFinder = new NearbyStudentsFinder(context);
-        nearbyStudentsFinder.getMessageListener().onFound(((DummyStudent) bob).toMessage());
-
-        assertEquals(nearbyStudents.size(), nearbyStudentsFinder.returnNearbyStudents().size());
-    }
-
-    @Test
-    public void MultipleNearbyStudentsTest() {
-        com.example.bof_group_28.utility.interfaces.Person bob = new DummyStudent("Bob");
-        ((DummyStudent) bob).addCourse(new DummyCourse("2020","fall", "CSE", "110"));
-
-        com.example.bof_group_28.utility.interfaces.Person lily = new DummyStudent("Lily");
-        ((DummyStudent) lily).addCourse(new DummyCourse("2020","fall", "CSE", "110"));
-
-        List<com.example.bof_group_28.utility.interfaces.Person> nearbyStudents = new ArrayList<com.example.bof_group_28.utility.interfaces.Person>();
-        nearbyStudents.add((com.example.bof_group_28.utility.interfaces.Person) bob);
-        nearbyStudents.add((com.example.bof_group_28.utility.interfaces.Person) lily);
-
-        Context context = InstrumentationRegistry.getInstrumentation().getContext();
-
-        NearbyStudentsFinder nearbyStudentsFinder = new NearbyStudentsFinder(context);
-        nearbyStudentsFinder.getMessageListener().onFound(((DummyStudent) bob).toMessage());
-        nearbyStudentsFinder.getMessageListener().onFound(((DummyStudent) lily).toMessage());
-
-        assertEquals(nearbyStudents.size(), nearbyStudentsFinder.returnNearbyStudents().size());
-    }*/
+          List<? extends IPerson> persons = db.personWithCoursesDAO().getAll();
+          assertEquals("John Doe", persons.get(0).getName());
+          assertEquals("CSE", persons.get(0).getCourses().get(0).subject);
+          assertEquals("Jane Doe", persons.get(1).getName());
+          assertEquals("MGT", persons.get(1).getCourses().get(1).subject);
+     }
 }
