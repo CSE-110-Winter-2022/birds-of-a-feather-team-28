@@ -11,6 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bof_group_28">
+        <meta-data
+            android:name="com.google.android.nearby.messages.API_KEY"
+            android:value="AIzaSyDr18JLunyCDtqX79f7SBxPO5AXeWRKlCs">
+        </meta-data>
         <activity
             android:name=".activities.EditProfilePictureActivity"
             android:exported="false" />
@@ -49,10 +53,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.StudentSelectedActivity" />
-        <meta-data
-            android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="AIzaSyC8BpGrCBo52SNG4SkmrlSqztpNHBt7cyI">
-        </meta-data>
     </application>
 
 </manifest>
