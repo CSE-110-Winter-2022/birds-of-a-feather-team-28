@@ -3,13 +3,23 @@ package com.example.bof_group_28.utility.classes;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.sessionManager;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.userId;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.ArraySet;
 import android.util.Log;
+
+import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
+import com.example.bof_group_28.utility.classes.Prioritizers.DefaultPrioritizer;
+import com.example.bof_group_28.utility.classes.Prioritizers.Prioritizer;
+import com.example.bof_group_28.utility.classes.Prioritizers.StudentSorter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,9 +30,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import model.db.AppDatabase;
 import model.db.CourseEntry;
@@ -31,153 +44,104 @@ import model.db.PersonWithCourses;
 
 public class SessionManager {
 
-    public static String SESSION_LIST = "sessionList";
     public static String LAST_USED_SESSION = "lastUsedSession";
-    public static String DEFAULT_SESSION_NAME = "default";
+    public static String NO_SESSION = "No Session Active";
+    public static String DIRECTORY_PATH = "";
 
     private AppDatabase appDatabase;
     private Context context;
     private String currentSession;
+    private StudentSorter sorter;
+
+    private List<UUID> uuidList;
 
     public SessionManager(Context context) {
+        DIRECTORY_PATH = context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getPath();
+
         this.context = context;
         currentSession = getLastUsedSession();
         this.appDatabase = AppDatabase.singleton(context);
+        databaseHandler = new DatabaseHandler(this.appDatabase);
 
-        if (!isDefaultSession()) {
+        uuidList = new ArrayList<>();
+
+        if (getUserId() != null) {
+            userId = getUserId();
+        } else {
+            firstTimeUserInitialize();
+        }
+        user = databaseHandler.getUser();
+
+        if (!noSessionActive()) {
             openSessionFromStorage(currentSession);
         }
+
         saveCurrentSessionAsLastUsed();
     }
 
-    /**
-     * Save the current session to storage
-     */
-    public void saveCurrentSessionToStorage() {
-        this.appDatabase = AppDatabase.singleton(context);
-        StringBuilder personsText = new StringBuilder();
-        StringBuilder coursesText = new StringBuilder();
+    public void setSorter(StudentSorter sorter) {
+        this.sorter = sorter;
+    }
 
-        // Build CSV string for people
-        for (int i = 0; i < appDatabase.personWithCoursesDAO().count(); i++) {
-            PersonWithCourses p = appDatabase.personWithCoursesDAO().get(i + 1);
-            personsText.append(p.person.personId + "," + p.person.name + "," + bytesToHex(p.person.profilePic) + "\n");
+    public UUID getUserId() {
+        File uuidFile = new File(DIRECTORY_PATH + "/uuidFile.text");
+        if (!uuidFile.exists()) {
+            return null;
         }
-
-        // Build CSV string for courses
-        for (int i = appDatabase.courseEntryDAO().maxId() - appDatabase.courseEntryDAO().count() + 1; i < appDatabase.courseEntryDAO().maxId(); i++) {
-            CourseEntry course = appDatabase.courseEntryDAO().get(i + 1);
-            coursesText.append(course.courseId + "," + course.personId + ","
-                    + course.year + "," + course.quarter + ","
-                    + course.subject + "," + course.courseNum + "," + course.size + "\n");
+        try (BufferedReader uuidReader = new BufferedReader(new FileReader(uuidFile))) {
+            String line;
+            while ((line = uuidReader.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    Log.d(TAG, "Reading UUID line: " + line);
+                    return UUID.fromString(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return null;
+    }
 
-        Log.v(TAG, "Appending to File " + currentSession + "/persons.csv: \n" + personsText);
-        Log.v(TAG, "Appending to File " + currentSession + "/courses.csv: \n" + coursesText);
-
-        // Create necessary files
-        File directory = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + currentSession);
-        File personsFile = new File(directory, "/persons.csv");
-        File coursesFile = new File(directory, "/courses.csv");
-        if (!directory.exists()) {
-            Log.v(TAG, "Parent Directory doesn't exist. Generating directory");
-            boolean madeDir = directory.mkdirs();
-            Log.v(TAG, "Directory creation status: " + madeDir);
-        }
-        FileOutputStream outputStream;
+    public void saveUUIDToFile() {
+        File uuidFile = new File(DIRECTORY_PATH + "/uuidFile.text");
         try {
-            boolean fileStatus = personsFile.createNewFile();
-            coursesFile.createNewFile();
-            Log.v(TAG, "Creation Status for PersonFile: " + fileStatus);
-
-            // Append CSV strings to files
-            outputStream = new FileOutputStream(personsFile, false);
-            outputStream.write(personsText.toString().getBytes());
-            outputStream.flush();
-            outputStream.close();
-
-            outputStream = new FileOutputStream(coursesFile, false);
-            outputStream.write(coursesText.toString().getBytes());
-            outputStream.flush();
-            outputStream.close();
+            uuidFile.createNewFile();
+            FileOutputStream stream;
+            stream = new FileOutputStream(uuidFile, false);
+            stream.write(userId.toString().getBytes());
+            stream.flush();
+            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    //https://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java
-    // This makes it easy to store in CSV
-    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
-    public static String bytesToHex(byte[] bytes) {
-        byte[] hexChars = new byte[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+    public List<PersonWithCourses> getPeople() {
+        List<PersonWithCourses> peopleList = new ArrayList<>();
+        Log.d(TAG, "Loading people from list of UUID size " + uuidList.size());
+        for (UUID id : uuidList) {
+            peopleList.add(databaseHandler.getPersonFromUUID(id));
         }
-        return new String(hexChars, StandardCharsets.UTF_8);
+        Log.d(TAG, "Returned a list of people with size " + peopleList.size());
+        return peopleList;
     }
 
-    //TODO: IMPORTANT!!!! COURSES ARE DISAPPEARING? LIKE ONE AT A TIME?
-    //https://www.baeldung.com/java-csv-file-array
-    public boolean openSessionFromStorage(String sessionToOpen) {
-        this.appDatabase = AppDatabase.singleton(context);
-        Log.v(TAG, "Opening session from storage " + sessionToOpen);
-        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + sessionToOpen);
-        if (!file.exists()) {
-            Log.e(TAG, "Session to open from storage did not exist");
-            return false;
-        }
+    public void addUUID(UUID id) {
+        uuidList.add(id);
+    }
 
+    public List<PersonWithCourses> getSortedPeople(Prioritizer prioritizer) {
+        return sorter.getSortedStudents(getPeople(), prioritizer);
+    }
 
-        appDatabase.clearAllTables();
-        Log.v(TAG, "Cleared tables to counts: " + appDatabase.personWithCoursesDAO().count() + " and " + appDatabase.courseEntryDAO().count());
-
-        try (BufferedReader personsReader = new BufferedReader(new FileReader(
-                Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + currentSession + "/persons.csv"))) {
-            String line;
-            while ((line = personsReader.readLine()) != null) {
-                Log.v(TAG, "Parsing line: " + line);
-                String[] values = new String[3];
-                values[0] = line.substring(0, line.indexOf(","));
-                String second = line.substring(line.indexOf(",") + 1);
-                values[1] = second.substring(0, second.indexOf(","));
-                values[2] = second.substring(second.indexOf(",") + 1);
-                Log.v(TAG, "Attempting to load " + Arrays.asList(values).toString());
-                Person p = new Person(Integer.parseInt(values[0]), values[1], values[2].getBytes());
-                appDatabase.personWithCoursesDAO().insert(p);
-                Log.v(TAG, "Loaded person " + p.name + " " + p.personId + " " + Arrays.toString(p.profilePic));
+    public void updatePeopleWithNearby(List<PersonWithCourses> people) {
+        for (PersonWithCourses pwc : people) {
+            // If we don't have them yet, and they share courses, add them!
+            if (!uuidList.contains(pwc.getId()) && databaseHandler.sharesCourses(pwc.getId())) {
+                uuidList.add(pwc.getId());
+                Log.d(TAG, "Added new UUID to nearby " + pwc.getId());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-        try (BufferedReader coursesReader = new BufferedReader(new FileReader(
-                Environment.getExternalStorageDirectory().getPath() + "/dataFiles/" + currentSession + "/courses.csv"))) {
-            String line;
-            while ((line = coursesReader.readLine()) != null) {
-                String[] values = line.split(",");
-                CourseEntry c = new CourseEntry(Integer.parseInt(values[0]), Integer.parseInt(values[1]), values[2], values[3], values[4], values[5], values[6]);
-                appDatabase.courseEntryDAO().insert(c);
-                Log.v(TAG, "Loaded course " + c.toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
-    public boolean isDefaultSession() {
-        return (currentSession.equals(DEFAULT_SESSION_NAME));
-    }
-
-    public AppDatabase getAppDatabase() {
-        this.appDatabase = AppDatabase.singleton(context);
-        return appDatabase;
-    }
-
-    public String getCurrentSession() {
-        return currentSession;
     }
 
     /**
@@ -186,14 +150,122 @@ public class SessionManager {
      */
     public List<String> getSessionsList() {
         List<String> fileList = new ArrayList<>();
-        File directory = new File(Environment.getExternalStorageDirectory().getPath() + "/dataFiles");
-        if (directory.exists()) {
-            Log.v(TAG, "Retrieving Sessions List from " + directory.getPath());
-            for (String s : directory.list()) {
-                fileList.add(s);
+        File directory = new File(DIRECTORY_PATH);
+        Log.d(TAG, "Retrieving Sessions List from " + directory.getPath());
+        if (directory.list() != null) {
+            for(String f : directory.list()) {
+                if (f.equals("uuidFile.text")) {
+                    continue;
+                }
+                fileList.add(f.substring(0, f.length() - 4));
             }
         }
         return fileList;
+    }
+
+    public boolean sessionExists(String sessionName) {
+        return getSessionsList().contains(sessionName);
+    }
+
+    /**
+     * "save" the current session
+     */
+    public void saveCurrentSession() {
+        Log.d(TAG, "Saving Session: " + currentSession);
+        saveCurrentSessionToStorage();
+    }
+
+    /**
+     * Change the session to some session name.
+     * Updates user for that session with the current user in memory, as that is most updated
+     * @param sessionName new name of session
+     */
+    public void changeSession(String sessionName) {
+        Log.d(TAG, "Changing session to " + sessionName);
+        currentSession = sessionName;
+        clearCurrentPeople();
+        if (sessionExists(sessionName)) {
+            Log.d(TAG, "Session exists!");
+            openSessionFromStorage(sessionName);
+        }
+        saveCurrentSessionAsLastUsed();
+    }
+
+    public void clearCurrentPeople() {
+        uuidList.clear();
+    }
+
+    /**
+     * Check if it's the user's first time logging in and set up the user if it is
+     */
+    private void firstTimeUserInitialize() {
+        String name = "Name Not Set";
+
+        // Add the person to the Database
+        userId = UUID.randomUUID();
+        Log.d(TAG, "First time user initialize ran, generated new UUID " + userId);
+        Person userPerson = new Person(userId, name, "https://i.imgur.com/OLWcBAL.png");
+        appDatabase.personWithCoursesDAO().insert(userPerson);
+        saveUUIDToFile();
+
+        databaseHandler.updateUser();
+    }
+
+    /**
+     * Save the current session to storage
+     */
+    public void saveCurrentSessionToStorage() {
+        Log.d(TAG, "Attempting to save " + currentSession + " to storage");
+        StringBuilder personsText = new StringBuilder();
+
+        for (PersonWithCourses pwc : getPeople()) {
+            personsText.append(pwc.getId()).append("\n");
+        }
+        Log.d(TAG, "Saving: " + personsText);
+
+        File sessionFile = new File(DIRECTORY_PATH + "/" + currentSession + ".txt");
+        try {
+            boolean fileStatus = sessionFile.createNewFile();
+            Log.d(TAG, "File creation status for " + currentSession + ".txt : " + fileStatus);
+
+            FileOutputStream stream;
+            stream = new FileOutputStream(sessionFile, false);
+            stream.write(personsText.toString().getBytes());
+            stream.flush();
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSession(String session) {
+        File sessionFile = new File(DIRECTORY_PATH + "/" + session + ".txt");
+        boolean del = sessionFile.delete();
+        Log.d(TAG, "Deleted session " + session + " STATUS: " + del);
+    }
+
+    public void openSessionFromStorage(String sessionToOpen) {
+        Log.d(TAG, "Opening session from storage " + sessionToOpen);
+        File sessionFile = new File(DIRECTORY_PATH + "/" + sessionToOpen + ".txt");
+        if (!sessionFile.exists()) {
+            Log.e(TAG, "Session to open from storage did not exist");
+            return;
+        }
+
+        try (BufferedReader personsReader = new BufferedReader(new FileReader(sessionFile))) {
+            String line;
+            while ((line = personsReader.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    Log.d(TAG, "Reading line: " + line);
+                    if (databaseHandler.databaseHasUUID(UUID.fromString(line))) {
+                        Log.d(TAG, "Line loaded to user successfully!");
+                        addUUID(UUID.fromString(line));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -202,7 +274,7 @@ public class SessionManager {
      */
     public String getLastUsedSession() {
         SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return preferences.getString(LAST_USED_SESSION, DEFAULT_SESSION_NAME);
+        return preferences.getString(LAST_USED_SESSION, NO_SESSION);
     }
 
     /**
@@ -215,43 +287,22 @@ public class SessionManager {
         editor.apply();
     }
 
-    /**
-     * "save" the current default session
-     * @param sessionName session
-     */
-    public void saveSession(String sessionName) {
-        Log.v(TAG, "Saving Session: " + sessionName);
-        currentSession = sessionName;
-        saveCurrentSessionToStorage();
+    public void renameSession(String session) {
+        currentSession = session;
     }
 
-    /**
-     * Change the session to some session name.
-     * Updates user for that session with the current user in memory, as that is most updated
-     * @param sessionName new name of session
-     */
-    public void changeSession(String sessionName) {
-        this.appDatabase = AppDatabase.singleton(context);
-        Log.v(TAG, "Changing session to " + sessionName);
-        // IMPORTANT: Always clear default database as it represents the unsaved database. Otherwise get from file
-        currentSession = sessionName;
-        if (sessionName.equals(DEFAULT_SESSION_NAME)) {
-            databaseHandler.clearNonUserEntries();
-        } else {
-            openSessionFromStorage(sessionName);
-        }
+    public void renameSessionFile(String session, String newSession) {
+        File file = new File(DIRECTORY_PATH + "/" + session + ".txt");
+        boolean rename = file.renameTo(new File(DIRECTORY_PATH + "/" + newSession + ".txt"));
+        Log.d(TAG, "Renamed session " + session + " to " + newSession + " status: " + rename);
+    }
 
-        // TODO: Doublecheck logic that ensures user object is actually up to date
+    public boolean noSessionActive() {
+        return currentSession.equals(NO_SESSION);
+    }
 
-        appDatabase.personWithCoursesDAO().deletePerson(1);
-        appDatabase.personWithCoursesDAO().insert(user.person);
-
-        // Update db with original user's courses
-        List<CourseEntry> courses = user.getCourses();
-        databaseHandler.clearCourses(user.getId());
-        databaseHandler.insertCourseList(courses);
-
-        saveCurrentSessionAsLastUsed();
+    public String getCurrentSession() {
+        return currentSession;
     }
 
 }

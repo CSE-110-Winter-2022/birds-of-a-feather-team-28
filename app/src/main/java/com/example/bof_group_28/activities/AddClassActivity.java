@@ -1,6 +1,7 @@
 package com.example.bof_group_28.activities;
 
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.PREF_NAME;
+import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.user;
 
@@ -21,6 +22,7 @@ import com.example.bof_group_28.utility.enums.QuarterName;
 import com.example.bof_group_28.utility.enums.SizeName;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import model.db.CourseEntry;
 
@@ -32,7 +34,7 @@ public class AddClassActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v("AddClassActivity", "AddClassActivity Created");
+        Log.d("AddClassActivity", "AddClassActivity Created");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_class);
 
@@ -51,7 +53,7 @@ public class AddClassActivity extends AppCompatActivity {
                 } else {
                     text.setText("");
                 }
-                Log.v("AddClassActivity", "Quarter Chosen");
+                Log.d("AddClassActivity", "Quarter Chosen");
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -74,7 +76,7 @@ public class AddClassActivity extends AppCompatActivity {
                 } else {
                     text.setText("");
                 }
-                Log.v("AddClassActivity", "Size Chosen");
+                Log.d("AddClassActivity", "Size Chosen");
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -111,9 +113,12 @@ public class AddClassActivity extends AppCompatActivity {
         editor.putString("size", sizeView.getText().toString());
         editor.apply();
 
+        Log.d(TAG, "Saved Add Class in preferences");
+
     }
 
     public void loadPreviousEntry() {
+        Log.d(TAG, "Loading previous Add Class entry from Preferences");
         //Load previously entered strings in views
         SharedPreferences preferences = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
 
@@ -143,8 +148,9 @@ public class AddClassActivity extends AppCompatActivity {
     }
 
     public void onAddClicked(View view){
+        savePreviousEntry();
         //Create new courseEntry object from views to add to database
-        Log.v("AddClassActivity", "Add Course Clicked");
+        Log.d("AddClassActivity", "Add Course Clicked");
         TextView text;
 
         text = findViewById(R.id.subject_entry);
@@ -162,15 +168,15 @@ public class AddClassActivity extends AppCompatActivity {
         text = findViewById(R.id.size_txt);
         String sizeTxt = text.getText().toString();
 
-        int newCourseID = databaseHandler.db.courseEntryDAO().maxId()+1;
+        UUID newCourseID = UUID.randomUUID();
         CourseEntry courseToAdd = new CourseEntry(newCourseID, user.getId(), yearTxt, quarterTxt, subjectTxt, courseNumTxt, sizeTxt);
 
         if (validateCourse(courseToAdd)) {
-            Log.v("AddClassActivity", "Course Successfully Added");
+            Log.d("AddClassActivity", "Course Successfully Added");
             databaseHandler.insertCourse(courseToAdd);
             finish();
         }
-        Log.v("AddClassActivity", "Course Not Added");
+        Log.d("AddClassActivity", "Course Not Added");
     }
 
     //FIXME Add more validation here if needed
@@ -207,9 +213,9 @@ public class AddClassActivity extends AppCompatActivity {
             flag = false;
         }
         if (flag) {
-            Log.v("AddClassActivity", "Successfully Validated New Course");
+            Log.d("AddClassActivity", "Successfully Validated New Course");
         } else {
-            Log.v("AddClassActivity", "New Course Not Validated");
+            Log.d("AddClassActivity", "New Course Not Validated");
         }
 
         return flag;

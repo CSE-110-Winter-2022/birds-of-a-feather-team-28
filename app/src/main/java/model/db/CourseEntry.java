@@ -5,17 +5,20 @@ import androidx.room.ColumnInfo;
 import androidx.room.PrimaryKey;
 import androidx.room.Entity;
 
+import java.util.UUID;
+
 @Entity(tableName = "courseentries")
 public class CourseEntry {
 
     public static final String MSG_DELIMITER = ",";
 
-    @PrimaryKey
-    @ColumnInfo(name = "course_id")
-    public int courseId;
-
     @ColumnInfo(name = "person_id")
-    public int personId;
+    public UUID personId;
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "course_id")
+    public UUID courseId;
 
     @ColumnInfo(name = "year")
     public String year;
@@ -32,7 +35,7 @@ public class CourseEntry {
     @ColumnInfo(name = "size")
     public String size;
 
-    public CourseEntry(int courseId, int personId, String year,
+    public CourseEntry(UUID courseId, UUID personId, String year,
                        String quarter, String subject, String courseNum, String size) {
         this.courseId = courseId;
         this.personId = personId;
@@ -46,13 +49,13 @@ public class CourseEntry {
     @NonNull
     @Override
     public String toString() {
-        return subject + " "  + courseNum + " for " + quarter + " of " + year + " size " + size;
+        return subject + " " + courseNum + " for " + quarter + " of " + year + " size " + size;
     }
 
     @NonNull
     public String toMsgString() {
 
-        return courseId  + MSG_DELIMITER +
+        return  courseId + MSG_DELIMITER +
                 personId + MSG_DELIMITER +
                 year + MSG_DELIMITER +
                 quarter + MSG_DELIMITER +
@@ -74,5 +77,9 @@ public class CourseEntry {
                 && subject.equals(otherCourse.subject)
                 && courseNum.equals(otherCourse.courseNum)
                 && size.equals(otherCourse.size));
+    }
+
+    public boolean sameUUID(CourseEntry ce) {
+        return courseId.toString().equals(ce.courseId.toString());
     }
 }

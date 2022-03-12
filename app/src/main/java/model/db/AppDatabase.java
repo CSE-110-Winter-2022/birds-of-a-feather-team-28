@@ -1,7 +1,6 @@
 package model.db;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.TAG;
 import static com.example.bof_group_28.activities.BirdsOfAFeatherActivity.databaseHandler;
-import static com.example.bof_group_28.utility.classes.SessionManager.DEFAULT_SESSION_NAME;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,11 +8,13 @@ import android.util.Log;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import java.io.File;
 import java.util.Arrays;
 
 @Database(entities = {Person.class, CourseEntry.class}, version = 1)
+@TypeConverters({UUIDConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase singletonInstance;
 
@@ -28,5 +29,5 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract PersonWithCoursesDAO personWithCoursesDAO();
-    public abstract CourseEntryDAO courseEntryDAO();
+    public abstract CourseEntryDAO  courseEntryDAO();
 }

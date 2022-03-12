@@ -9,21 +9,44 @@
     android:gravity="center_vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="395dp"
         android:layout_height="match_parent">
 
         <Button
             android:id="@+id/session_button"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_width="0dp"
+            android:layout_height="49dp"
+            android:layout_marginEnd="5dp"
             android:backgroundTint="@color/white"
             android:gravity="center"
             android:text="session"
             android:textColor="@color/black"
+            android:textSize="10sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/renameSessionButton"
+            app:layout_constraintEnd_toStartOf="@+id/renameSessionButton"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/deleteSession"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="11dp"
+            android:text="Delete"
+            android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/renameSessionButton"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/renameSessionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rename"
+            android:textSize="10sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/deleteSession"
+            app:layout_constraintEnd_toStartOf="@+id/deleteSession"
+            app:layout_constraintStart_toEndOf="@+id/session_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

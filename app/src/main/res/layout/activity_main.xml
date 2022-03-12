@@ -5,23 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/sessionNameField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="640dp"
-        android:text="Session"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/personRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="66dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
@@ -63,14 +52,16 @@
 
     <LinearLayout
         android:id="@+id/linearLayout5"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="398dp"
+        android:layout_height="69dp"
         android:layout_marginTop="1dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/sessionNameField"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.225"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <Button
             android:id="@+id/bofButton"
@@ -93,15 +84,12 @@
             android:textColor="@android:color/holo_orange_dark"
             android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/clearButton"
+        <TextView
+            android:id="@+id/sessionNameField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="15dp"
-            android:backgroundTint="@android:color/holo_blue_light"
-            android:onClick="onClearButtonClicked"
-            android:text="@string/clear" />
+            android:text="Session" />
 
     </LinearLayout>
 
