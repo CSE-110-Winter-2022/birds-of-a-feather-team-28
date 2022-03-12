@@ -35,7 +35,7 @@ public class FakePersonParser {
                 Log.d(TAG, c + " parsing as a wave");
                 String[] waveData = c.split(",");
                 UUID toWave = UUID.fromString(waveData[0]);
-                Log.d(TAG, "Waving to " + databaseHandler.getPersonFromUUID(toWave).getName());
+                Log.d(TAG, "Waving to " + toWave.toString());
 
                 // WAVE HERE!
             } else {
@@ -88,7 +88,7 @@ public class FakePersonParser {
         }
 
 
-        builder.append(numCourses).append(name).append(",").append(fakeId).append(",").append(profilePic).append(",").append(coursesString);
+        builder.append(numCourses).append(",").append(name).append(",").append(fakeId).append(",").append(profilePic).append(",").append(coursesString);
 
         Log.d(TAG, "Faking string : " + builder.toString());
 

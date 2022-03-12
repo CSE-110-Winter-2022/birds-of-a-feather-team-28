@@ -296,7 +296,6 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     public void mockUserPrompt(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
-        input.setText(sessionManager.getCurrentSession());
         builder.setMessage(message)
                 .setPositiveButton("Mock", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
