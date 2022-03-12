@@ -35,6 +35,9 @@
             android:name=".activities.ManageClassesActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.FavoritesViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.BirdsOfAFeatherActivity"
             android:exported="true"
             android:label="@string/app_name"

@@ -45,7 +45,6 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
     // Instance Variables
     public final List<PersonWithCourses> students;
-    private final NearbyStudentsHandler handler;
 
     // Constants
     public static final String SELECTED_STUDENT_NAME = "selectedName";
@@ -56,9 +55,8 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
      * @param students list of students to show
      * @param handler nearby handler
      */
-    public StudentViewAdapter(List<PersonWithCourses> students, NearbyStudentsHandler handler) {
+    public StudentViewAdapter(List<PersonWithCourses> students) {
         super();
-        this.handler = handler;
         this.students = students;
     }
 
@@ -69,7 +67,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
                 .from(parent.getContext())
                 .inflate(R.layout.person_row, parent, false);
 
-        return new ViewHolder(view, handler);
+        return new ViewHolder(view);
     }
 
     /**
@@ -118,9 +116,8 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         /**
          * Construct a Recycler View Item with onClick to select a student
          * @param itemView the item
-         * @param handler the nearby handler
          */
-        ViewHolder(View itemView, NearbyStudentsHandler handler) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             // shared count

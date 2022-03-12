@@ -113,6 +113,16 @@ public class DatabaseHandler {
         updateUser();
     }
 
+    public List<PersonWithCourses> getFavorites() {
+        List<PersonWithCourses> favorites = new ArrayList<>();
+        for (PersonWithCourses pwc : db.personWithCoursesDAO().getAll()) {
+            if (pwc.getFavStatus()) {
+                favorites.add(pwc);
+            }
+        }
+        return favorites;
+    }
+
     public void deleteCourses(UUID personId) {
         db.courseEntryDAO().deleteCourses(personId);
     }
