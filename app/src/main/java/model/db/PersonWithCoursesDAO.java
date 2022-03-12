@@ -19,6 +19,9 @@ public interface PersonWithCoursesDAO {
     @Query("SELECT * FROM persons WHERE person_id=:id")
     PersonWithCourses get(UUID id);
 
+    @Query("UPDATE persons SET fav_status=:favStatus WHERE person_id=:id")
+    void setFavStatus(UUID id, boolean favStatus);
+
     @Query("SELECT COUNT(*) FROM persons")
     int count();
 

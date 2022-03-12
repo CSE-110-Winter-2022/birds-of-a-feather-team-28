@@ -20,10 +20,14 @@ public class Person {
     @ColumnInfo(name = "profile_pic")
     public String profilePic;
 
+    @ColumnInfo(name = "fav_status")
+    public boolean favStatus;
+
     public Person(UUID personId, String name, String profilePic) {
         this.personId = personId;
         this.name = name;
         this.profilePic = profilePic;
+        this.favStatus = false;
     }
 
     public String toString() {

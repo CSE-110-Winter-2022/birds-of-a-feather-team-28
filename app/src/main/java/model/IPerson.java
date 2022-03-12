@@ -9,6 +9,7 @@ public interface IPerson {
     UUID getId();
     String getName();
     String getProfilePic();
+    boolean getFavStatus();
     List<CourseEntry> getCourses();
 
 }
