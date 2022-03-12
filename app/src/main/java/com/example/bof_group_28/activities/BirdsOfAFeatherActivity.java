@@ -154,7 +154,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
                 } else if (position == 2) {
                     currentPrioritizer = new SmallClassPrioritizer();
                     Log.d(TAG, "Prioritizing off Small Courses");
-                } else {
+                } else if (position == 3) {
                     DateFinder dateFinder = new DateFinder();
                     currentPrioritizer = new ThisQuarterPrioritizer(dateFinder.getCurrYear(), dateFinder.getCurrQuarter());
                     Log.d(TAG, "Prioritizing by this quarter: " + dateFinder.getCurrYear() + " and " + dateFinder.getCurrQuarter());
@@ -172,8 +172,13 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         studentRecyclerView = findViewById(R.id.personRecyclerView);
         studentLayoutManager = new LinearLayoutManager(this);
         studentRecyclerView.setLayoutManager(studentLayoutManager);
-        studentViewAdapter = new StudentViewAdapter(sessionManager.getSortedPeople(currentPrioritizer), handler);
+        studentViewAdapter = new StudentViewAdapter(sessionManager.getSortedPeople(currentPrioritizer));
         studentRecyclerView.setAdapter(studentViewAdapter);
+    }
+
+    public void clickFavoritesButton(View view) {
+        Intent intent = new Intent(this, FavoritesViewActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -278,7 +283,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
      */
     public void updateStudentsView() {
         studentViewAdapter.clear();
-        studentViewAdapter = new StudentViewAdapter(sessionManager.getSortedPeople(currentPrioritizer), handler);
+        studentViewAdapter = new StudentViewAdapter(sessionManager.getSortedPeople(currentPrioritizer));
         studentRecyclerView.setAdapter(studentViewAdapter);
         Log.d(TAG, "Updated nearby students view");
     }
