@@ -55,16 +55,25 @@ public class SessionManager {
 
     private List<UUID> uuidList;
 
+    /**
+     * Create a new Session Manager
+     * @param context app context
+     */
     public SessionManager(Context context) {
         DIRECTORY_PATH = context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getPath();
-
         this.context = context;
+
+        // Set current session to session from last time
         currentSession = getLastUsedSession();
+
+        // Setup database and database handler
         this.appDatabase = AppDatabase.singleton(context);
         databaseHandler = new DatabaseHandler(this.appDatabase);
 
+        // Setup the list of people to be shown in the current session
         uuidList = new ArrayList<>();
 
+        // If it's the first time, run first time setup!
         if (getUserId() != null) {
             userId = getUserId();
         } else {
@@ -72,6 +81,7 @@ public class SessionManager {
         }
         user = databaseHandler.getUser();
 
+        // Open the session if the session is not the default
         if (!noSessionActive()) {
             openSessionFromStorage(currentSession);
         }
@@ -83,6 +93,10 @@ public class SessionManager {
         this.sorter = sorter;
     }
 
+    /**
+     * Get the user's ID from file
+     * @return
+     */
     public UUID getUserId() {
         File uuidFile = new File(DIRECTORY_PATH + "/uuidFile.text");
         if (!uuidFile.exists()) {
@@ -102,6 +116,9 @@ public class SessionManager {
         return null;
     }
 
+    /**
+     * Save the user's UUID to a file
+     */
     public void saveUUIDToFile() {
         File uuidFile = new File(DIRECTORY_PATH + "/uuidFile.text");
         try {
@@ -116,6 +133,10 @@ public class SessionManager {
         }
     }
 
+    /**
+     * get an unordered list of the people in this session
+     * @return list of people
+     */
     public List<PersonWithCourses> getPeople() {
         List<PersonWithCourses> peopleList = new ArrayList<>();
         Log.d(TAG, "Loading people from list of UUID size " + uuidList.size());
@@ -126,14 +147,27 @@ public class SessionManager {
         return peopleList;
     }
 
+    /**
+     * add a UUID to the list of shown people
+     * @param id the UUID
+     */
     public void addUUID(UUID id) {
         uuidList.add(id);
     }
 
+    /**
+     * Get the list of people in the current session in order of the prioritizer
+     * @param prioritizer the prioritizer
+     * @return the sorted list of people
+     */
     public List<PersonWithCourses> getSortedPeople(Prioritizer prioritizer) {
         return sorter.getSortedStudents(uuidList, prioritizer);
     }
 
+    /**
+     * Update current list of people with nearby's newest people
+     * @param people the list of people
+     */
     public void updatePeopleWithNearby(List<PersonWithCourses> people) {
         for (PersonWithCourses pwc : people) {
             // If we don't have them yet, and they share courses, add them!
@@ -191,6 +225,9 @@ public class SessionManager {
         saveCurrentSessionAsLastUsed();
     }
 
+    /**
+     * Clear current list of people shown
+     */
     public void clearCurrentPeople() {
         uuidList.clear();
     }
@@ -287,10 +324,19 @@ public class SessionManager {
         editor.apply();
     }
 
+    /**
+     * Rename current session string
+     * @param session to rename to
+     */
     public void renameSession(String session) {
         currentSession = session;
     }
 
+    /**
+     * Rename session to new session
+     * @param session the session to renmae
+     * @param newSession new session name
+     */
     public void renameSessionFile(String session, String newSession) {
         File file = new File(DIRECTORY_PATH + "/" + session + ".txt");
         boolean rename = file.renameTo(new File(DIRECTORY_PATH + "/" + newSession + ".txt"));

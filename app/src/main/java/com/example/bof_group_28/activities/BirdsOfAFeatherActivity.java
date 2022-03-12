@@ -134,6 +134,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         sessionManager.setSorter(sorter);
         currentPrioritizer = new DefaultPrioritizer();
 
+        // Setup the prioritizer dropdown
         String[] prioritizers = {"DEFAULT", "RECENT", "SMALL COURSES", "THIS QUARTER"};
 
         Spinner prioritizerSpinner = findViewById(R.id.prioritizer_dd);

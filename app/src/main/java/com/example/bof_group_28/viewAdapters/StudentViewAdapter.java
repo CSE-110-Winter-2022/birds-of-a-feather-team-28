@@ -53,7 +53,6 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     /**
      * Construct a student view adapter with a nearby handler and list of students
      * @param students list of students to show
-     * @param handler nearby handler
      */
     public StudentViewAdapter(List<PersonWithCourses> students) {
         super();
