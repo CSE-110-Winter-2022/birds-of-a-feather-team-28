@@ -148,6 +148,7 @@ public class AddClassActivity extends AppCompatActivity {
     }
 
     public void onAddClicked(View view){
+        savePreviousEntry();
         //Create new courseEntry object from views to add to database
         Log.d("AddClassActivity", "Add Course Clicked");
         TextView text;
