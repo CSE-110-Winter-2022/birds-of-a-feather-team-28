@@ -65,10 +65,10 @@ public class DatabaseInsertionTest {
           //FIXME: bad quarter naming
           courseEntry = new CourseEntry(c2, id,"2022", "WI22", "CSE", "101", "500");
           db.courseEntryDAO().insert(courseEntry);
-          courseEntry = new CourseEntry(c1, id,"2022", "WI22", "CSE", "110", "Small (40-75)");
+          courseEntry = new CourseEntry(c3, id,"2022", "WI22", "CSE", "110", "Small (40-75)");
           db.courseEntryDAO().insert(courseEntry);
           //FIXME: bad quarter naming
-          courseEntry = new CourseEntry(c2, id,"2022", "WI22", "CSE", "101", "Small (40-75)");
+          courseEntry = new CourseEntry(c4, id,"2022", "WI22", "CSE", "101", "Small (40-75)");
 
           db.courseEntryDAO().insert(courseEntry);
 
@@ -90,9 +90,9 @@ public class DatabaseInsertionTest {
           db.personWithCoursesDAO().insert(person);
 
 
-          CourseEntry courseEntry = new CourseEntry(c3, id, "2022", "WI22", "CSE", "110", "500");
+          CourseEntry courseEntry = new CourseEntry(c1, id, "2022", "WI22", "CSE", "110", "500");
           db.courseEntryDAO().insert(courseEntry);
-          courseEntry = new CourseEntry(c4, id2, "2022", "WI22", "MGT", "181", "500");
+          courseEntry = new CourseEntry(c2, id2, "2022", "WI22", "MGT", "181", "500");
           db.courseEntryDAO().insert(courseEntry);
           courseEntry = new CourseEntry(c3, id, "2022", "WI22", "CSE", "110", "Small (40-75)");
           db.courseEntryDAO().insert(courseEntry);
@@ -106,6 +106,6 @@ public class DatabaseInsertionTest {
           assertEquals("John Doe", persons.get(0).getName());
           assertEquals("CSE", persons.get(0).getCourses().get(0).subject);
           assertEquals("Jane Doe", persons.get(1).getName());
-          assertEquals("MGT", persons.get(1).getCourses().get(0).subject);
+          assertEquals("MGT", persons.get(1).getCourses().get(1).subject);
      }
 }

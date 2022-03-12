@@ -34,6 +34,10 @@ public class PersonWithCoursesDAOTest {
     private UUID c2 = UUID.randomUUID();
     private UUID c3 = UUID.randomUUID();
     private UUID c4 = UUID.randomUUID();
+    private UUID c5 = UUID.randomUUID();
+    private UUID c6 = UUID.randomUUID();
+    private UUID c7 = UUID.randomUUID();
+    private UUID c8 = UUID.randomUUID();
     private UUID id = UUID.randomUUID();
     private UUID id2 = UUID.randomUUID();
     private UUID id3 = UUID.randomUUID();
@@ -43,7 +47,7 @@ public class PersonWithCoursesDAOTest {
 
     ArrayList<CourseEntry> courseList;
     ArrayList<Person> personList;
-    /**
+
      @Before
      public void createDb() {
      Context context = ApplicationProvider.getApplicationContext();
@@ -81,21 +85,22 @@ public class PersonWithCoursesDAOTest {
      courseList.add(courseEntry);
 
      courseEntry = new CourseEntry(c4, id3, "2022", "WI22", "CSE", "110", "500");
-
-     courseEntry = new CourseEntry(c1, id, "2022", "WI22", "CSE", "110", "Small (40-75)");
      db.courseEntryDAO().insert(courseEntry);
      courseList.add(courseEntry);
 
-     courseEntry = new CourseEntry(c2, id2, "2022", "WI22", "CSE", "110", "Small (40-75)");
+     courseEntry = new CourseEntry(c5, id, "2022", "WI22", "CSE", "110", "Small (40-75)");
      db.courseEntryDAO().insert(courseEntry);
      courseList.add(courseEntry);
 
-     courseEntry = new CourseEntry(c3, id2, "2022", "WI22", "MGT", "181", "Small (40-75)");
+     courseEntry = new CourseEntry(c6, id2, "2022", "WI22", "CSE", "110", "Small (40-75)");
      db.courseEntryDAO().insert(courseEntry);
      courseList.add(courseEntry);
 
-     courseEntry = new CourseEntry(c4, id3, "2022", "WI22", "CSE", "110", "Small (40-75)");
+     courseEntry = new CourseEntry(c7, id2, "2022", "WI22", "MGT", "181", "Small (40-75)");
+     db.courseEntryDAO().insert(courseEntry);
+     courseList.add(courseEntry);
 
+     courseEntry = new CourseEntry(c8, id3, "2022", "WI22", "CSE", "110", "Small (40-75)");
      db.courseEntryDAO().insert(courseEntry);
      courseList.add(courseEntry);
      }
@@ -120,19 +125,18 @@ public class PersonWithCoursesDAOTest {
 
      @Test
      public void someCoursesGetCourses() {
-     assertEquals(2, db.personWithCoursesDAO().get(id2).getCourses().size());
+     assertEquals(4, db.personWithCoursesDAO().get(id2).getCourses().size());
      assertEquals(courseList.get(1), db.personWithCoursesDAO().get(id2).getCourses().get(0));
      }
 
-     /**
+
      @Test
      public void getFromID() {
-     for (int i = 0; i < 4; i++) {
-     //Array list indexed to 0, DB indexed to 1 (add 1)
-     assertEquals(personList.get(i).name, db.personWithCoursesDAO().get(i+1).getName());
+      assertEquals(personList.get(0).name, db.personWithCoursesDAO().get(id).getName());
+      assertEquals(personList.get(1).name, db.personWithCoursesDAO().get(id2).getName());
+      assertEquals(personList.get(2).name, db.personWithCoursesDAO().get(id3).getName());
+      assertEquals(personList.get(3).name, db.personWithCoursesDAO().get(id4).getName());
      }
-
-     }*/
 
     /*@Test
     public void maxIDPersons() {
