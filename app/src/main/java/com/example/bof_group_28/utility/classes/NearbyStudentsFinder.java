@@ -17,6 +17,7 @@ import com.example.bof_group_28.utility.interfaces.StudentFinder;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageListener;
+import com.google.android.gms.nearby.messages.Strategy;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public class NearbyStudentsFinder implements StudentFinder {
     List<PersonWithCourses> nearbyStudents;
     Context context;
 
+    Message userDetailsMsg;
+
     public NearbyStudentsFinder(Context context) {
         this.messageListener = createMessageListener();
         this.nearbyStudents = new ArrayList<>();
@@ -54,6 +57,11 @@ public class NearbyStudentsFinder implements StudentFinder {
         return nearbyStudents;
     }
 
+    public void stop() {
+        Nearby.getMessagesClient(context).unsubscribe(messageListener);
+        Nearby.getMessagesClient(context).unpublish(userDetailsMsg);
+    }
+
     @Override
     public void updateNearbyStudents() {
         Nearby.getMessagesClient(context).subscribe(messageListener);
@@ -62,7 +70,7 @@ public class NearbyStudentsFinder implements StudentFinder {
     }
 
     public void publishToNearbyStudents() {
-        Message userDetailsMsg = user.toMessage();
+        userDetailsMsg = user.toMessage();
         Nearby.getMessagesClient(context).publish(userDetailsMsg);
         Log.d(TAG,"Publishing user profile to other students");
         Log.d(TAG, "Message content: " + userDetailsMsg.getContent());
@@ -86,6 +94,8 @@ public class NearbyStudentsFinder implements StudentFinder {
 
     private MessageListener createMessageListener() {
         return new MessageListener() {
+
+
             @Override
             public void onFound(@NonNull Message message) {
                 String[] decodedMessage = decodeMessage(message);

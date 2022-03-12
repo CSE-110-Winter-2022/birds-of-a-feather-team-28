@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.bof_group_28.activities.BirdsOfAFeatherActivity;
 import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
+import com.google.android.gms.nearby.Nearby;
 
 public class NearbyStudentsService extends Service {
 
@@ -26,6 +27,8 @@ public class NearbyStudentsService extends Service {
         Toast.makeText(NearbyStudentsService.this, SEARCHING_FOR_STUDENTS, Toast.LENGTH_SHORT).show();
 
         synchronized (this) {
+            Log.d(TAG, "Finder publishing to Nearby");
+            finder.publishToNearbyStudents();
             finder.updateNearbyStudents();
             /*if (finder != null) {
                 Log.d(TAG, "Finder publishing to Nearby");
@@ -39,6 +42,7 @@ public class NearbyStudentsService extends Service {
 
     @Override
     public void onDestroy() {
+        finder.stop();
         Toast.makeText(NearbyStudentsService.this, STOP_SEARCHING, Toast.LENGTH_SHORT).show();
         super.onDestroy();
     }

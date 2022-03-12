@@ -56,7 +56,6 @@ public class NearbyStudentsHandler {
     public void refreshNearbyStudents() {
         Log.d(TAG, "Refreshed nearby students finder");
         refreshUser();
-        finder.updateNearbyStudents();
         sessionManager.updatePeopleWithNearby(getAllNearbyStudents());
     }
 

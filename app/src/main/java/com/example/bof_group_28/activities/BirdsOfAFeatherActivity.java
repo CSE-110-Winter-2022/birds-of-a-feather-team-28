@@ -327,9 +327,6 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
             public void run() {
                 if (bofStarted) {
 
-                    Log.d(TAG, "Finder publishing to Nearby");
-                    finder.publishToNearbyStudents();
-
                     handler.refreshNearbyStudents();
                     updateStudentsView();
                     Log.d(TAG, "Refreshed and updated nearby students view in main activity.");
