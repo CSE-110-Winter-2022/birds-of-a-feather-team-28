@@ -71,10 +71,6 @@ public class NearbyStudentsHandler {
         this.user = BirdsOfAFeatherActivity.user;
     }
 
-    public HashMap<PersonWithCourses, List<CourseEntry>> getStudentSorterMap() {
-        return sorter.generateStudentClassMap(getAllNearbyStudents());
-    }
-
     /**
      * Get the students in the class map as a list
      * @return the students list
