@@ -9,6 +9,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.room.Room;
 
+import com.example.bof_group_28.utility.enums.QuarterName;
+import com.example.bof_group_28.utility.enums.SizeName;
 import com.example.bof_group_28.utility.interfaces.StudentFinder;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
@@ -33,12 +35,19 @@ public class NearbyStudentsFinder implements StudentFinder {
 
     List<PersonWithCourses> nearbyStudents;
     Context context;
-    DatabaseHandler databaseHandler;
 
     public NearbyStudentsFinder(Context context) {
         this.messageListener = createMessageListener();
         this.nearbyStudents = new ArrayList<>();
         this.context = context;
+        addFakeUser();
+    }
+
+    public void addFakeUser() {
+        UUID personId = UUID.randomUUID();
+        databaseHandler.insertCourse(new CourseEntry(UUID.randomUUID(), personId, "2022", QuarterName.FALL.getText(), "CSE", "101", SizeName.GIGANTIC.getText()));
+        databaseHandler.insertPersonWithCourses(new Person(personId, "Bob", "https://i.imgur.com/6ieINZP_d.webp?maxwidth=520&shape=thumb&fidelity=high"));
+        nearbyStudents.add(databaseHandler.getPersonFromUUID(personId));
     }
 
     @Override
