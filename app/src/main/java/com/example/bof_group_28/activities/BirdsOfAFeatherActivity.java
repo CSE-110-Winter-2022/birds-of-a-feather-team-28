@@ -25,14 +25,23 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bof_group_28.utility.Utilities;
+import com.example.bof_group_28.utility.classes.Calendar.DateFinder;
 import com.example.bof_group_28.utility.classes.NearbyStudentsFinder;
+import com.example.bof_group_28.utility.classes.Prioritizers.DefaultPrioritizer;
+import com.example.bof_group_28.utility.classes.Prioritizers.Prioritizer;
+import com.example.bof_group_28.utility.classes.Prioritizers.RecentPrioritizer;
+import com.example.bof_group_28.utility.classes.Prioritizers.SmallClassPrioritizer;
 import com.example.bof_group_28.utility.classes.Prioritizers.StudentSorter;
+import com.example.bof_group_28.utility.classes.Prioritizers.ThisQuarterPrioritizer;
 import com.example.bof_group_28.utility.classes.SessionManager;
 import com.example.bof_group_28.utility.classes.Converters;
 import com.example.bof_group_28.utility.classes.DatabaseHandler;
@@ -40,6 +49,7 @@ import com.example.bof_group_28.utility.classes.DummyStudentFinder;
 import com.example.bof_group_28.utility.classes.FetchImage;
 import com.example.bof_group_28.utility.classes.NearbyStudentsHandler;
 import com.example.bof_group_28.R;
+import com.example.bof_group_28.utility.enums.SizeName;
 import com.example.bof_group_28.utility.services.NearbyStudentsService;
 import com.example.bof_group_28.viewAdapters.StudentViewAdapter;
 
@@ -77,6 +87,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
     private boolean bofStarted;
     private NearbyStudentsHandler handler;
     private Intent nearbyStudentService;
+    private Prioritizer currentPrioritizer;
 
     // Constants
     public static final String PREF_NAME = "preferences";
@@ -118,12 +129,47 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         handler = new NearbyStudentsHandler(user, new NearbyStudentsFinder(this.getApplicationContext()), sorter);
 
         sessionManager.setSorter(sorter);
+        currentPrioritizer = new DefaultPrioritizer();
+
+        String[] prioritizers = {"DEFAULT", "RECENT", "SMALL COURSES", "THIS QUARTER"};
+
+        Spinner prioritizerSpinner = findViewById(R.id.prioritizer_dd);
+        ArrayAdapter<String> sizeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, prioritizers);
+        sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        prioritizerSpinner.setAdapter(sizeAdapter);
+        prioritizerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+
+                if (position == 0) {
+                    currentPrioritizer = new DefaultPrioritizer();
+                    Log.d(TAG, "Prioritizing by default order");
+                } else if (position == 1) {
+                    DateFinder dateFinder = new DateFinder();
+                    currentPrioritizer = new RecentPrioritizer(dateFinder.getCurrYear(), dateFinder.getCurrQuarter());
+                    Log.d(TAG, "Prioritizing by most recent based on: " + dateFinder.getCurrYear() + " and " + dateFinder.getCurrQuarter());
+                } else if (position == 2) {
+                    currentPrioritizer = new SmallClassPrioritizer();
+                    Log.d(TAG, "Prioritizing off Small Courses");
+                } else {
+                    DateFinder dateFinder = new DateFinder();
+                    currentPrioritizer = new ThisQuarterPrioritizer(dateFinder.getCurrYear(), dateFinder.getCurrQuarter());
+                    Log.d(TAG, "Prioritizing by this quarter: " + dateFinder.getCurrYear() + " and " + dateFinder.getCurrQuarter());
+                }
+
+                updateStudentsView();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // Do nothing
+            }
+        });
 
         // Setup student view
         studentRecyclerView = findViewById(R.id.personRecyclerView);
         studentLayoutManager = new LinearLayoutManager(this);
         studentRecyclerView.setLayoutManager(studentLayoutManager);
-        studentViewAdapter = new StudentViewAdapter(sessionManager.getPeople(), handler);
+        studentViewAdapter = new StudentViewAdapter(sessionManager.getSortedPeople(currentPrioritizer), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
     }
 
@@ -220,6 +266,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
         }
         Toast.makeText(this, "Starting a New Session", Toast.LENGTH_LONG).show();
         sessionManager.changeSession(strDate);
+        updateStudentsView();
         clickStartButton();
     }
 
@@ -228,7 +275,7 @@ public class BirdsOfAFeatherActivity extends AppCompatActivity {
      */
     public void updateStudentsView() {
         studentViewAdapter.clear();
-        studentViewAdapter = new StudentViewAdapter(sessionManager.getPeople(), handler);
+        studentViewAdapter = new StudentViewAdapter(sessionManager.getSortedPeople(currentPrioritizer), handler);
         studentRecyclerView.setAdapter(studentViewAdapter);
         Log.d(TAG, "Updated nearby students view");
     }

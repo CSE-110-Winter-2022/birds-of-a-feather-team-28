@@ -131,7 +131,7 @@ public class SessionManager {
     }
 
     public List<PersonWithCourses> getSortedPeople(Prioritizer prioritizer) {
-        return sorter.getSortedStudents(getPeople(), prioritizer);
+        return sorter.getSortedStudents(uuidList, prioritizer);
     }
 
     public void updatePeopleWithNearby(List<PersonWithCourses> people) {
